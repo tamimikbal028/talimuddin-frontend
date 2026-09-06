@@ -80,9 +80,9 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
 
                 {showMenu && (
                   <div
-                    className={`absolute left-0 z-50 w-56 rounded-lg border border-gray-200 bg-white shadow-lg sm:right-0 sm:left-auto ${
+                    className={`absolute right-0 z-50 w-48 rounded-xl border border-gray-200 bg-white shadow-xl ${
                       openUpward ? "bottom-full mb-1" : "top-full mt-1"
-                    }`}
+                    } animate-in fade-in zoom-in-95 duration-150`}
                   >
                     <div className="py-1">
                       {(meta.is_creator || meta.is_admin) && (
