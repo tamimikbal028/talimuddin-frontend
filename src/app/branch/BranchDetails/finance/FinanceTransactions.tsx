@@ -19,7 +19,6 @@ import {
   FaEdit,
   FaChevronDown,
   FaChevronUp,
-  FaInfoCircle,
 } from "react-icons/fa";
 
 const FinanceTransactions = () => {
@@ -120,7 +119,7 @@ const FinanceTransactions = () => {
                 setType(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
             >
               <option value="">All Transactions</option>
               <option value="INCOME">Income</option>
@@ -139,7 +138,7 @@ const FinanceTransactions = () => {
                 setCategoryId(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
             >
               <option value="">All Categories</option>
               {categories.map((cat) => (
@@ -169,7 +168,7 @@ const FinanceTransactions = () => {
                 setStartDate(e.target.value);
                 setPage(1);
               }}
-              className="w-full cursor-pointer rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="w-full cursor-pointer appearance-none rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none [&::-webkit-calendar-picker-indicator]:hidden"
             />
           </div>
 
@@ -192,7 +191,7 @@ const FinanceTransactions = () => {
                 setEndDate(e.target.value);
                 setPage(1);
               }}
-              className="w-full cursor-pointer rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="w-full cursor-pointer appearance-none rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none [&::-webkit-calendar-picker-indicator]:hidden"
             />
           </div>
 
@@ -257,9 +256,18 @@ const FinanceTransactions = () => {
                   return (
                     <Fragment key={entry.id}>
                       <tr
-                        className={`border-b border-gray-200/80 transition-colors hover:bg-gray-50/80 ${
+                        onClick={() => {
+                          if (hasDetails || hasNotes) {
+                            toggleRow(entry.id);
+                          }
+                        }}
+                        className={`border-b border-gray-200/80 transition-colors ${
+                          hasDetails || hasNotes
+                            ? "cursor-pointer select-none hover:bg-gray-50/90"
+                            : "hover:bg-gray-50/50"
+                        } ${
                           isExpanded && (hasDetails || hasNotes)
-                            ? "bg-blue-50/20"
+                            ? "bg-blue-50/30"
                             : ""
                         }`}
                       >
@@ -319,30 +327,40 @@ const FinanceTransactions = () => {
                           <div className="flex items-center justify-center gap-2 sm:gap-3">
                             {(hasDetails || hasNotes) && (
                               <button
-                                onClick={() => toggleRow(entry.id)}
-                                className="cursor-pointer p-1 text-gray-400 hover:text-gray-700"
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleRow(entry.id);
+                                }}
+                                className="cursor-pointer p-1 text-gray-400 transition-colors hover:text-gray-700"
                                 title="View Details"
                               >
                                 {isExpanded ? (
-                                  <FaChevronUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                  <FaChevronUp className="h-3.5 w-3.5 text-blue-600 sm:h-4 sm:w-4" />
                                 ) : (
                                   <FaChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                 )}
                               </button>
                             )}
                             <button
-                              onClick={() => {
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setEditingEntry(entry);
                                 setIsModalOpen(true);
                               }}
-                              className="cursor-pointer p-1 text-gray-400 hover:text-blue-600"
+                              className="cursor-pointer p-1 text-gray-400 transition-colors hover:text-blue-600"
                               title="Edit Transaction"
                             >
                               <FaEdit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                             </button>
                             <button
-                              onClick={() => handleDelete(entry)}
-                              className="cursor-pointer p-1 text-gray-400 hover:text-red-600"
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(entry);
+                              }}
+                              className="cursor-pointer p-1 text-gray-400 transition-colors hover:text-red-600"
                               title="Delete Transaction"
                             >
                               <FaTrash className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -362,15 +380,12 @@ const FinanceTransactions = () => {
                               {/* Notes */}
                               {hasNotes && (
                                 <div className="flex items-start gap-2 rounded-lg border border-gray-200/80 bg-white p-2.5 shadow-xs">
-                                  <FaInfoCircle className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-                                  <div>
-                                    <p className="font-bold text-gray-500">
-                                      Note:
-                                    </p>
-                                    <p className="mt-0.5 font-medium text-gray-700">
-                                      {entry.note}
-                                    </p>
-                                  </div>
+                                  <p className="rounded-lg bg-blue-500 px-2 py-1 font-bold text-white">
+                                    Note
+                                  </p>
+                                  <p className="font-medium text-gray-700">
+                                    {entry.note}
+                                  </p>
                                 </div>
                               )}
 
