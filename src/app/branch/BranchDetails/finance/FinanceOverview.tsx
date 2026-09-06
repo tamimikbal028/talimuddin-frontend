@@ -2,10 +2,14 @@ import { useParams } from "react-router-dom";
 import { useFinanceSummary } from "@/hooks/useBranchFinance";
 import { FaWallet, FaArrowUp, FaArrowDown, FaChartBar } from "react-icons/fa";
 import { formatCurrency, getMonthName } from "./financeUtils";
+import {
+  OverviewSkeleton,
+  FetchingIndicator,
+} from "@/app/shared/LoadingSkeleton/FinanceSkeletons";
 
 const FinanceOverview = () => {
   const { branchId } = useParams<{ branchId: string }>();
-  const { data, isLoading } = useFinanceSummary(branchId as string);
+  const { data, isLoading, isFetching } = useFinanceSummary(branchId as string);
 
   const overall = data?.data?.overall;
   const monthlyStats = data?.data?.monthlyStats ?? [];
@@ -38,23 +42,21 @@ const FinanceOverview = () => {
   ];
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
-          {[...Array(3)].map((_, i) => (
-            <div
-              key={i}
-              className="h-28 animate-pulse rounded-xl bg-gray-100 sm:h-32"
-            />
-          ))}
-        </div>
-        <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
-      </div>
-    );
+    return <OverviewSkeleton />;
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div
+      className={`space-y-4 transition-opacity duration-200 sm:space-y-6 ${
+        isFetching ? "opacity-75" : "opacity-100"
+      }`}
+    >
+      <div className="flex items-center justify-between">
+        <h3 className="text-xs font-bold tracking-wider text-gray-500 uppercase sm:text-sm">
+          Financial Overview
+        </h3>
+        <FetchingIndicator isFetching={isFetching} isLoading={isLoading} />
+      </div>
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:gap-5">
         {metricCards.map((card, index) => {

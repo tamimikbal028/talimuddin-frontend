@@ -2,6 +2,10 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFinanceMonthExport } from "@/hooks/useBranchFinance";
 import { formatCurrency, getMonthName } from "./financeUtils";
+import {
+  ExportStatementSkeleton,
+  FetchingIndicator,
+} from "@/app/shared/LoadingSkeleton/FinanceSkeletons";
 import { FaPrint, FaArrowUp, FaArrowDown, FaWallet } from "react-icons/fa";
 
 const FinanceExport = () => {
@@ -21,7 +25,7 @@ const FinanceExport = () => {
   // Months options
   const months = Array.from({ length: 12 }, (_, idx) => idx + 1);
 
-  const { data, isLoading } = useFinanceMonthExport(
+  const { data, isLoading, isFetching } = useFinanceMonthExport(
     branchId as string,
     year,
     month,
@@ -116,7 +120,8 @@ const FinanceExport = () => {
           </div>
 
           {/* Action buttons */}
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2.5">
+            <FetchingIndicator isFetching={isFetching} isLoading={isLoading} />
             <button
               onClick={handlePrint}
               disabled={isLoading || entries.length === 0}
@@ -130,7 +135,7 @@ const FinanceExport = () => {
 
       {/* Main Print Container */}
       {isLoading ? (
-        <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
+        <ExportStatementSkeleton />
       ) : entries.length === 0 ? (
         <div className="rounded-xl border border-dashed border-gray-200 bg-white py-14 text-center">
           <p className="text-sm text-gray-500">
@@ -140,7 +145,9 @@ const FinanceExport = () => {
       ) : (
         <div
           id="print-area"
-          className="space-y-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+          className={`space-y-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-opacity duration-200 ${
+            isFetching ? "opacity-75" : "opacity-100"
+          }`}
         >
           {/* Header (visible in print too) */}
           <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gray-100 pb-5">

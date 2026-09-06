@@ -8,6 +8,10 @@ import {
 import FinanceAddEntryForm from "./FinanceAddEntryForm";
 import { confirmDelete } from "@/utils/sweetAlert";
 import { formatCurrency, getMonthName } from "./financeUtils";
+import {
+  TransactionsTableSkeleton,
+  FetchingIndicator,
+} from "@/app/shared/LoadingSkeleton/FinanceSkeletons";
 import type { FinanceEntry, FinanceDetailItem } from "@/types";
 import {
   FaPlus,
@@ -50,7 +54,10 @@ const FinanceTransactions = () => {
     startDate: startDate || undefined,
     endDate: endDate || undefined,
   };
-  const { data, isLoading } = useFinanceEntries(branchId as string, filters);
+  const { data, isLoading, isFetching } = useFinanceEntries(
+    branchId as string,
+    filters
+  );
   const { mutate: deleteEntry } = useDeleteFinanceEntry(branchId as string);
 
   const entries = data?.data?.entries ?? [];
@@ -82,9 +89,12 @@ const FinanceTransactions = () => {
     <div className="space-y-3 sm:space-y-4">
       {/* Action Header */}
       <div className="flex flex-row items-center justify-between gap-2 sm:gap-4">
-        <h3 className="text-xs font-bold tracking-wider text-gray-500 uppercase sm:text-sm">
-          All Transactions
-        </h3>
+        <div className="flex items-center gap-2.5">
+          <h3 className="text-xs font-bold tracking-wider text-gray-500 uppercase sm:text-sm">
+            All Transactions
+          </h3>
+          <FetchingIndicator isFetching={isFetching} isLoading={isLoading} />
+        </div>
         <button
           onClick={() => {
             setEditingEntry(null);
@@ -234,14 +244,7 @@ const FinanceTransactions = () => {
 
       {/* Transaction List table */}
       {isLoading ? (
-        <div className="space-y-3">
-          {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="h-16 animate-pulse rounded-xl bg-gray-100"
-            />
-          ))}
-        </div>
+        <TransactionsTableSkeleton />
       ) : entries.length === 0 ? (
         <div className="rounded-xl border border-dashed border-gray-200 bg-white py-14 text-center">
           <p className="text-sm text-gray-500">
@@ -249,7 +252,11 @@ const FinanceTransactions = () => {
           </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-300 bg-white shadow-xs">
+        <div
+          className={`overflow-hidden rounded-xl border border-gray-300 bg-white shadow-xs transition-opacity duration-200 ${
+            isFetching ? "opacity-70" : "opacity-100"
+          }`}
+        >
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left text-xs sm:text-sm">
               <thead className="border-b border-gray-300 bg-gray-50/80 text-[11px] font-bold tracking-wider text-gray-500 uppercase sm:text-xs">

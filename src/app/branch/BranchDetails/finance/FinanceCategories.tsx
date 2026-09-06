@@ -2,6 +2,10 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFinanceCategories } from "@/hooks/useBranchFinance";
 import { formatCurrency } from "./financeUtils";
+import {
+  CategoriesTableSkeleton,
+  FetchingIndicator,
+} from "@/app/shared/LoadingSkeleton/FinanceSkeletons";
 import { FaTag } from "react-icons/fa";
 
 const FinanceCategories = () => {
@@ -10,7 +14,7 @@ const FinanceCategories = () => {
   // Filter state (All, Income, Expense)
   const [filterType, setFilterType] = useState<string>("");
 
-  const { data, isLoading } = useFinanceCategories(
+  const { data, isLoading, isFetching } = useFinanceCategories(
     branchId as string,
     filterType === "INCOME" || filterType === "EXPENSE" ? filterType : undefined
   );
@@ -20,9 +24,12 @@ const FinanceCategories = () => {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h3 className="text-sm font-bold tracking-wider text-gray-500 uppercase">
-          Categories Breakdown
-        </h3>
+        <div className="flex items-center gap-2.5">
+          <h3 className="text-sm font-bold tracking-wider text-gray-500 uppercase">
+            Categories Breakdown
+          </h3>
+          <FetchingIndicator isFetching={isFetching} isLoading={isLoading} />
+        </div>
 
         {/* Filter buttons */}
         <div className="flex rounded-lg border border-gray-200 bg-white p-1">
@@ -49,14 +56,7 @@ const FinanceCategories = () => {
       </div>
 
       {isLoading ? (
-        <div className="space-y-3">
-          {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="h-14 animate-pulse rounded-xl bg-gray-100"
-            />
-          ))}
-        </div>
+        <CategoriesTableSkeleton />
       ) : categories.length === 0 ? (
         <div className="rounded-xl border border-dashed border-gray-200 bg-white py-14 text-center">
           <p className="text-sm text-gray-500">
@@ -64,7 +64,11 @@ const FinanceCategories = () => {
           </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
+        <div
+          className={`overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs transition-opacity duration-200 ${
+            isFetching ? "opacity-70" : "opacity-100"
+          }`}
+        >
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left text-sm">
               <thead className="border-b border-gray-200 bg-gray-50/80 text-xs font-bold tracking-wider text-gray-500 uppercase">
@@ -80,7 +84,10 @@ const FinanceCategories = () => {
                 {categories.map((cat) => {
                   const netBalance = cat.income - cat.expense;
                   return (
-                    <tr key={cat.id} className="border-b border-gray-200/80 transition-colors hover:bg-gray-50/70 last:border-b-0">
+                    <tr
+                      key={cat.id}
+                      className="border-b border-gray-200/80 transition-colors last:border-b-0 hover:bg-gray-50/70"
+                    >
                       {/* Name & Count */}
                       <td className="px-5 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
