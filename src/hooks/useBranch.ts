@@ -8,7 +8,11 @@ import { branchServices } from "@/services/branch.service";
 import { uploadSingleImage } from "@/services/common/fileUpload.service";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
-import type { UpdateBranchData } from "@/types";
+import type {
+  UpdateBranchData,
+  AddBranchMemberData,
+  UpdateBranchMemberData,
+} from "@/types";
 import { BRANCH_KEYS } from "@/constants";
 import { handleMutationError } from "@/utils/errorHandler";
 
@@ -53,7 +57,6 @@ const useMyBranches = () => {
   });
 };
 
-
 const useBranchDetails = () => {
   const { branchId } = useParams();
   return useQuery({
@@ -85,7 +88,6 @@ const useJoinBranch = () => {
     onError: handleMutationError("Failed to join branch"),
   });
 };
-
 
 const useDeleteBranch = () => {
   const queryClient = useQueryClient();
@@ -164,19 +166,65 @@ const useUpdateBranchCoverImage = () => {
 // Branch Members
 // ====================================
 
-const useBranchMembers = () => {
+const useBranchMembers = (search?: string) => {
   const { branchId } = useParams();
   return useInfiniteQuery({
-    queryKey: [BRANCH_KEYS.MEMBERS, branchId],
+    queryKey: [BRANCH_KEYS.MEMBERS, branchId, search || ""],
     queryFn: ({ pageParam }) =>
-      branchServices.getBranchMembers(branchId as string, pageParam as number),
+      branchServices.getBranchMembers(
+        branchId as string,
+        pageParam as number,
+        search
+      ),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const { page, totalPages } = lastPage.data.pagination;
       return page < totalPages ? page + 1 : undefined;
     },
     enabled: !!branchId,
-    staleTime: Infinity,
+    staleTime: 1000 * 60,
+  });
+};
+
+const useAddBranchMember = () => {
+  const { branchId } = useParams();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: AddBranchMemberData) =>
+      branchServices.addBranchMember(branchId as string, data),
+    onSuccess: (response) => {
+      toast.success(response.message || "Member added successfully");
+      queryClient.invalidateQueries({
+        queryKey: [BRANCH_KEYS.MEMBERS, branchId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [BRANCH_KEYS.DETAILS, branchId],
+      });
+    },
+    onError: handleMutationError("Failed to add member"),
+  });
+};
+
+const useUpdateBranchMember = () => {
+  const { branchId } = useParams();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      memberId,
+      data,
+    }: {
+      memberId: string;
+      data: UpdateBranchMemberData;
+    }) => branchServices.updateBranchMember(branchId as string, memberId, data),
+    onSuccess: (response) => {
+      toast.success(response.message || "Member updated successfully");
+      queryClient.invalidateQueries({
+        queryKey: [BRANCH_KEYS.MEMBERS, branchId],
+      });
+    },
+    onError: handleMutationError("Failed to update member"),
   });
 };
 
@@ -185,8 +233,8 @@ const useRemoveBranchMember = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ userId }: { userId: string }) =>
-      branchServices.removeMember(branchId as string, userId),
+    mutationFn: (options: { userId?: string; memberId?: string }) =>
+      branchServices.removeMember(branchId as string, options),
     onSuccess: (response) => {
       toast.success(response.message);
       queryClient.invalidateQueries({
@@ -258,10 +306,12 @@ const branchHooks = {
 
   // Members
   useBranchMembers,
-  useBranchDirectorySearch,
+  useAddBranchMember,
+  useUpdateBranchMember,
   useRemoveBranchMember,
   usePromoteBranchMember,
   useDemoteBranchMember,
+  useBranchDirectorySearch,
 } as const;
 
 export default branchHooks;

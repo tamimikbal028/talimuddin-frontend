@@ -12,6 +12,9 @@ import type {
   BaseBranchActionResponse,
   BranchSearchResponse,
   MainBranchesResponse,
+  AddBranchMemberData,
+  BranchMember,
+  UpdateBranchMemberData,
 } from "../types";
 
 const createBranch = async (branchData: {
@@ -41,7 +44,6 @@ const getMyBranches = async (page: number): Promise<MyBranchesResponse> => {
   return response.data;
 };
 
-
 const getBranchDetails = async (
   branchId: string
 ): Promise<BranchDetailsResponse> => {
@@ -65,7 +67,6 @@ const joinBranch = async (joinCode: string): Promise<JoinBranchResponse> => {
   return response.data;
 };
 
-
 const deleteBranch = async (
   branchId: string
 ): Promise<DeleteBranchResponse> => {
@@ -88,10 +89,42 @@ const updateBranch = async (
 
 const getBranchMembers = async (
   branchId: string,
-  page: number
+  page: number,
+  search?: string
 ): Promise<BranchMembersResponse> => {
+  const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
   const response = await api.get<BranchMembersResponse>(
-    `/branches/${branchId}/members?page=${page}&limit=${MEMBERS_LIMIT}`
+    `/branches/${branchId}/members?page=${page}&limit=${MEMBERS_LIMIT}${searchParam}`
+  );
+  return response.data;
+};
+
+const addBranchMember = async (
+  branchId: string,
+  memberData: AddBranchMemberData
+): Promise<{
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: { member: BranchMember };
+}> => {
+  const response = await api.post(`/branches/${branchId}/members`, memberData);
+  return response.data;
+};
+
+const updateBranchMember = async (
+  branchId: string,
+  memberId: string,
+  memberData: UpdateBranchMemberData
+): Promise<{
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: { member: BranchMember };
+}> => {
+  const response = await api.patch(
+    `/branches/${branchId}/members/${memberId}`,
+    memberData
   );
   return response.data;
 };
@@ -107,11 +140,17 @@ const leaveBranch = async (
 
 const removeMember = async (
   branchId: string,
-  userId: string
+  options: { userId?: string; memberId?: string }
 ): Promise<BaseBranchActionResponse> => {
+  if (options.memberId) {
+    const response = await api.delete<BaseBranchActionResponse>(
+      `/branches/${branchId}/members/${options.memberId}`
+    );
+    return response.data;
+  }
   const response = await api.delete<BaseBranchActionResponse>(
     `/branches/${branchId}/remove`,
-    { data: { userId } }
+    { data: { userId: options.userId } }
   );
   return response.data;
 };
@@ -148,6 +187,8 @@ export const branchServices = {
   deleteBranch,
   updateBranch,
   getBranchMembers,
+  addBranchMember,
+  updateBranchMember,
   leaveBranch,
   removeMember,
   promoteMember,

@@ -44,20 +44,46 @@ export interface BranchMeta {
 
 // Branch Member (from getBranchMembers)
 export interface BranchMember {
+  id?: string;
+  name?: string;
+  phone?: string | null;
+  address?: string | null;
+  blood_group?: string | null;
+  email?: string | null;
+  note?: string | null;
   user: User;
   meta: {
     member_id: string;
     is_self: boolean;
     is_admin: boolean;
     is_creator: boolean;
+    is_manual?: boolean;
     joined_at: string;
     user_relation_status: string;
     can_manage: boolean;
-    institution: {
+    institution?: {
       id: string;
       name: string;
     } | null;
   };
+}
+
+export interface AddBranchMemberData {
+  name: string;
+  phone: string;
+  address?: string | null;
+  blood_group?: string | null;
+  email?: string | null;
+  note?: string | null;
+}
+
+export interface UpdateBranchMemberData {
+  name?: string;
+  phone?: string;
+  address?: string | null;
+  blood_group?: string | null;
+  email?: string | null;
+  note?: string | null;
 }
 
 // Update Branch Data (for updateBranch API)
