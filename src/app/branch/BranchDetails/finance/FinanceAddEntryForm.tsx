@@ -201,12 +201,12 @@ const FinanceAddEntryForm = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+        className="animate-in fade-in fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-200"
         onClick={onClose}
       />
 
       {/* Modal Dialog Card */}
-      <div className="relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-200">
+      <div className="animate-in fade-in zoom-in-95 relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-200">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50/80 px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex items-center gap-2.5">
@@ -250,293 +250,299 @@ const FinanceAddEntryForm = ({
           className="flex min-h-0 flex-1 flex-col overflow-hidden"
         >
           {/* Scrollable Form Content */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 sm:p-6">
-        {/* Income / Expense Toggle */}
-        <div className="flex gap-2">
-          {(["INCOME", "EXPENSE"] as const).map((t) => (
-            <label
-              key={t}
-              className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-2.5 text-xs font-semibold transition-colors sm:p-3 sm:text-sm ${
-                selectedType === t
-                  ? t === "INCOME"
-                    ? "border-green-500 bg-green-50 text-green-700"
-                    : "border-red-500 bg-red-50 text-red-700"
-                  : "border-gray-200 text-gray-500 hover:border-gray-300"
-              }`}
-            >
-              <input
-                type="radio"
-                value={t}
-                {...register("type")}
-                className="sr-only"
-                onChange={(e) => {
-                  register("type").onChange(e);
-                  // Reset selected category because type changed
-                  setValue("category_id", "");
-                }}
-              />
-              {t === "INCOME" ? (
-                <FaArrowUp className="h-3.5 w-3.5" />
-              ) : (
-                <FaArrowDown className="h-3.5 w-3.5" />
-              )}
-              {t === "INCOME" ? "Income" : "Expense"}
-            </label>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {/* Amount field */}
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold text-gray-600">
-              Amount (BDT) *
-            </label>
-            <input
-              type="number"
-              step="any"
-              {...register("amount")}
-              placeholder="e.g. 500"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
-            />
-            {errors.amount && (
-              <p className="mt-1 text-xs text-red-600">
-                {errors.amount.message}
-              </p>
-            )}
-          </div>
-
-          {/* Category Dropdown & Custom Category input */}
-          <div>
-            <div className="mb-1.5 flex items-center justify-between">
-              <label className="block text-xs font-semibold text-gray-600">
-                Category *
-              </label>
-              {!isAddingCustomCat && (
-                <button
-                  type="button"
-                  onClick={() => setIsAddingCustomCat(true)}
-                  className="text-[11px] cursor-pointer font-bold text-blue-600 hover:text-blue-800 sm:text-xs"
+          <div className="flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
+            {/* Income / Expense Toggle */}
+            <div className="flex gap-2">
+              {(["INCOME", "EXPENSE"] as const).map((t) => (
+                <label
+                  key={t}
+                  className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-2.5 text-xs font-semibold transition-colors sm:p-3 sm:text-sm ${
+                    selectedType === t
+                      ? t === "INCOME"
+                        ? "border-green-500 bg-green-50 text-green-700"
+                        : "border-red-500 bg-red-50 text-red-700"
+                      : "border-gray-200 text-gray-500 hover:border-gray-300"
+                  }`}
                 >
-                  + Add Category
-                </button>
-              )}
+                  <input
+                    type="radio"
+                    value={t}
+                    {...register("type")}
+                    className="sr-only"
+                    onChange={(e) => {
+                      register("type").onChange(e);
+                      // Reset selected category because type changed
+                      setValue("category_id", "");
+                    }}
+                  />
+                  {t === "INCOME" ? (
+                    <FaArrowUp className="h-3.5 w-3.5" />
+                  ) : (
+                    <FaArrowDown className="h-3.5 w-3.5" />
+                  )}
+                  {t === "INCOME" ? "Income" : "Expense"}
+                </label>
+              ))}
             </div>
 
-            {isAddingCustomCat ? (
-              <div className="flex gap-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {/* Amount field */}
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-gray-600">
+                  Amount (BDT) *
+                </label>
+                <input
+                  type="number"
+                  step="any"
+                  {...register("amount")}
+                  placeholder="e.g. 500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                />
+                {errors.amount && (
+                  <p className="mt-1 text-xs text-red-600">
+                    {errors.amount.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Category Dropdown & Custom Category input */}
+              <div>
+                <div className="mb-1.5 flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-gray-600">
+                    Category *
+                  </label>
+                  {!isAddingCustomCat && (
+                    <button
+                      type="button"
+                      onClick={() => setIsAddingCustomCat(true)}
+                      className="cursor-pointer text-[11px] font-bold text-blue-600 hover:text-blue-800 sm:text-xs"
+                    >
+                      + Add Category
+                    </button>
+                  )}
+                </div>
+
+                {isAddingCustomCat ? (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCatName}
+                      onChange={(e) => setNewCatName(e.target.value)}
+                      placeholder="New Category Name"
+                      className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleCreateCustomCategory}
+                      disabled={isCreatingCat}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg border border-green-200 bg-green-50 text-green-700 hover:bg-green-100"
+                      title="Save Category"
+                    >
+                      <FaCheck className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingCustomCat(false);
+                        setNewCatName("");
+                      }}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                      title="Cancel"
+                    >
+                      <FaTimes className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <select
+                    {...register("category_id")}
+                    disabled={isCatLoading}
+                    className="w-full appearance-none rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                  >
+                    <option value="">-- Select category --</option>
+                    {filteredCategories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {errors.category_id && !isAddingCustomCat && (
+                  <p className="mt-1 text-xs text-red-600">
+                    {errors.category_id.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Date field */}
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-gray-600">
+                  Date *
+                </label>
+                <input
+                  type="date"
+                  {...register("date")}
+                  onClick={(e) => {
+                    try {
+                      e.currentTarget.showPicker?.();
+                    } catch {
+                      // Ignore browsers that do not support showPicker or dismiss errors
+                    }
+                  }}
+                  className="w-full cursor-pointer rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                />
+              </div>
+
+              {/* Person Name field */}
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-gray-600">
+                  Person Name{" "}
+                  <span className="font-normal text-gray-400">(optional)</span>
+                </label>
                 <input
                   type="text"
-                  value={newCatName}
-                  onChange={(e) => setNewCatName(e.target.value)}
-                  placeholder="New Category Name"
-                  className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                  {...register("personName")}
+                  placeholder="e.g. Abdullah"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
                 />
-                <button
-                  type="button"
-                  onClick={handleCreateCustomCategory}
-                  disabled={isCreatingCat}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-green-200 bg-green-50 text-green-700 hover:bg-green-100"
-                  title="Save Category"
-                >
-                  <FaCheck className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsAddingCustomCat(false);
-                    setNewCatName("");
-                  }}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
-                  title="Cancel"
-                >
-                  <FaTimes className="h-3.5 w-3.5" />
-                </button>
               </div>
-            ) : (
-              <select
-                {...register("category_id")}
-                disabled={isCatLoading}
-                className="w-full appearance-none rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
-              >
-                <option value="">-- Select category --</option>
-                {filteredCategories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            )}
-            {errors.category_id && !isAddingCustomCat && (
-              <p className="mt-1 text-xs text-red-600">
-                {errors.category_id.message}
-              </p>
-            )}
-          </div>
 
-          {/* Date field */}
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold text-gray-600">
-              Date *
-            </label>
-            <input
-              type="date"
-              {...register("date")}
-              onClick={(e) => {
-                try {
-                  e.currentTarget.showPicker?.();
-                } catch {
-                  // Ignore browsers that do not support showPicker or dismiss errors
-                }
-              }}
-              className="w-full cursor-pointer rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
-            />
-          </div>
+              {/* Person Phone field */}
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-gray-600">
+                  Person Phone{" "}
+                  <span className="font-normal text-gray-400">(optional)</span>
+                </label>
+                <input
+                  type="tel"
+                  {...register("personPhone")}
+                  placeholder="e.g. 01712345678"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                />
+              </div>
 
-          {/* Person Name field */}
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold text-gray-600">
-              Person Name{" "}
-              <span className="font-normal text-gray-400">(optional)</span>
-            </label>
-            <input
-              type="text"
-              {...register("personName")}
-              placeholder="e.g. Abdullah"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
-            />
-          </div>
-
-          {/* Person Phone field */}
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold text-gray-600">
-              Person Phone{" "}
-              <span className="font-normal text-gray-400">(optional)</span>
-            </label>
-            <input
-              type="tel"
-              {...register("personPhone")}
-              placeholder="e.g. 01712345678"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
-            />
-          </div>
-
-          {/* Note field */}
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold text-gray-600">
-              Note <span className="font-normal text-gray-400">(optional)</span>
-            </label>
-            <input
-              type="text"
-              {...register("note")}
-              placeholder="Short transaction note..."
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
-            />
-          </div>
-        </div>
-
-        {/* Dynamic Details Section */}
-        <div className="space-y-3 rounded-xl border border-gray-200/80 bg-gray-50/50 p-3.5 sm:p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-xs font-bold text-gray-800">
-                Breakdown Details
-                <span className="ml-1.5 text-[10px] font-normal text-gray-400">
-                  (Optional)
-                </span>
-              </h3>
-              <p className="text-[11px] text-gray-500">
-                Add itemized breakdown list for this transaction
-              </p>
+              {/* Note field */}
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-gray-600">
+                  Note{" "}
+                  <span className="font-normal text-gray-400">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  {...register("note")}
+                  placeholder="Short transaction note..."
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                />
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={() =>
-                append({ itemName: "", amount: "" as unknown as number })
-              }
-              className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 transition-colors hover:bg-blue-100"
-            >
-              <FaPlus className="h-3 w-3" />
-              Add Item
-            </button>
-          </div>
 
-          {fields.length > 0 ? (
-            <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
-              <div className="grid grid-cols-12 border-b border-gray-100 bg-gray-50/80 px-3 py-2 text-[10px] font-bold tracking-wider text-gray-500 uppercase">
-                <div className="col-span-7 sm:col-span-8">Item Name</div>
-                <div className="col-span-4 text-right sm:col-span-3">
-                  Amount (BDT)
-                </div>
-                <div className="col-span-1 text-center"></div>
-              </div>
-              <div className="divide-y divide-gray-100">
-                {fields.map((field, index) => (
-                  <div
-                    key={field.id}
-                    className="grid grid-cols-12 items-center gap-2 px-3 py-2 transition-colors hover:bg-gray-50/40"
-                  >
-                    <div className="col-span-7 sm:col-span-8">
-                      <input
-                        type="text"
-                        {...register(`details.${index}.itemName` as const)}
-                        placeholder="e.g. Electricity Bill"
-                        className="w-full rounded-md border border-gray-200 bg-gray-50/50 px-2.5 py-1.5 text-xs text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:bg-white focus:outline-none"
-                      />
-                      {errors.details?.[index]?.itemName && (
-                        <p className="mt-0.5 text-[10px] text-red-600">
-                          {errors.details[index]?.itemName?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="col-span-4 sm:col-span-3">
-                      <input
-                        type="number"
-                        step="any"
-                        {...register(`details.${index}.amount` as const)}
-                        placeholder="0.00"
-                        className="w-full rounded-md border border-gray-200 bg-gray-50/50 px-2.5 py-1.5 text-right text-xs font-semibold text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:bg-white focus:outline-none"
-                      />
-                      {errors.details?.[index]?.amount && (
-                        <p className="mt-0.5 text-right text-[10px] text-red-600">
-                          {errors.details[index]?.amount?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="col-span-1 flex justify-center">
-                      <button
-                        type="button"
-                        onClick={() => remove(index)}
-                        className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                        title="Remove item"
-                      >
-                        <FaTrash className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
+            {/* Dynamic Details Section */}
+            <div className="space-y-3 rounded-xl border border-gray-200/80 bg-gray-50/50 p-3 sm:p-4">
+              <div className="flex items-center justify-between gap-2.5">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="text-xs font-bold text-gray-800 sm:text-sm">
+                      Breakdown Details
+                    </h3>
+                    <span className="rounded bg-gray-200/70 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
+                      Optional
+                    </span>
                   </div>
-                ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    append({ itemName: "", amount: "" as unknown as number })
+                  }
+                  className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-blue-600 transition-colors hover:bg-blue-100 active:scale-95 sm:px-3"
+                >
+                  <FaPlus className="h-3 w-3" />
+                  <span>Add Item</span>
+                </button>
               </div>
-              {/* Subtotal row */}
-              <div className="flex items-center justify-between border-t border-gray-100 bg-gray-50/50 px-3.5 py-2 text-xs font-semibold">
-                <span className="text-gray-600">Breakdown Total:</span>
-                <span className="font-bold text-gray-900">
-                  {(watch("details") || [])
-                    .reduce((acc, item) => acc + (Number(item?.amount) || 0), 0)
-                    .toLocaleString()}{" "}
-                  BDT
-                </span>
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-lg border border-dashed border-gray-200 bg-white py-4 text-center">
-              <p className="text-xs text-gray-400">
-                No items added. Click{" "}
-                <span className="font-semibold text-blue-600">+ Add Item</span>{" "}
-                to add breakdown line items.
-              </p>
-            </div>
-          )}
-        </div>
 
+              {fields.length > 0 ? (
+                <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
+                  <div className="flex items-center gap-2 border-b border-gray-100 bg-gray-50/80 px-3 py-2 text-[10px] font-bold tracking-wider text-gray-500 uppercase">
+                    <div className="min-w-0 flex-1">Item Name</div>
+                    <div className="w-24 shrink-0 text-right sm:w-32">
+                      Amount (BDT)
+                    </div>
+                    <div className="w-7 shrink-0"></div>
+                  </div>
+                  <div className="divide-y divide-gray-100">
+                    {fields.map((field, index) => (
+                      <div
+                        key={field.id}
+                        className="flex items-center gap-2 px-3 py-2 transition-colors hover:bg-gray-50/40"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <input
+                            type="text"
+                            {...register(`details.${index}.itemName` as const)}
+                            placeholder="e.g. Electricity Bill"
+                            className="w-full rounded-md border border-gray-200 bg-gray-50/50 px-2.5 py-1.5 text-xs text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:bg-white focus:outline-none"
+                          />
+                          {errors.details?.[index]?.itemName && (
+                            <p className="mt-0.5 text-[10px] text-red-600">
+                              {errors.details[index]?.itemName?.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="w-24 shrink-0 sm:w-32">
+                          <input
+                            type="number"
+                            step="any"
+                            {...register(`details.${index}.amount` as const)}
+                            placeholder="0.00"
+                            className="w-full rounded-md border border-gray-200 bg-gray-50/50 px-2.5 py-1.5 text-right text-xs font-semibold text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:bg-white focus:outline-none"
+                          />
+                          {errors.details?.[index]?.amount && (
+                            <p className="mt-0.5 text-right text-[10px] text-red-600">
+                              {errors.details[index]?.amount?.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex w-7 shrink-0 justify-center">
+                          <button
+                            type="button"
+                            onClick={() => remove(index)}
+                            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                            title="Remove item"
+                          >
+                            <FaTrash className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Subtotal row */}
+                  <div className="flex items-center justify-between border-t border-gray-100 bg-gray-50/50 px-3.5 py-2 text-xs font-semibold">
+                    <span className="text-gray-600">Breakdown Total:</span>
+                    <span className="font-bold text-gray-900">
+                      {(watch("details") || [])
+                        .reduce(
+                          (acc, item) => acc + (Number(item?.amount) || 0),
+                          0
+                        )
+                        .toLocaleString()}{" "}
+                      BDT
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() =>
+                    append({ itemName: "", amount: "" as unknown as number })
+                  }
+                  className="group flex w-full cursor-pointer items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white/70 px-3 py-3.5 text-center transition-all hover:border-blue-400 hover:bg-blue-50/40"
+                >
+                  <p className="text-xs text-gray-500 transition-colors group-hover:text-blue-600">
+                    Click to add breakdown line items.
+                  </p>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Modal Footer */}

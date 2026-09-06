@@ -15,7 +15,6 @@ const branchSchema = z
     description: z.string().optional(),
     branch_type: z.enum(["MAIN", "SUB"]),
     parent_branch_id: z.string().optional().nullable(),
-    require_post_approval: z.boolean().optional(),
   })
   .refine(
     (data) => {
@@ -51,7 +50,6 @@ const CreateBranchForm = () => {
         description: "",
         branch_type: "MAIN",
         parent_branch_id: "",
-        require_post_approval: false,
       },
     });
 
@@ -253,23 +251,6 @@ const CreateBranchForm = () => {
           rows={3}
           className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 shadow-xs transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none sm:text-base"
         />
-      </div>
-
-      {/* Settings */}
-      <div className="space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-4">
-        <h4 className="text-xs font-semibold text-gray-700 sm:text-sm">
-          Branch Settings
-        </h4>
-        <label className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            {...register("require_post_approval")}
-            className="h-4 w-4 rounded border-gray-300 text-blue-600"
-          />
-          <span className="text-xs font-medium text-gray-700 sm:text-sm">
-            Require post approval before publishing
-          </span>
-        </label>
       </div>
 
       {/* Action Buttons */}
