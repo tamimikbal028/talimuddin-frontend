@@ -64,10 +64,10 @@ const FinanceCategories = () => {
           </p>
         </div>
       ) : (
-        <div className="border-gray-150 overflow-hidden rounded-xl border bg-white shadow-xs">
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left text-sm">
-              <thead className="border-b border-gray-100 bg-gray-50 text-xs font-bold tracking-wider text-gray-500 uppercase">
+              <thead className="border-b border-gray-200 bg-gray-50/80 text-xs font-bold tracking-wider text-gray-500 uppercase">
                 <tr>
                   <th className="px-5 py-3.5">Category Name</th>
                   <th className="px-5 py-3.5 text-center">Type</th>
@@ -76,11 +76,11 @@ const FinanceCategories = () => {
                   <th className="px-5 py-3.5 text-right">Net Balance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 font-medium text-gray-700">
+              <tbody className="divide-y divide-gray-200/80 font-medium text-gray-700">
                 {categories.map((cat) => {
                   const netBalance = cat.income - cat.expense;
                   return (
-                    <tr key={cat.id} className="hover:bg-gray-50/50">
+                    <tr key={cat.id} className="border-b border-gray-200/80 transition-colors hover:bg-gray-50/70 last:border-b-0">
                       {/* Name & Count */}
                       <td className="px-5 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">

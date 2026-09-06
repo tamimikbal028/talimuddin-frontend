@@ -140,12 +140,12 @@ const FinanceExport = () => {
       ) : (
         <div
           id="print-area"
-          className="border-gray-150 space-y-6 rounded-xl border bg-white p-6 shadow-sm"
+          className="space-y-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
         >
           {/* Header (visible in print too) */}
           <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gray-100 pb-5">
             <div>
-              <h2 className="text-gray-955 text-xl font-extrabold">
+              <h2 className="text-xl font-extrabold text-gray-900">
                 Monthly Finance Statement
               </h2>
               <p className="mt-1 text-xs font-semibold text-gray-500">
@@ -199,9 +199,9 @@ const FinanceExport = () => {
           </div>
 
           {/* Printable Table */}
-          <div className="border-gray-150 overflow-hidden rounded-lg border bg-white">
+          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
             <table className="w-full border-collapse text-left text-xs">
-              <thead className="border-b border-gray-100 bg-gray-50 font-bold tracking-wider text-gray-500 uppercase">
+              <thead className="border-b border-gray-200 bg-gray-50/80 font-bold tracking-wider text-gray-500 uppercase">
                 <tr>
                   <th className="px-4 py-3">Date</th>
                   <th className="px-4 py-3">Category</th>
@@ -211,9 +211,12 @@ const FinanceExport = () => {
                   <th className="px-4 py-3 text-right">Expense</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 font-medium text-gray-700">
+              <tbody className="divide-y divide-gray-200/80 font-medium text-gray-700">
                 {entries.map((entry) => (
-                  <tr key={entry.id}>
+                  <tr
+                    key={entry.id}
+                    className="border-b border-gray-200/80 last:border-b-0"
+                  >
                     <td className="px-4 py-3 whitespace-nowrap">
                       {formatDateShort(entry.date)}
                     </td>

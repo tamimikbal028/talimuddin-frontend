@@ -176,7 +176,7 @@ const FinanceAddEntryForm = ({
   };
 
   return (
-    <div className="border-gray-150 rounded-xl border bg-white p-4 shadow-sm sm:p-5">
+    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-sm font-bold text-gray-800 sm:text-base">
           {isEditing ? (

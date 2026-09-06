@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   useFinanceEntries,
@@ -92,7 +92,7 @@ const FinanceTransactions = () => {
           }}
           className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${
             showAddForm || editingEntry
-              ? "bg-gray-150 text-gray-700 hover:bg-gray-200"
+              ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
               : "bg-blue-600 text-white shadow-xs hover:bg-blue-700"
           }`}
         >
@@ -235,10 +235,10 @@ const FinanceTransactions = () => {
           </p>
         </div>
       ) : (
-        <div className="border-gray-150 overflow-hidden rounded-xl border bg-white shadow-xs">
+        <div className="overflow-hidden rounded-xl border border-gray-300 bg-white shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left text-xs sm:text-sm">
-              <thead className="border-b border-gray-100 bg-gray-50 text-[11px] font-bold tracking-wider text-gray-500 uppercase sm:text-xs">
+              <thead className="border-b border-gray-300 bg-gray-50/80 text-[11px] font-bold tracking-wider text-gray-500 uppercase sm:text-xs">
                 <tr>
                   <th className="px-3 py-3 whitespace-nowrap sm:px-5">Date</th>
                   <th className="px-3 py-3 whitespace-nowrap sm:px-5">
@@ -255,22 +255,28 @@ const FinanceTransactions = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-500">
                 {entries.map((entry) => {
                   const isExpanded = expandedRows[entry.id];
                   const hasDetails = entry.details && entry.details.length > 0;
                   const hasNotes = !!entry.note;
 
                   return (
-                    <React.Fragment key={entry.id}>
-                      <tr className="hover:bg-gray-50/50">
+                    <Fragment key={entry.id}>
+                      <tr
+                        className={`border-b border-gray-200/80 transition-colors hover:bg-gray-50/80 ${
+                          isExpanded && (hasDetails || hasNotes)
+                            ? "bg-blue-50/20"
+                            : ""
+                        }`}
+                      >
                         {/* Date */}
-                        <td className="px-3 py-3.5 font-medium whitespace-nowrap text-gray-700 sm:px-5">
+                        <td className="border-b border-gray-200/80 px-3 py-3.5 font-medium whitespace-nowrap text-gray-700 sm:px-5">
                           {formatDate(entry.date)}
                         </td>
 
                         {/* Category */}
-                        <td className="px-3 py-3.5 whitespace-nowrap sm:px-5">
+                        <td className="border-b border-gray-200/80 px-3 py-3.5 whitespace-nowrap sm:px-5">
                           <span className="block font-semibold text-gray-900">
                             {entry.category?.name}
                           </span>
@@ -286,7 +292,7 @@ const FinanceTransactions = () => {
                         </td>
 
                         {/* Person Name / Details */}
-                        <td className="px-3 py-3.5 font-medium whitespace-nowrap text-gray-600 sm:px-5">
+                        <td className="border-b border-gray-200/80 px-3 py-3.5 font-medium whitespace-nowrap text-gray-600 sm:px-5">
                           {entry.person_name ? (
                             <div>
                               <p className="font-semibold text-gray-900">
@@ -305,7 +311,7 @@ const FinanceTransactions = () => {
 
                         {/* Amount */}
                         <td
-                          className={`px-3 py-3.5 text-right font-bold whitespace-nowrap sm:px-5 ${
+                          className={`border-b border-gray-200/80 px-3 py-3.5 text-right font-bold whitespace-nowrap sm:px-5 ${
                             entry.type === "INCOME"
                               ? "text-green-600"
                               : "text-red-600"
@@ -316,7 +322,7 @@ const FinanceTransactions = () => {
                         </td>
 
                         {/* Actions */}
-                        <td className="px-3 py-3.5 text-center whitespace-nowrap sm:px-5">
+                        <td className="border-b border-gray-200/80 px-3 py-3.5 text-center whitespace-nowrap sm:px-5">
                           <div className="flex items-center justify-center gap-2 sm:gap-3">
                             {(hasDetails || hasNotes) && (
                               <button
@@ -355,12 +361,15 @@ const FinanceTransactions = () => {
 
                       {/* Expanded Row Detail view */}
                       {isExpanded && (hasDetails || hasNotes) && (
-                        <tr className="bg-gray-50/50">
-                          <td colSpan={5} className="px-4 py-3 sm:px-8">
+                        <tr className="border-b border-gray-200/80 bg-gray-50/40">
+                          <td
+                            colSpan={5}
+                            className="border-b border-gray-200/80 px-4 py-3 sm:px-8"
+                          >
                             <div className="space-y-3 text-xs">
                               {/* Notes */}
                               {hasNotes && (
-                                <div className="shadow-3xs flex items-start gap-2 rounded-lg border border-gray-100 bg-white p-2.5">
+                                <div className="flex items-start gap-2 rounded-lg border border-gray-200/80 bg-white p-2.5 shadow-xs">
                                   <FaInfoCircle className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
                                   <div>
                                     <p className="font-bold text-gray-500">
@@ -379,7 +388,7 @@ const FinanceTransactions = () => {
                                   <p className="text-[9px] font-bold tracking-wider text-gray-500 uppercase">
                                     Breakdown List:
                                   </p>
-                                  <div className="border-gray-150 shadow-3xs divide-y divide-gray-100 overflow-hidden rounded-lg border bg-white">
+                                  <div className="divide-y divide-gray-200/70 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
                                     {entry.details.map(
                                       (
                                         item: FinanceDetailItem,
@@ -405,7 +414,7 @@ const FinanceTransactions = () => {
                           </td>
                         </tr>
                       )}
-                    </React.Fragment>
+                    </Fragment>
                   );
                 })}
               </tbody>
@@ -414,7 +423,7 @@ const FinanceTransactions = () => {
 
           {/* Pagination Footer */}
           {pagination && pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-gray-100 px-4 py-3.5 sm:px-5">
+            <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3.5 sm:px-5">
               <div className="flex flex-1 justify-between sm:hidden">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -520,8 +529,5 @@ const FinanceTransactions = () => {
     </div>
   );
 };
-
-// Global React import for React.Fragment syntax
-import React from "react";
 
 export default FinanceTransactions;
