@@ -73,10 +73,10 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
 
   return (
     <div
-      className={`group flex items-center justify-between rounded-2xl border p-3.5 shadow-xs transition-all duration-200 hover:shadow-md sm:p-4 ${
+      className={`group flex items-center justify-between rounded-2xl border p-3 shadow-xs transition-all duration-200 hover:shadow-md ${
         meta.is_self
           ? "border-blue-300 bg-white ring-2 ring-blue-500/10 hover:border-blue-400"
-          : "border-gray-200/90 bg-white hover:border-gray-300"
+          : "border-gray-300 bg-white hover:border-gray-300"
       }`}
     >
       <div className="flex min-w-0 items-center space-x-3.5 sm:space-x-4">

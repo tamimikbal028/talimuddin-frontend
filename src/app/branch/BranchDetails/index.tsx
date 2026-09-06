@@ -121,11 +121,11 @@ const BranchDetails = () => {
 
   // Member - Show full branch details
   return (
-    <div className="space-y-5 overflow-hidden">
+    <div className="space-y-5">
       <BranchHeader branch={branch} meta={meta} />
 
       <div className="mx-auto max-w-5xl">
-        <div className="space-y-3 rounded-xl shadow">
+        <div className="space-y-3">
           <Routes>
             <Route
               index

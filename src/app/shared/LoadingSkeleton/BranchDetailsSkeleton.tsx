@@ -1,6 +1,6 @@
 const BranchDetailsSkeleton = () => {
   return (
-    <div className="space-y-5 overflow-hidden">
+    <div className="space-y-5">
       {/* Header Skeleton Matching BranchHeader */}
       <div>
         {/* Cover Image Skeleton */}
