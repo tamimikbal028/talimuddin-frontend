@@ -77,13 +77,13 @@ const BranchMembersTab = () => {
   return (
     <div className="space-y-4">
       {/* Header bar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h2 className="text-xl font-bold tracking-tight text-gray-900">
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <h2 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
               Members
             </h2>
-            <span className="inline-flex items-center rounded-full border border-blue-200/80 bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+            <span className="inline-flex items-center rounded-full border border-blue-200/80 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 sm:px-2.5">
               {totalDocs}
             </span>
           </div>
@@ -95,7 +95,7 @@ const BranchMembersTab = () => {
         {canAddMember && (
           <button
             onClick={handleOpenAddModal}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-98"
+            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-98 sm:gap-2 sm:px-4 sm:py-2.5"
           >
             <FaUserPlus className="h-3.5 w-3.5" />
             <span>Add Member</span>
