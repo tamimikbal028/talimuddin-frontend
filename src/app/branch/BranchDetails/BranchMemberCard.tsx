@@ -11,7 +11,6 @@ import branchHooks from "@/hooks/useBranch";
 import confirm from "@/utils/sweetAlert";
 import dropdownHooks from "@/hooks/useDropdown";
 import type { BranchMember } from "@/types";
-import { AvatarImage } from "@/utils/components/FallbackImage";
 
 interface BranchMemberCardProps {
   member: BranchMember;
@@ -81,12 +80,6 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
       }`}
     >
       <div className="flex min-w-0 items-center space-x-3.5 sm:space-x-4">
-        <AvatarImage
-          src={user?.avatar}
-          name={memberName}
-          alt={memberName}
-          className="h-11 w-11 shrink-0 rounded-2xl object-cover shadow-xs ring-2 ring-gray-100 sm:h-12 sm:w-12"
-        />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             {member.serial_no != null && (
