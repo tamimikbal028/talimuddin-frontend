@@ -26,7 +26,9 @@ const BranchMembersTab = () => {
     isFetchingNextPage,
   } = branchHooks.useBranchMembers(searchTerm);
 
-  const members = data?.pages.flatMap((page) => page.data.members) || [];
+  const members = (data?.pages.flatMap((page) => page.data.members) || []).filter(
+    (member) => !member.meta?.is_admin && !member.meta?.is_creator
+  );
   const isCreator = data?.pages[0]?.data.meta?.is_creator ?? false;
   const isAdmin = data?.pages[0]?.data.meta?.is_admin ?? false;
   const canAddMember = isCreator || isAdmin;
@@ -86,7 +88,7 @@ const BranchMembersTab = () => {
             </span>
           </div>
           <p className="mt-0.5 text-xs text-gray-500">
-            List of people and administrators in this branch
+            List of members in this branch
           </p>
         </div>
 
