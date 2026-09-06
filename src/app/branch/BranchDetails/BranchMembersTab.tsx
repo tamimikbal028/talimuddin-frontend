@@ -4,7 +4,7 @@ import {
   HiUsers,
   HiMagnifyingGlass,
 } from "react-icons/hi2";
-import { FaPlus } from "react-icons/fa";
+import { FaUserPlus } from "react-icons/fa";
 import BranchMemberCard from "@/app/branch/BranchDetails/BranchMemberCard";
 import AddEditMemberModal from "@/app/branch/BranchDetails/AddEditMemberModal";
 import FriendCardSkeleton from "@/app/shared/LoadingSkeleton/FriendCardSkeleton";
@@ -95,7 +95,7 @@ const BranchMembersTab = () => {
             onClick={handleOpenAddModal}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-98"
           >
-            <FaPlus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+            <FaUserPlus className="h-3.5 w-3.5" />
             <span>Add Member</span>
           </button>
         )}

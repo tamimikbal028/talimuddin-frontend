@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
-import { HiUserPlus, HiPencilSquare } from "react-icons/hi2";
+import { HiPencilSquare } from "react-icons/hi2";
+import { FaUserPlus } from "react-icons/fa";
 import type { BranchMember, AddBranchMemberData } from "@/types";
 import branchHooks from "@/hooks/useBranch";
 import { BLOOD_GROUPS } from "@/constants";
@@ -136,7 +137,7 @@ const AddEditMemberModal = ({
               {isEdit ? (
                 <HiPencilSquare className="h-5 w-5" />
               ) : (
-                <HiUserPlus className="h-5 w-5" />
+                <FaUserPlus className="h-4.5 w-4.5" />
               )}
             </div>
             <div>
@@ -180,7 +181,7 @@ const AddEditMemberModal = ({
                   }));
                 }}
                 placeholder="e.g. 1"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
               />
             </div>
 
