@@ -1,6 +1,6 @@
 import { BsThreeDots } from "react-icons/bs";
 import { FaUserShield, FaUserMinus } from "react-icons/fa";
-import { HiPencilSquare, HiPhone } from "react-icons/hi2";
+import { HiPencilSquare, HiPhone, HiMapPin } from "react-icons/hi2";
 import branchHooks from "@/hooks/useBranch";
 import confirm from "@/utils/sweetAlert";
 import dropdownHooks from "@/hooks/useDropdown";
@@ -86,14 +86,14 @@ const BranchMemberCard = ({
   const getRoleBadge = () => {
     if (meta.is_creator) {
       return (
-        <span className="ml-2 rounded-full bg-purple-100 px-2 py-0.5 text-xs font-semibold text-purple-700">
+        <span className="shrink-0 rounded-full border border-purple-200/90 bg-purple-50 px-2.5 py-0.5 text-[10px] font-bold text-purple-700 shadow-2xs">
           Creator
         </span>
       );
     }
     if (meta.is_admin) {
       return (
-        <span className="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+        <span className="shrink-0 rounded-full border border-indigo-200/90 bg-indigo-50 px-2.5 py-0.5 text-[10px] font-bold text-indigo-700 shadow-2xs">
           Admin
         </span>
       );
@@ -103,55 +103,66 @@ const BranchMemberCard = ({
 
   return (
     <div
-      className={`flex items-center justify-between rounded-xl border p-3 shadow-xs transition-all hover:shadow-sm ${
+      className={`group flex items-center justify-between rounded-2xl border p-3.5 shadow-xs transition-all duration-200 hover:shadow-md sm:p-4 ${
         meta.is_self
-          ? "border-blue-200 bg-blue-50/50"
-          : "border-gray-200 bg-white"
+          ? "border-blue-300 bg-white ring-2 ring-blue-500/10 hover:border-blue-400"
+          : "border-gray-200/90 bg-white hover:border-gray-300"
       }`}
     >
-      <div className="flex min-w-0 items-center space-x-3.5">
+      <div className="flex min-w-0 items-center space-x-3.5 sm:space-x-4">
         <AvatarImage
           src={user?.avatar}
           name={memberName}
           alt={memberName}
-          className="h-10 w-10 shrink-0 rounded-full object-cover"
+          className="h-11 w-11 shrink-0 rounded-2xl object-cover shadow-xs ring-2 ring-gray-100 sm:h-12 sm:w-12"
         />
-        <div className="min-w-0">
-          <h3 className="flex items-center gap-1.5 truncate">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             {member.serial_no != null && (
-              <span className="shrink-0 rounded-md bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700">
+              <span className="shrink-0 rounded-md border border-slate-200/90 bg-slate-100 px-1.5 py-0.5 font-mono text-[11px] font-bold text-slate-700 shadow-2xs">
                 #{member.serial_no}
               </span>
             )}
-            <span className="truncate text-sm font-semibold text-gray-800">
+            <span className="text-sm font-bold tracking-tight text-gray-900 sm:text-base">
               {memberName}
             </span>
+            {member.blood_group && (
+              <span className="shrink-0 rounded-md border border-rose-200/90 bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-600 shadow-2xs">
+                {member.blood_group}
+              </span>
+            )}
             {getRoleBadge()}
-          </h3>
+            {meta.is_self && (
+              <span className="shrink-0 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
+                You
+              </span>
+            )}
+          </div>
 
           {isManual ? (
-            <div className="mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-gray-500">
+            <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs">
               {member.phone && (
-                <span className="inline-flex items-center gap-1 font-medium text-gray-600">
-                  <HiPhone className="h-3 w-3 text-gray-400" />
+                <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200/70 bg-gray-50/80 px-2.5 py-1 text-xs font-medium text-gray-700">
+                  <HiPhone className="h-3.5 w-3.5 shrink-0 text-gray-400" />
                   {member.phone}
                 </span>
               )}
-              {member.blood_group && (
-                <span className="py-0.2 rounded bg-rose-50 px-1.5 text-[10px] font-semibold text-rose-600">
-                  {member.blood_group}
-                </span>
-              )}
               {member.address && (
-                <span className="hidden max-w-36 truncate text-gray-400 sm:inline">
-                  • {member.address}
+                <span
+                  className="inline-flex max-w-75 items-center gap-1.5 truncate rounded-lg border border-gray-200/70 bg-gray-50/80 px-2.5 py-1 text-xs text-gray-600"
+                  title={member.address}
+                >
+                  <HiMapPin className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                  <span className="truncate">{member.address}</span>
                 </span>
               )}
             </div>
           ) : (
-            <p className="truncate text-xs text-gray-500">
-              @{user?.user_name || "user"}
-            </p>
+            <div className="mt-1.5 flex items-center gap-2 text-xs">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200/70 bg-gray-50/80 px-2.5 py-1 text-xs font-medium text-gray-600">
+                @{user?.user_name || "user"}
+              </span>
+            </div>
           )}
         </div>
       </div>

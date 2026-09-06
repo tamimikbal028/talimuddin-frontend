@@ -2,9 +2,9 @@ import { useState } from "react";
 import {
   HiExclamationTriangle,
   HiUsers,
-  HiUserPlus,
   HiMagnifyingGlass,
 } from "react-icons/hi2";
+import { FaPlus } from "react-icons/fa";
 import BranchMemberCard from "@/app/branch/BranchDetails/BranchMemberCard";
 import AddEditMemberModal from "@/app/branch/BranchDetails/AddEditMemberModal";
 import FriendCardSkeleton from "@/app/shared/LoadingSkeleton/FriendCardSkeleton";
@@ -73,17 +73,19 @@ const BranchMembersTab = () => {
   }
 
   return (
-    <div className="space-y-4 rounded-2xl bg-white p-4 shadow-xs sm:p-6">
+    <div className="space-y-4">
       {/* Header bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-bold text-gray-800">
-            Members{" "}
-            <span className="text-sm font-normal text-gray-500">
-              ({totalDocs})
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-xl font-bold tracking-tight text-gray-900">
+              Members
+            </h2>
+            <span className="inline-flex items-center rounded-full border border-blue-200/80 bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+              {totalDocs}
             </span>
-          </h2>
-          <p className="text-xs text-gray-500">
+          </div>
+          <p className="mt-0.5 text-xs text-gray-500">
             List of people and administrators in this branch
           </p>
         </div>
@@ -91,9 +93,9 @@ const BranchMembersTab = () => {
         {canAddMember && (
           <button
             onClick={handleOpenAddModal}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-98"
           >
-            <HiUserPlus className="h-4 w-4" />
+            <FaPlus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
             <span>Add Member</span>
           </button>
         )}
@@ -101,18 +103,18 @@ const BranchMembersTab = () => {
 
       {/* Search Input */}
       <div className="relative">
-        <HiMagnifyingGlass className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <HiMagnifyingGlass className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-gray-400" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search members by name or phone..."
-          className="w-full rounded-xl border border-gray-200 bg-gray-50/70 py-2 pr-4 pl-9.5 text-xs text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+          placeholder="Search members by name, phone or serial..."
+          className="w-full rounded-xl border border-gray-500 bg-white py-2.5 pr-10 pl-10 text-xs text-gray-800 placeholder:text-gray-400 shadow-xs transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 focus:outline-none sm:text-sm"
         />
         {searchTerm && (
           <button
             onClick={() => setSearchTerm("")}
-            className="absolute top-1/2 right-3 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600"
+            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-md px-1.5 py-0.5 text-xs font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           >
             Clear
           </button>
@@ -121,7 +123,7 @@ const BranchMembersTab = () => {
 
       {/* Members List */}
       {members.length > 0 ? (
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           {members.map((member) => (
             <BranchMemberCard
               key={member.meta.member_id}
