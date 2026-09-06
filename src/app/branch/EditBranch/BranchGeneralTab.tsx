@@ -15,7 +15,8 @@ const BranchGeneralTab = ({ branch }: BranchGeneralTabProps) => {
     description: branch.description || "",
   });
 
-  const { mutate: updateDetails, isPending } = branchHooks.useUpdateBranchDetails();
+  const { mutate: updateDetails, isPending } =
+    branchHooks.useUpdateBranchDetails();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,12 +38,10 @@ const BranchGeneralTab = ({ branch }: BranchGeneralTabProps) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="animate-in fade-in slide-in-from-bottom-2 space-y-6 duration-500"
+      className="animate-in fade-in slide-in-from-bottom-2 duration-500"
     >
-      <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-        <h2 className="mb-6 text-xl font-bold text-gray-900">
-          General Information
-        </h2>
+      <div className="space-y-5 rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
+        <h2 className="text-xl font-bold text-gray-900">General Information</h2>
 
         <div className="space-y-5">
           <div>
@@ -86,7 +85,7 @@ const BranchGeneralTab = ({ branch }: BranchGeneralTabProps) => {
           </div>
         </div>
 
-        <div className="mt-10 flex items-center justify-end gap-3 border-t border-gray-100 pt-6">
+        <div className="flex items-center justify-end gap-3">
           <button
             type="submit"
             disabled={

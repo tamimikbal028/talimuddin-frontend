@@ -43,13 +43,13 @@ const EditPageWrapper = <T extends string>({
   const activeTabContent = tabs.find((t) => t.id === activeTab)?.content;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-20">
+    <div>
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white shadow-sm">
-        <div className="mx-auto max-w-4xl px-4">
+      <div className=" border-b bg-gray-50 border-gray-500">
+        <div className="mx-auto">
           {/* Title Section */}
-          <div className="flex items-center justify-between border-b border-gray-100 py-5">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between border-b border-gray-100 py-3">
+            <div className="flex items-center gap-3">
               <button
                 onClick={handleBack}
                 className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border-none bg-gray-100 text-gray-600 transition-all outline-none hover:bg-gray-200 hover:text-gray-900 active:scale-95"
@@ -91,9 +91,7 @@ const EditPageWrapper = <T extends string>({
       </div>
 
       {/* Tab Content */}
-      <div className="mx-auto max-w-4xl px-4 pt-10">
-        <div className="flex flex-col gap-8">{activeTabContent}</div>
-      </div>
+      <div className="py-3">{activeTabContent}</div>
     </div>
   );
 };

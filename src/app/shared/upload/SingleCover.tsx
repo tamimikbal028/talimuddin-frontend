@@ -67,8 +67,8 @@ const SingleCover = ({
   };
 
   return (
-    <div className="rounded-lg bg-white p-6 shadow-md">
-      <h2 className="mb-4 text-lg font-semibold text-gray-900">
+    <div className="space-y-5 rounded-lg bg-white p-5 shadow-md">
+      <h2 className="text-lg font-semibold text-gray-900">
         <FaImage className="mr-2 inline text-purple-600" />
         {title}
       </h2>
@@ -105,7 +105,7 @@ const SingleCover = ({
               onClick={() => inputRef.current?.click()}
               className="rounded-lg border-2 border-dashed border-gray-300 px-6 py-4 text-gray-600 transition-colors hover:border-purple-400 hover:bg-purple-50"
             >
-              <FaImage className="mx-auto mb-2 text-2xl text-gray-400" />
+              <FaImage className="mx-auto hidden sm:inline mb-2 text-2xl text-gray-400" />
               <span className="block text-center font-medium text-black">
                 Choose Cover Image
               </span>

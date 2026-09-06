@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaImage } from "react-icons/fa";
 import PageLoader from "@/app/shared/PageLoader";
 import branchHooks from "@/hooks/useBranch";
 import BranchGeneralTab from "./BranchGeneralTab";
+import BranchPhotosTab from "./BranchPhotosTab";
 import EditPageWrapper, { type TabConfig } from "@/app/shared/EditPageWrapper";
 
-type TabType = "general";
+type TabType = "general" | "photos";
 
 const EditBranchPage = () => {
   const navigate = useNavigate();
@@ -21,9 +22,12 @@ const EditBranchPage = () => {
           <FaInfoCircle className="text-4xl" />
         </div>
         <div className="text-center">
-          <h1 className="text-3xl font-black text-gray-900">Branch Not Found</h1>
+          <h1 className="text-3xl font-black text-gray-900">
+            Branch Not Found
+          </h1>
           <p className="mt-2 font-medium text-gray-500">
-            The branch you're trying to manage doesn't exist or has been removed.
+            The branch you're trying to manage doesn't exist or has been
+            removed.
           </p>
         </div>
         <button
@@ -50,6 +54,12 @@ const EditBranchPage = () => {
       label: "Basic Info",
       icon: <FaInfoCircle />,
       content: <BranchGeneralTab branch={branch} />,
+    },
+    {
+      id: "photos",
+      label: "Cover Photo",
+      icon: <FaImage />,
+      content: <BranchPhotosTab cover_image={branch.cover_image || null} />,
     },
   ];
 
