@@ -129,15 +129,6 @@ const updateBranchMember = async (
   return response.data;
 };
 
-const leaveBranch = async (
-  branchId: string
-): Promise<BaseBranchActionResponse> => {
-  const response = await api.delete<BaseBranchActionResponse>(
-    `/branches/${branchId}/leave`
-  );
-  return response.data;
-};
-
 const removeMember = async (
   branchId: string,
   options: { userId?: string; memberId?: string }
@@ -167,7 +158,6 @@ export const branchServices = {
   getBranchMembers,
   addBranchMember,
   updateBranchMember,
-  leaveBranch,
   removeMember,
 } as const;
 

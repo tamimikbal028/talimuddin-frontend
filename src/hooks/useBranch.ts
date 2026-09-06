@@ -104,25 +104,6 @@ const useDeleteBranch = () => {
   });
 };
 
-const useLeaveBranch = () => {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-
-  return useMutation({
-    mutationFn: (branchId: string) => branchServices.leaveBranch(branchId),
-    onSuccess: (data) => {
-      toast.success(data.message);
-
-      // Invalidate branch queries
-      queryClient.invalidateQueries({ queryKey: ["myBranches"] });
-
-      // Navigate back to branch
-      navigate("/branch");
-    },
-    onError: handleMutationError("Failed to leave branch"),
-  });
-};
-
 const useUpdateBranchDetails = () => {
   const { branchId } = useParams();
   const queryClient = useQueryClient();
@@ -266,7 +247,6 @@ const branchHooks = {
   useBranchDetails,
   useJoinBranch,
   useDeleteBranch,
-  useLeaveBranch,
   useUpdateBranchDetails,
   useUpdateBranchCoverImage,
 

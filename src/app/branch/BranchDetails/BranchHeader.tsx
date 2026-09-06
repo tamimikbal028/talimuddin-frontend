@@ -2,7 +2,6 @@ import {
   FaEllipsisH,
   FaEdit,
   FaTrash,
-  FaSignOutAlt,
   FaArrowLeft,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,8 +22,6 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
 
   const { mutate: deleteBranch, isPending: isDeleting } =
     branchHooks.useDeleteBranch();
-  const { mutate: leaveBranch, isPending: isLeaving } =
-    branchHooks.useLeaveBranch();
 
   const {
     isOpen: showMenu,
@@ -62,20 +59,6 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
     }
   };
 
-  const handleLeave = async () => {
-    closeMenu();
-    const ok = await confirm({
-      title: "Leave Branch?",
-      text: "Are you sure you want to leave this branch? You'll need the join code to rejoin.",
-      confirmButtonText: "Yes, leave",
-      confirmButtonColor: "#d33",
-      isDanger: true,
-    });
-
-    if (ok) {
-      leaveBranch(branch.id);
-    }
-  };
 
   return (
     <div>
@@ -166,19 +149,6 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
                     }`}
                   >
                     <div className="py-1">
-                      {!meta.is_creator && !meta.is_admin && meta.is_member && (
-                        <button
-                          onClick={handleLeave}
-                          disabled={isLeaving}
-                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <FaSignOutAlt className="h-4 w-4 shrink-0" />
-                          <span className="font-medium">
-                            {isLeaving ? "Leaving..." : "Leave Branch"}
-                          </span>
-                        </button>
-                      )}
-
                       {(meta.is_creator || meta.is_admin) && (
                         <Link
                           to={`/branch/branches/${branch.id}/edit`}

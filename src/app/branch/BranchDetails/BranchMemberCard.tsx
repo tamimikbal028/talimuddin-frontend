@@ -1,6 +1,12 @@
 import { BsThreeDots } from "react-icons/bs";
 import { FaUserMinus } from "react-icons/fa";
-import { HiPencilSquare, HiPhone, HiMapPin } from "react-icons/hi2";
+import {
+  HiPencilSquare,
+  HiPhone,
+  HiMapPin,
+  HiEnvelope,
+  HiDocumentText,
+} from "react-icons/hi2";
 import branchHooks from "@/hooks/useBranch";
 import confirm from "@/utils/sweetAlert";
 import dropdownHooks from "@/hooks/useDropdown";
@@ -104,31 +110,46 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
             )}
           </div>
 
-          {isManual ? (
-            <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs">
-              {member.phone && (
-                <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200/70 bg-gray-50/80 px-2.5 py-1 text-xs font-medium text-gray-700">
-                  <HiPhone className="h-3.5 w-3.5 shrink-0 text-gray-400" />
-                  {member.phone}
-                </span>
-              )}
-              {member.address && (
-                <span
-                  className="inline-flex max-w-75 items-center gap-1.5 truncate rounded-lg border border-gray-200/70 bg-gray-50/80 px-2.5 py-1 text-xs text-gray-600"
-                  title={member.address}
-                >
-                  <HiMapPin className="h-3.5 w-3.5 shrink-0 text-gray-400" />
-                  <span className="truncate">{member.address}</span>
-                </span>
-              )}
-            </div>
-          ) : (
-            <div className="mt-1.5 flex items-center gap-2 text-xs">
+          <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs">
+            {!isManual && user?.user_name && (
               <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200/70 bg-gray-50/80 px-2.5 py-1 text-xs font-medium text-gray-600">
-                @{user?.user_name || "user"}
+                @{user.user_name}
               </span>
-            </div>
-          )}
+            )}
+            {member.phone && (
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200/70 bg-gray-50/80 px-2.5 py-1 text-xs font-medium text-gray-700">
+                <HiPhone className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                <span>{member.phone}</span>
+              </span>
+            )}
+            {member.email && (
+              <span
+                className="inline-flex max-w-65 items-center gap-1.5 truncate rounded-lg border border-gray-200/70 bg-gray-50/80 px-2.5 py-1 text-xs text-gray-600"
+                title={member.email}
+              >
+                <HiEnvelope className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                <span className="truncate">{member.email}</span>
+              </span>
+            )}
+            {member.address && (
+              <span
+                className="inline-flex max-w-75 items-center gap-1.5 truncate rounded-lg border border-gray-200/70 bg-gray-50/80 px-2.5 py-1 text-xs text-gray-600"
+                title={member.address}
+              >
+                <HiMapPin className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                <span className="truncate">{member.address}</span>
+              </span>
+            )}
+            {member.note && (
+              <span
+                className="inline-flex max-w-80 items-center gap-1.5 truncate rounded-lg border border-amber-200/80 bg-amber-50/70 px-2.5 py-1 text-xs font-medium text-amber-800"
+                title={member.note}
+              >
+                <HiDocumentText className="h-3.5 w-3.5 shrink-0 text-amber-600" />
+                <span className="truncate">{member.note}</span>
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
