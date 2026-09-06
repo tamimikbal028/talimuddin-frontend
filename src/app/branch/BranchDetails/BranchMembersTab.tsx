@@ -26,9 +26,18 @@ const BranchMembersTab = () => {
     isFetchingNextPage,
   } = branchHooks.useBranchMembers(searchTerm);
 
-  const members = (data?.pages.flatMap((page) => page.data.members) || []).filter(
-    (member) => !member.meta?.is_admin && !member.meta?.is_creator
-  );
+  const members = (data?.pages.flatMap((page) => page.data.members) || [])
+    .filter((member) => !member.meta?.is_admin && !member.meta?.is_creator)
+    .sort((a, b) => {
+      const aSerial = a.serial_no;
+      const bSerial = b.serial_no;
+      if (aSerial != null && bSerial != null) {
+        return aSerial - bSerial;
+      }
+      if (aSerial != null) return -1;
+      if (bSerial != null) return 1;
+      return 0;
+    });
   const isCreator = data?.pages[0]?.data.meta?.is_creator ?? false;
   const isAdmin = data?.pages[0]?.data.meta?.is_admin ?? false;
   const canAddMember = isCreator || isAdmin;
@@ -111,7 +120,7 @@ const BranchMembersTab = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search members by name, phone or serial..."
-          className="w-full rounded-xl border border-gray-500 bg-white py-2.5 pr-10 pl-10 text-xs text-gray-800 placeholder:text-gray-400 shadow-xs transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 focus:outline-none sm:text-sm"
+          className="w-full rounded-xl border border-gray-500 bg-white py-2.5 pr-10 pl-10 text-xs text-gray-800 shadow-xs transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 focus:outline-none sm:text-sm"
         />
         {searchTerm && (
           <button

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaPlus, FaSignInAlt, FaCodeBranch } from "react-icons/fa";
+import { FaPlus, FaCodeBranch } from "react-icons/fa";
 import authHooks from "@/hooks/useAuth";
 import { USER_TYPES } from "@/constants";
 
@@ -18,7 +18,7 @@ const BranchHeader = () => {
             Branch Management
           </h1>
           <p className="text-xs text-gray-600 sm:text-sm">
-            Join and manage institution branches.
+            Manage institution branches.
           </p>
         </div>
       </div>
@@ -34,15 +34,6 @@ const BranchHeader = () => {
             <span className="hidden sm:inline">Create Branch</span>
           </Link>
         )}
-
-        <Link
-          to="/branch/joinbranch"
-          className="flex h-9 w-9 items-center justify-center gap-2 rounded-full border border-green-200 bg-green-50 text-xs font-semibold text-green-700 shadow-xs transition-colors hover:bg-green-100 sm:h-auto sm:w-auto sm:rounded-xl sm:px-4 sm:py-2 sm:text-sm"
-          title="Join Branch"
-        >
-          <FaSignInAlt className="h-4 w-4" />
-          <span className="hidden sm:inline">Join Branch</span>
-        </Link>
       </div>
     </header>
   );

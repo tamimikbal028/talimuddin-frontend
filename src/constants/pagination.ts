@@ -1,2 +1,2 @@
-export const BRANCH_LIMIT = 10;
-export const MEMBERS_LIMIT = 10;
+export const BRANCH_LIMIT = 2;
+export const MEMBERS_LIMIT = 2;

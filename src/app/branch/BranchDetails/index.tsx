@@ -97,18 +97,12 @@ const BranchDetails = () => {
           </div>
           <h2 className="mb-2 text-xl font-bold text-gray-900">Not a Member</h2>
           <p className="mb-6 text-gray-600">
-            You are not a member of this branch. Please join using the join code.
+            You are not a member of this branch. Please contact an administrator to get access.
           </p>
           <div className="flex flex-col gap-3">
             <Link
-              to="/branch/joinbranch"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
-            >
-              Join with Code
-            </Link>
-            <Link
               to="/branch"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-gray-700"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
             >
               <FaCodeBranch className="h-4 w-4" />
               Back to Branches
