@@ -186,7 +186,7 @@ const CreateBranchForm = () => {
             <select
               {...register("parent_branch_id")}
               disabled={isLoadingMainBranches}
-              className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-xs transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:bg-gray-100 sm:text-base"
+              className="block w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-xs transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:bg-gray-100 sm:text-base"
             >
               <option value="">-- Choose a Main Branch --</option>
               {mainBranches.map((branch) => (
