@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Date picker clickable styles */
+input[type="date"] {
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
 /* Hide scrollbar but keep functionality */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;

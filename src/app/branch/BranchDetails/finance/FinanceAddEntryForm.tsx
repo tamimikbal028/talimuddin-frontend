@@ -191,15 +191,6 @@ const FinanceAddEntryForm = ({
             </>
           )}
         </h2>
-        {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="text-xs font-semibold text-gray-500 hover:text-gray-700"
-          >
-            Cancel
-          </button>
-        )}
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -333,7 +324,14 @@ const FinanceAddEntryForm = ({
             <input
               type="date"
               {...register("date")}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+              onClick={(e) => {
+                try {
+                  e.currentTarget.showPicker?.();
+                } catch {
+                  // Ignore browsers that do not support showPicker or dismiss errors
+                }
+              }}
+              className="w-full cursor-pointer rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
             />
           </div>
 
@@ -487,7 +485,7 @@ const FinanceAddEntryForm = ({
             <button
               type="button"
               onClick={onCancel}
-              className="cursor-pointer rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 sm:text-sm"
+              className="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-600 transition-colors hover:border-red-300 hover:bg-red-100 sm:text-sm"
             >
               Cancel
             </button>
@@ -503,10 +501,7 @@ const FinanceAddEntryForm = ({
                 {isSavingEntry ? "Updating..." : "Update Entry"}
               </>
             ) : (
-              <>
-                <FaPlus className="h-3.5 w-3.5" />
-                {isSavingEntry ? "Saving..." : "Save Entry"}
-              </>
+              <span>{isSavingEntry ? "Saving..." : "Save Entry"}</span>
             )}
           </button>
         </div>

@@ -11,7 +11,7 @@ import { formatCurrency, getMonthName } from "./financeUtils";
 import type { FinanceEntry, FinanceDetailItem } from "@/types";
 import {
   FaPlus,
-  FaMinus,
+  FaTimes,
   FaTrash,
   FaEdit,
   FaChevronDown,
@@ -92,13 +92,13 @@ const FinanceTransactions = () => {
           }}
           className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${
             showAddForm || editingEntry
-              ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              ? "border border-red-200 bg-red-50 text-red-600 hover:border-red-300 hover:bg-red-100"
               : "bg-blue-600 text-white shadow-xs hover:bg-blue-700"
           }`}
         >
           {showAddForm || editingEntry ? (
             <>
-              <FaMinus className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Close Form
+              <FaTimes className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Close Form
             </>
           ) : (
             <>
@@ -176,11 +176,18 @@ const FinanceTransactions = () => {
             <input
               type="date"
               value={startDate}
+              onClick={(e) => {
+                try {
+                  e.currentTarget.showPicker?.();
+                } catch {
+                  // Ignore browsers that do not support showPicker or dismiss errors
+                }
+              }}
               onChange={(e) => {
                 setStartDate(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="w-full cursor-pointer rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
@@ -192,11 +199,18 @@ const FinanceTransactions = () => {
             <input
               type="date"
               value={endDate}
+              onClick={(e) => {
+                try {
+                  e.currentTarget.showPicker?.();
+                } catch {
+                  // Ignore browsers that do not support showPicker or dismiss errors
+                }
+              }}
               onChange={(e) => {
                 setEndDate(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="w-full cursor-pointer rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
