@@ -315,7 +315,7 @@ const FinanceAddEntryForm = ({
                 <button
                   type="button"
                   onClick={() => setIsAddingCustomCat(true)}
-                  className="text-[11px] font-bold text-blue-600 hover:text-blue-800 sm:text-xs"
+                  className="text-[11px] cursor-pointer font-bold text-blue-600 hover:text-blue-800 sm:text-xs"
                 >
                   + Add Category
                 </button>
@@ -356,7 +356,7 @@ const FinanceAddEntryForm = ({
               <select
                 {...register("category_id")}
                 disabled={isCatLoading}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                className="w-full appearance-none rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
               >
                 <option value="">-- Select category --</option>
                 {filteredCategories.map((cat) => (
