@@ -1,5 +1,5 @@
 import { BsThreeDots } from "react-icons/bs";
-import { FaUserShield, FaUserMinus } from "react-icons/fa";
+import { FaUserMinus } from "react-icons/fa";
 import { HiPencilSquare, HiPhone, HiMapPin } from "react-icons/hi2";
 import branchHooks from "@/hooks/useBranch";
 import confirm from "@/utils/sweetAlert";
@@ -9,15 +9,10 @@ import { AvatarImage } from "@/utils/components/FallbackImage";
 
 interface BranchMemberCardProps {
   member: BranchMember;
-  isCreator?: boolean;
   onEdit?: (member: BranchMember) => void;
 }
 
-const BranchMemberCard = ({
-  member,
-  isCreator = false,
-  onEdit,
-}: BranchMemberCardProps) => {
+const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
   const { user, meta } = member;
   const isManual = meta.is_manual ?? !user?.id;
   const memberName = member.name || user?.full_name || "Member";
@@ -33,8 +28,6 @@ const BranchMemberCard = ({
 
   // Branch management mutations
   const { mutate: removeMember } = branchHooks.useRemoveBranchMember();
-  const { mutate: promoteMember } = branchHooks.usePromoteBranchMember();
-  const { mutate: demoteMember } = branchHooks.useDemoteBranchMember();
 
   // Check if 3-dot menu should show
   const canManage = meta.can_manage;
@@ -52,34 +45,6 @@ const BranchMemberCard = ({
         memberId: meta.member_id,
         userId: user?.id || undefined,
       });
-    }
-  };
-
-  const handlePromote = async () => {
-    closeMenu();
-    if (!user?.id) return;
-    const ok = await confirm({
-      title: "Make Admin?",
-      text: `${memberName} will be promoted to admin.`,
-      confirmButtonText: "Yes, promote",
-      icon: "info",
-    });
-    if (ok) {
-      promoteMember({ userId: user.id });
-    }
-  };
-
-  const handleDemote = async () => {
-    closeMenu();
-    if (!user?.id) return;
-    const ok = await confirm({
-      title: "Demote Admin?",
-      text: `${memberName} will be demoted to member.`,
-      confirmButtonText: "Yes, demote",
-      icon: "warning",
-    });
-    if (ok) {
-      demoteMember({ userId: user.id });
     }
   };
 
@@ -198,30 +163,6 @@ const BranchMemberCard = ({
                     <HiPencilSquare className="h-4 w-4 shrink-0 text-blue-500" />
                     <span>Edit Details</span>
                   </button>
-                )}
-
-                {/* Creator-only actions for registered users: Promote/Demote */}
-                {isCreator && !isManual && user?.id && (
-                  <>
-                    {!meta.is_admin && (
-                      <button
-                        onClick={handlePromote}
-                        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100"
-                      >
-                        <FaUserShield className="h-4 w-4 shrink-0 text-blue-500" />
-                        <span>Make Admin</span>
-                      </button>
-                    )}
-                    {meta.is_admin && !meta.is_creator && (
-                      <button
-                        onClick={handleDemote}
-                        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100"
-                      >
-                        <FaUserMinus className="h-4 w-4 shrink-0 text-orange-500" />
-                        <span>Demote to Member</span>
-                      </button>
-                    )}
-                  </>
                 )}
 
                 {/* Remove action */}

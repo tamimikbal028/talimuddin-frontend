@@ -248,40 +248,6 @@ const useRemoveBranchMember = () => {
   });
 };
 
-const usePromoteBranchMember = () => {
-  const { branchId } = useParams();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ userId }: { userId: string }) =>
-      branchServices.promoteMember(branchId as string, userId),
-    onSuccess: (response) => {
-      toast.success(response.message);
-      queryClient.invalidateQueries({
-        queryKey: [BRANCH_KEYS.MEMBERS, branchId],
-      });
-    },
-    onError: handleMutationError("Failed to promote member"),
-  });
-};
-
-const useDemoteBranchMember = () => {
-  const { branchId } = useParams();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ userId }: { userId: string }) =>
-      branchServices.demoteMember(branchId as string, userId),
-    onSuccess: (response) => {
-      toast.success(response.message);
-      queryClient.invalidateQueries({
-        queryKey: [BRANCH_KEYS.MEMBERS, branchId],
-      });
-    },
-    onError: handleMutationError("Failed to demote member"),
-  });
-};
-
 const useBranchDirectorySearch = (query: string) => {
   const normalizedQuery = query.trim();
 
@@ -309,8 +275,6 @@ const branchHooks = {
   useAddBranchMember,
   useUpdateBranchMember,
   useRemoveBranchMember,
-  usePromoteBranchMember,
-  useDemoteBranchMember,
   useBranchDirectorySearch,
 } as const;
 

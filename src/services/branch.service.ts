@@ -155,28 +155,6 @@ const removeMember = async (
   return response.data;
 };
 
-const promoteMember = async (
-  branchId: string,
-  userId: string
-): Promise<BaseBranchActionResponse> => {
-  const response = await api.patch<BaseBranchActionResponse>(
-    `/branches/${branchId}/promote`,
-    { userId }
-  );
-  return response.data;
-};
-
-const demoteMember = async (
-  branchId: string,
-  userId: string
-): Promise<BaseBranchActionResponse> => {
-  const response = await api.patch<BaseBranchActionResponse>(
-    `/branches/${branchId}/demote`,
-    { userId }
-  );
-  return response.data;
-};
-
 export const branchServices = {
   createBranch,
   getMainBranches,
@@ -191,8 +169,6 @@ export const branchServices = {
   updateBranchMember,
   leaveBranch,
   removeMember,
-  promoteMember,
-  demoteMember,
 } as const;
 
 export default branchServices;

@@ -130,7 +130,6 @@ const BranchMembersTab = () => {
             <BranchMemberCard
               key={member.meta.member_id}
               member={member}
-              isCreator={isCreator}
               onEdit={canAddMember ? handleOpenEditModal : undefined}
             />
           ))}
