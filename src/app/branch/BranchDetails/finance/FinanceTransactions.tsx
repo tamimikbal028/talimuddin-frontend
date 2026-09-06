@@ -15,7 +15,6 @@ import {
 import type { FinanceEntry, FinanceDetailItem } from "@/types";
 import {
   FaPlus,
-  FaTimes,
   FaTrash,
   FaEdit,
   FaChevronDown,
@@ -26,8 +25,8 @@ import {
 const FinanceTransactions = () => {
   const { branchId } = useParams<{ branchId: string }>();
 
-  // State for adding/editing entry
-  const [showAddForm, setShowAddForm] = useState(false);
+  // State for adding/editing entry modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<FinanceEntry | null>(null);
 
   // Pagination & Filtering state
@@ -98,41 +97,14 @@ const FinanceTransactions = () => {
         <button
           onClick={() => {
             setEditingEntry(null);
-            setShowAddForm((prev) => !prev);
+            setIsModalOpen(true);
           }}
-          className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${
-            showAddForm || editingEntry
-              ? "border border-red-200 bg-red-50 text-red-600 hover:border-red-300 hover:bg-red-100"
-              : "bg-blue-600 text-white shadow-xs hover:bg-blue-700"
-          }`}
+          className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-98 sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm"
         >
-          {showAddForm || editingEntry ? (
-            <>
-              <FaTimes className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Close Form
-            </>
-          ) : (
-            <>
-              <FaPlus className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Add Entry
-            </>
-          )}
+          <FaPlus className="h-3.5 w-3.5" />
+          <span>Add Entry</span>
         </button>
       </div>
-
-      {/* Add or Edit Entry Form Inline */}
-      {(showAddForm || editingEntry) && (
-        <FinanceAddEntryForm
-          branchId={branchId as string}
-          entryToEdit={editingEntry}
-          onSuccess={() => {
-            setShowAddForm(false);
-            setEditingEntry(null);
-          }}
-          onCancel={() => {
-            setShowAddForm(false);
-            setEditingEntry(null);
-          }}
-        />
-      )}
 
       {/* Filters Bar */}
       <div className="rounded-xl border border-gray-100 bg-white p-3 shadow-xs sm:p-4">
@@ -361,8 +333,7 @@ const FinanceTransactions = () => {
                             <button
                               onClick={() => {
                                 setEditingEntry(entry);
-                                setShowAddForm(false);
-                                window.scrollTo({ top: 0, behavior: "smooth" });
+                                setIsModalOpen(true);
                               }}
                               className="cursor-pointer p-1 text-gray-400 hover:text-blue-600"
                               title="Edit Transaction"
@@ -547,6 +518,16 @@ const FinanceTransactions = () => {
           )}
         </div>
       )}
+      {/* Add or Edit Entry Modal */}
+      <FinanceAddEntryForm
+        isOpen={isModalOpen}
+        branchId={branchId as string}
+        entryToEdit={editingEntry}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingEntry(null);
+        }}
+      />
     </div>
   );
 };

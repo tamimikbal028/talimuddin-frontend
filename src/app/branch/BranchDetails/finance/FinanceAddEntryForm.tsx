@@ -11,6 +11,7 @@ import {
   FaTimes,
   FaEdit,
 } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 import {
   useCategoriesList,
   useCreateCategory,
@@ -41,17 +42,19 @@ const entrySchema = z.object({
 type EntryFormData = z.infer<typeof entrySchema>;
 
 interface FinanceAddEntryFormProps {
+  isOpen: boolean;
   branchId: string;
   entryToEdit?: FinanceEntry | null;
-  onSuccess: () => void;
-  onCancel?: () => void;
+  onClose: () => void;
+  onSuccess?: () => void;
 }
 
 const FinanceAddEntryForm = ({
+  isOpen,
   branchId,
   entryToEdit,
+  onClose,
   onSuccess,
-  onCancel,
 }: FinanceAddEntryFormProps) => {
   const { data: categoriesData, isLoading: isCatLoading } =
     useCategoriesList(branchId);
@@ -93,21 +96,38 @@ const FinanceAddEntryForm = ({
   });
 
   useEffect(() => {
-    if (entryToEdit) {
-      reset({
-        type: entryToEdit.type,
-        amount: entryToEdit.amount,
-        category_id: entryToEdit.category?.id || "",
-        date: entryToEdit.date
-          ? new Date(entryToEdit.date).toISOString().split("T")[0]
-          : new Date().toISOString().split("T")[0],
-        note: entryToEdit.note || "",
-        personName: entryToEdit.person_name || "",
-        personPhone: entryToEdit.person_phone || "",
-        details: entryToEdit.details || [],
-      });
+    if (isOpen) {
+      if (entryToEdit) {
+        reset({
+          type: entryToEdit.type,
+          amount: entryToEdit.amount,
+          category_id: entryToEdit.category?.id || "",
+          date: entryToEdit.date
+            ? new Date(entryToEdit.date).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0],
+          note: entryToEdit.note || "",
+          personName: entryToEdit.person_name || "",
+          personPhone: entryToEdit.person_phone || "",
+          details: entryToEdit.details || [],
+        });
+      } else {
+        reset({
+          type: "INCOME",
+          amount: undefined,
+          category_id: "",
+          date: new Date().toISOString().split("T")[0],
+          note: "",
+          personName: "",
+          personPhone: "",
+          details: [],
+        });
+      }
+      setIsAddingCustomCat(false);
+      setNewCatName("");
     }
-  }, [entryToEdit, reset]);
+  }, [entryToEdit, reset, isOpen]);
+
+  if (!isOpen) return null;
 
   const selectedType = watch("type");
 
@@ -157,7 +177,8 @@ const FinanceAddEntryForm = ({
         { entryId: entryToEdit.id, data: payload },
         {
           onSuccess: () => {
-            onSuccess();
+            onClose();
+            onSuccess?.();
           },
         }
       );
@@ -169,31 +190,67 @@ const FinanceAddEntryForm = ({
             date: new Date().toISOString().split("T")[0],
             details: [],
           });
-          onSuccess();
+          onClose();
+          onSuccess?.();
         },
       });
     }
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-sm font-bold text-gray-800 sm:text-base">
-          {isEditing ? (
-            <>
-              <FaEdit className="h-4 w-4 text-blue-600" />
-              Edit Transaction
-            </>
-          ) : (
-            <>
-              <FaPlus className="h-4 w-4 text-blue-600" />
-              Add Transaction
-            </>
-          )}
-        </h2>
-      </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+        onClick={onClose}
+      />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* Modal Dialog Card */}
+      <div className="relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-200">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50/80 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex items-center gap-2.5">
+            <div
+              className={`flex h-8 w-8 items-center justify-center rounded-lg sm:h-9 sm:w-9 ${
+                isEditing
+                  ? "bg-amber-100 text-amber-700"
+                  : "bg-blue-100 text-blue-700"
+              }`}
+            >
+              {isEditing ? (
+                <FaEdit className="h-4 w-4" />
+              ) : (
+                <FaPlus className="h-3.5 w-3.5" />
+              )}
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-gray-900 sm:text-base">
+                {isEditing ? "Edit Transaction" : "Add Transaction"}
+              </h2>
+              <p className="text-[11px] text-gray-500">
+                {isEditing
+                  ? "Update financial entry details"
+                  : "Record a new income or expense entry"}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-200/70 hover:text-gray-600"
+            title="Close modal"
+          >
+            <IoClose className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Form Form Wrapper */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex min-h-0 flex-1 flex-col overflow-hidden"
+        >
+          {/* Scrollable Form Content */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 sm:p-6">
         {/* Income / Expense Toggle */}
         <div className="flex gap-2">
           {(["INCOME", "EXPENSE"] as const).map((t) => (
@@ -480,32 +537,37 @@ const FinanceAddEntryForm = ({
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-2">
-          {onCancel && (
+          </div>
+
+          {/* Modal Footer */}
+          <div className="flex items-center justify-end gap-3 border-t border-gray-100 bg-gray-50/60 px-4 py-3 sm:px-6 sm:py-3.5">
             <button
               type="button"
-              onClick={onCancel}
-              className="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-600 transition-colors hover:border-red-300 hover:bg-red-100 sm:text-sm"
+              onClick={onClose}
+              className="cursor-pointer rounded-xl border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 sm:text-sm"
             >
               Cancel
             </button>
-          )}
-          <button
-            type="submit"
-            disabled={isSavingEntry}
-            className="flex cursor-pointer items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:text-sm"
-          >
-            {isEditing ? (
-              <>
-                <FaEdit className="h-3.5 w-3.5" />
-                {isSavingEntry ? "Updating..." : "Update Entry"}
-              </>
-            ) : (
-              <span>{isSavingEntry ? "Saving..." : "Save Entry"}</span>
-            )}
-          </button>
-        </div>
-      </form>
+            <button
+              type="submit"
+              disabled={isSavingEntry}
+              className="flex cursor-pointer items-center gap-2 rounded-xl bg-blue-600 px-5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-98 disabled:opacity-60 sm:text-sm"
+            >
+              {isEditing ? (
+                <>
+                  <FaEdit className="h-3.5 w-3.5" />
+                  <span>{isSavingEntry ? "Updating..." : "Update Entry"}</span>
+                </>
+              ) : (
+                <>
+                  <FaPlus className="h-3.5 w-3.5" />
+                  <span>{isSavingEntry ? "Saving..." : "Save Entry"}</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
