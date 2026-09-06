@@ -45,6 +45,7 @@ export interface BranchMeta {
 // Branch Member (from getBranchMembers)
 export interface BranchMember {
   id?: string;
+  serial_no?: number | null;
   name?: string;
   phone?: string | null;
   address?: string | null;
@@ -69,6 +70,7 @@ export interface BranchMember {
 }
 
 export interface AddBranchMemberData {
+  serial_no?: number | null;
   name: string;
   phone: string;
   address?: string | null;
@@ -78,6 +80,7 @@ export interface AddBranchMemberData {
 }
 
 export interface UpdateBranchMemberData {
+  serial_no?: number | null;
   name?: string;
   phone?: string;
   address?: string | null;

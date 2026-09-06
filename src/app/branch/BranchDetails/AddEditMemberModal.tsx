@@ -25,6 +25,7 @@ const AddEditMemberModal = ({
   const isPending = isAdding || isUpdating;
 
   const [formData, setFormData] = useState<AddBranchMemberData>({
+    serial_no: null,
     name: "",
     phone: "",
     address: "",
@@ -38,6 +39,7 @@ const AddEditMemberModal = ({
   useEffect(() => {
     if (memberToEdit) {
       setFormData({
+        serial_no: memberToEdit.serial_no ?? null,
         name: memberToEdit.name || memberToEdit.user?.full_name || "",
         phone: memberToEdit.phone || "",
         address: memberToEdit.address || "",
@@ -47,6 +49,7 @@ const AddEditMemberModal = ({
       });
     } else {
       setFormData({
+        serial_no: null,
         name: "",
         phone: "",
         address: "",
@@ -77,6 +80,10 @@ const AddEditMemberModal = ({
     if (!validate()) return;
 
     const payload: AddBranchMemberData = {
+      serial_no:
+        formData.serial_no !== undefined && formData.serial_no !== null
+          ? Number(formData.serial_no)
+          : null,
       name: formData.name.trim(),
       phone: formData.phone.trim(),
       address: formData.address?.trim() || null,
@@ -153,29 +160,54 @@ const AddEditMemberModal = ({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="space-y-4 p-6">
-          {/* Name Field (Required) */}
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-gray-700">
-              Full Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => {
-                setFormData((prev) => ({ ...prev, name: e.target.value }));
-                if (errors.name)
-                  setErrors((prev) => ({ ...prev, name: undefined }));
-              }}
-              placeholder="e.g. Abdur Rahman"
-              className={`w-full rounded-lg border px-3 py-2 text-sm focus:ring-1 focus:outline-none ${
-                errors.name
-                  ? "border-red-400 focus:border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              }`}
-            />
-            {errors.name && (
-              <p className="mt-1 text-xs text-red-600">{errors.name}</p>
-            )}
+          <div className="grid grid-cols-3 gap-3">
+            {/* Serial No Field (Optional Number) */}
+            <div className="col-span-1">
+              <label className="mb-1 block text-xs font-semibold text-gray-700">
+                Serial No{" "}
+                <span className="text-xs font-normal text-gray-400">(opt)</span>
+              </label>
+              <input
+                type="number"
+                min="1"
+                step="1"
+                value={formData.serial_no ?? ""}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setFormData((prev) => ({
+                    ...prev,
+                    serial_no: val === "" ? null : Number(val),
+                  }));
+                }}
+                placeholder="e.g. 1"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Name Field (Required) */}
+            <div className="col-span-2">
+              <label className="mb-1 block text-xs font-semibold text-gray-700">
+                Full Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => {
+                  setFormData((prev) => ({ ...prev, name: e.target.value }));
+                  if (errors.name)
+                    setErrors((prev) => ({ ...prev, name: undefined }));
+                }}
+                placeholder="e.g. Abdur Rahman"
+                className={`w-full rounded-lg border px-3 py-2 text-sm focus:ring-1 focus:outline-none ${
+                  errors.name
+                    ? "border-red-400 focus:border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                }`}
+              />
+              {errors.name && (
+                <p className="mt-1 text-xs text-red-600">{errors.name}</p>
+              )}
+            </div>
           </div>
 
           {/* Phone Field (Required) */}

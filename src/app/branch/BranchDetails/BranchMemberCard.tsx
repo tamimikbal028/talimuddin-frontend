@@ -117,7 +117,12 @@ const BranchMemberCard = ({
           className="h-10 w-10 shrink-0 rounded-full object-cover"
         />
         <div className="min-w-0">
-          <h3 className="flex items-center gap-1 truncate">
+          <h3 className="flex items-center gap-1.5 truncate">
+            {member.serial_no != null && (
+              <span className="shrink-0 rounded-md bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700">
+                #{member.serial_no}
+              </span>
+            )}
             <span className="truncate text-sm font-semibold text-gray-800">
               {memberName}
             </span>
