@@ -1,0 +1,4 @@
+export const ACCOUNT_STATUS = {
+  ACTIVE: "ACTIVE",
+  DELETED: "DELETED",
+};
