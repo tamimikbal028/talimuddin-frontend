@@ -237,6 +237,7 @@ const useBranchDirectorySearch = (query: string) => {
     queryFn: () => branchServices.searchBranches(normalizedQuery),
     staleTime: 1000 * 60 * 2,
     retry: 0,
+    enabled: !!normalizedQuery,
   });
 };
 

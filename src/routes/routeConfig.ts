@@ -56,8 +56,7 @@ export const routes: RouteConfig[] = [
   {
     path: "/",
     display: true,
-    Component: () =>
-      createElement(Navigate, { to: "/branch", replace: true }),
+    Component: () => createElement(Navigate, { to: "/branch", replace: true }),
     requireAuth: true,
     title: "Home",
     preload: true,
@@ -72,15 +71,6 @@ export const routes: RouteConfig[] = [
     title: "Branch",
     category: "management",
     meta: { description: "Attend and manage branches" },
-  },
-  {
-    path: "/search",
-    display: FEATURE_FLAGS.BRANCH,
-    Component: lazy(() => import("../app/search/page")),
-    requireAuth: true,
-    title: "Search Branch",
-    category: "management",
-    meta: { description: "Search branches" },
   },
 
   // Settings routes

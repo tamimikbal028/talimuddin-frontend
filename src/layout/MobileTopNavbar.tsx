@@ -1,7 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import {
   FaCodeBranch,
-  FaSearch,
   FaCog,
   FaSignOutAlt,
 } from "react-icons/fa";
@@ -22,12 +21,6 @@ const MobileTopNavbar = () => {
       to: "/branch",
       icon: FaCodeBranch,
       label: "Branch",
-      display: flags.BRANCH,
-    },
-    {
-      to: "/search",
-      icon: FaSearch,
-      label: "Search",
       display: flags.BRANCH,
     },
     {

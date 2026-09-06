@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { FaCodeBranch, FaSearch, FaCog, FaSignOutAlt } from "react-icons/fa";
+import { FaCodeBranch, FaCog, FaSignOutAlt } from "react-icons/fa";
 import authHooks from "@/hooks/useAuth";
 import { FEATURE_FLAGS as flags } from "@/constants";
 
@@ -15,13 +15,6 @@ const Sidebar = () => {
       label: "Branch",
       path: "/branch",
       active: location.pathname.startsWith("/branch"),
-    },
-    {
-      icon: FaSearch,
-      display: flags.BRANCH,
-      label: "Search Branch",
-      path: "/search",
-      active: location.pathname.startsWith("/search"),
     },
     {
       icon: FaCog,
