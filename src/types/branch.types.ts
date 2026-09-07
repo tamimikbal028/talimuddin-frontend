@@ -142,7 +142,7 @@ export interface CreateBranchResponse {
   message: string;
   data: {
     branch: Branch;
-    meta: {
+    meta?: {
       is_member: boolean;
       is_creator: boolean;
       is_admin: boolean;
