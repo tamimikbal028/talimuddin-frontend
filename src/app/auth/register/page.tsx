@@ -70,7 +70,7 @@ const Register = () => {
       </div>
 
       {/* Register Form - Right Side */}
-      <div className="w-full max-w-[400px] rounded-lg border bg-white p-5 shadow-lg lg:max-w-[550px]">
+      <div className="w-full max-w-100 rounded-lg border bg-white p-5 shadow-lg lg:max-w-105">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Scrollable Input Fields */}
           <div className="space-y-3 overflow-y-auto p-2">
