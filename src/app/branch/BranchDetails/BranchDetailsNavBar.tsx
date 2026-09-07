@@ -37,7 +37,7 @@ const BranchDetailsNavBar = ({
       ? [
           {
             path: `${baseUrl}/members`,
-            label: "Members",
+            label: "Students",
             icon: FaUsers,
             count: membersCount,
             end: true,

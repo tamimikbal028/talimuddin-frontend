@@ -75,7 +75,7 @@ const BranchMembersTab = () => {
         <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
           <HiExclamationTriangle className="h-6 w-6 text-red-600" />
         </div>
-        <p className="font-semibold text-red-800">Failed to load members</p>
+        <p className="font-semibold text-red-800">Failed to load students</p>
         <p className="mt-1 text-sm text-red-600">
           Please try refreshing the page
         </p>
@@ -90,14 +90,14 @@ const BranchMembersTab = () => {
         <div>
           <div className="flex items-center gap-2 sm:gap-2.5">
             <h2 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
-              Members
+              Students
             </h2>
             <span className="inline-flex items-center rounded-full border border-blue-200/80 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 sm:px-2.5">
               {totalDocs}
             </span>
           </div>
           <p className="mt-0.5 text-xs text-gray-500">
-            List of members in this branch
+            List of students in this branch
           </p>
         </div>
 
@@ -119,7 +119,7 @@ const BranchMembersTab = () => {
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search members by name, phone or serial..."
+          placeholder="Search students by name, phone or serial..."
           className="w-full rounded-xl border border-gray-500 bg-white py-2.5 pr-10 pl-10 text-xs text-gray-800 shadow-xs transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 focus:outline-none sm:text-sm"
         />
         {searchTerm && (
@@ -148,15 +148,15 @@ const BranchMembersTab = () => {
           <HiUsers className="mx-auto mb-3 h-12 w-12 text-gray-300" />
           <p className="font-medium text-gray-700">
             {searchTerm
-              ? "No matching members found"
-              : "No members found in this branch"}
+              ? "No matching students found"
+              : "No students found in this branch"}
           </p>
           <p className="mt-1 text-xs text-gray-400">
             {searchTerm
               ? "Try searching with a different name or phone number"
               : canAddMember
-                ? "Click 'Add Member' above to enter members to this branch"
-                : "No members have joined this branch yet"}
+                ? "Click 'Add Student' above to enter students to this branch"
+                : "No students have joined this branch yet"}
           </p>
         </div>
       )}
@@ -167,8 +167,8 @@ const BranchMembersTab = () => {
           <LoadMoreButton
             onClick={() => fetchNextPage()}
             isLoading={isFetchingNextPage}
-            label="Load More Members"
-            loadingLabel="Loading more members..."
+            label="Load More Students"
+            loadingLabel="Loading more students..."
           />
         </div>
       )}

@@ -68,7 +68,7 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
             <FaUsers className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-medium text-gray-500">Total Members</p>
+            <p className="text-xs font-medium text-gray-500">Total Students</p>
             <p className="text-lg font-bold text-gray-900 sm:text-xl">
               {(branch.members_count || 0).toLocaleString()}
             </p>
