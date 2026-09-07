@@ -42,7 +42,7 @@ const useMainBranches = () => {
 
 const useMyBranches = (enabled = true) => {
   return useInfiniteQuery({
-    queryKey: ["myBranches", "infinite"],
+    queryKey: [BRANCH_KEYS.MY_BRANCHES, "infinite"],
     queryFn: ({ pageParam }) =>
       branchServices.getMyBranches(pageParam as number),
     initialPageParam: 1,
@@ -50,7 +50,7 @@ const useMyBranches = (enabled = true) => {
       const { page, totalPages } = lastPage.data.pagination;
       return page < totalPages ? page + 1 : undefined;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 2,
     enabled,
   });
 };

@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import authServices from "@/services/auth.service";
 import { handleMutationError } from "@/utils/errorHandler";
 import type { LoginType, RegisterType } from "@/types";
-import { AUTH_KEYS, USER_TYPES } from "@/constants";
+import { AUTH_KEYS, BRANCH_KEYS, USER_TYPES } from "@/constants";
 import { supabase } from "@/config/supabase";
 
 // Default query options for current user
@@ -88,6 +88,7 @@ const useLogin = () => {
         }
       }
       queryClient.setQueryData([AUTH_KEYS.CURRENT_USER], response.data);
+      queryClient.invalidateQueries({ queryKey: [BRANCH_KEYS.MY_BRANCHES] });
       toast.success(response.message);
 
       // Extract original path from location state
@@ -117,6 +118,7 @@ const useLogout = () => {
       }
       queryClient.setQueryData([AUTH_KEYS.CURRENT_USER], null);
       queryClient.removeQueries({ queryKey: [AUTH_KEYS.CURRENT_USER] });
+      queryClient.invalidateQueries({ queryKey: [BRANCH_KEYS.MY_BRANCHES] });
       toast.success(response?.message);
       navigate("/login");
     },
