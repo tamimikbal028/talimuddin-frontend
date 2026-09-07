@@ -413,7 +413,7 @@ const FinanceTransactions = () => {
                                     setSelectedDueEntry(entry);
                                     setIsDueModalOpen(true);
                                   }}
-                                  className="flex h-7 w-[72px] shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[11px] font-bold text-amber-800 transition-colors hover:bg-amber-100"
+                                  className="flex h-7 w-18 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[11px] font-bold text-amber-800 transition-colors hover:bg-amber-100"
                                   title={
                                     entry.type === "INCOME"
                                       ? "বকেয়া আদায় করুন"
@@ -428,7 +428,7 @@ const FinanceTransactions = () => {
                                   </span>
                                 </button>
                               ) : (
-                                <div className="h-7 w-[72px] shrink-0" />
+                                <div className="h-7 w-18 shrink-0" />
                               ))}
 
                             {/* Slot 2: Expand Chevron button or fixed width spacer */}
