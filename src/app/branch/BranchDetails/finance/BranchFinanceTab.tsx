@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { FaWallet } from "react-icons/fa";
-import FinanceExport from "./FinanceExport";
-import FinanceTransactions from "./FinanceTransactions";
-import FinanceCategories from "./FinanceCategories";
-import FinanceOverview from "./FinanceOverview";
+import FinanceExport from "./statements/FinanceExport";
+import FinanceTransactions from "./transactions/FinanceTransactions";
+import FinanceCategories from "./categories/FinanceCategories";
+import FinanceOverview from "./overview/FinanceOverview";
 
 type SubTab = "TRANSACTIONS" | "OVERVIEW" | "CATEGORIES" | "DOWNLOADS";
 

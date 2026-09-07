@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFinanceCategories } from "@/hooks/useBranchFinance";
-import { formatCurrency } from "./financeUtils";
+import { formatCurrency } from "../financeUtils";
 import {
   CategoriesTableSkeleton,
   FetchingIndicator,

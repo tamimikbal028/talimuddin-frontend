@@ -5,7 +5,7 @@ import {
   useRecordFinancePayment,
   useFinancePayments,
 } from "@/hooks/useBranchFinance";
-import { formatCurrency, getMonthName } from "./financeUtils";
+import { formatCurrency, getMonthName } from "../../financeUtils";
 import type { FinanceEntry } from "@/types";
 
 interface CollectDueModalProps {

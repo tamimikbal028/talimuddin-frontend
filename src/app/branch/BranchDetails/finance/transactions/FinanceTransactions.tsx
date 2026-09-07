@@ -6,19 +6,19 @@ import {
   useCategoriesList,
 } from "@/hooks/useBranchFinance";
 import branchHooks from "@/hooks/useBranch";
-import FinanceAddEntryForm from "./FinanceAddEntryForm";
-import CollectDueModal from "./CollectDueModal";
+import FinanceAddEntryForm from "./components/FinanceAddEntryForm";
+import CollectDueModal from "./components/CollectDueModal";
+import TransactionFilters from "./components/TransactionFilters";
+import TransactionExpandedRow from "./components/TransactionExpandedRow";
 import { confirmDelete } from "@/utils/sweetAlert";
-import { formatCurrency, getMonthName } from "./financeUtils";
+import { formatCurrency, getMonthName } from "../financeUtils";
 import {
   TransactionsTableSkeleton,
   FetchingIndicator,
 } from "@/app/shared/LoadingSkeleton/FinanceSkeletons";
-import type { FinanceEntry, FinanceDetailItem } from "@/types";
+import type { FinanceEntry } from "@/types";
 import {
   FaPlus,
-  FaTrash,
-  FaEdit,
   FaChevronDown,
   FaChevronUp,
   FaMoneyBillWave,
@@ -42,11 +42,11 @@ const FinanceTransactions = () => {
     null
   );
 
-  // Pagination & Filtering state
-  const [page, setPage] = useState(1);
+  // Filter States
   const [type, setType] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string>("");
   const [paymentStatus, setPaymentStatus] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
@@ -99,6 +99,15 @@ const FinanceTransactions = () => {
     return `${day} ${month}, ${year}`;
   };
 
+  const handleClearFilters = () => {
+    setType("");
+    setCategoryId("");
+    setPaymentStatus("");
+    setStartDate("");
+    setEndDate("");
+    setPage(1);
+  };
+
   return (
     <div className="space-y-3 sm:space-y-4">
       {/* Action Header */}
@@ -124,134 +133,35 @@ const FinanceTransactions = () => {
       </div>
 
       {/* Filters Bar */}
-      <div className="rounded-xl border border-gray-100 bg-white p-3 shadow-xs sm:p-4">
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
-          {/* Type Filter */}
-          <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-wider text-gray-400 uppercase">
-              Type
-            </label>
-            <select
-              value={type}
-              onChange={(e) => {
-                setType(e.target.value);
-                setPage(1);
-              }}
-              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            >
-              <option value="">All Transactions</option>
-              <option value="INCOME">Income</option>
-              <option value="EXPENSE">Expense</option>
-            </select>
-          </div>
-
-          {/* Category Filter */}
-          <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-wider text-gray-400 uppercase">
-              Category
-            </label>
-            <select
-              value={categoryId}
-              onChange={(e) => {
-                setCategoryId(e.target.value);
-                setPage(1);
-              }}
-              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            >
-              <option value="">All Categories</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name} ({cat.type === "INCOME" ? "Income" : "Expense"})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Payment Status Filter */}
-          <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-wider text-gray-400 uppercase">
-              Status
-            </label>
-            <select
-              value={paymentStatus}
-              onChange={(e) => {
-                setPaymentStatus(e.target.value);
-                setPage(1);
-              }}
-              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            >
-              <option value="">All Statuses</option>
-              <option value="PAID">পরিশোধিত (Paid)</option>
-              <option value="HAS_DUE">সকল বকেয়া (Has Due)</option>
-              <option value="PARTIAL">আংশিক বাকি (Partial)</option>
-              <option value="DUE">সম্পূর্ণ বাকি (Full Due)</option>
-            </select>
-          </div>
-
-          {/* Start Date */}
-          <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-wider text-gray-400 uppercase">
-              Start Date
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onClick={(e) => {
-                try {
-                  e.currentTarget.showPicker?.();
-                } catch {
-                  // Ignore browsers that do not support showPicker or dismiss errors
-                }
-              }}
-              onChange={(e) => {
-                setStartDate(e.target.value);
-                setPage(1);
-              }}
-              className="w-full cursor-pointer appearance-none rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none [&::-webkit-calendar-picker-indicator]:hidden"
-            />
-          </div>
-
-          {/* End Date */}
-          <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-wider text-gray-400 uppercase">
-              End Date
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onClick={(e) => {
-                try {
-                  e.currentTarget.showPicker?.();
-                } catch {
-                  // Ignore browsers that do not support showPicker or dismiss errors
-                }
-              }}
-              onChange={(e) => {
-                setEndDate(e.target.value);
-                setPage(1);
-              }}
-              className="w-full cursor-pointer appearance-none rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none [&::-webkit-calendar-picker-indicator]:hidden"
-            />
-          </div>
-
-          {/* Clear Filters */}
-          <div className="col-span-2 flex items-end sm:col-span-1">
-            <button
-              onClick={() => {
-                setType("");
-                setCategoryId("");
-                setPaymentStatus("");
-                setStartDate("");
-                setEndDate("");
-                setPage(1);
-              }}
-              className="w-full cursor-pointer rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-100"
-            >
-              Clear Filters
-            </button>
-          </div>
-        </div>
-      </div>
+      <TransactionFilters
+        type={type}
+        setType={(val) => {
+          setType(val);
+          setPage(1);
+        }}
+        categoryId={categoryId}
+        setCategoryId={(val) => {
+          setCategoryId(val);
+          setPage(1);
+        }}
+        paymentStatus={paymentStatus}
+        setPaymentStatus={(val) => {
+          setPaymentStatus(val);
+          setPage(1);
+        }}
+        startDate={startDate}
+        setStartDate={(val) => {
+          setStartDate(val);
+          setPage(1);
+        }}
+        endDate={endDate}
+        setEndDate={(val) => {
+          setEndDate(val);
+          setPage(1);
+        }}
+        categories={categories}
+        onClearFilters={handleClearFilters}
+      />
 
       {/* Transaction List table */}
       {isLoading ? (
@@ -466,139 +376,19 @@ const FinanceTransactions = () => {
 
                       {/* Expanded Row Detail view */}
                       {isExpanded && canExpand && (
-                        <tr className="border-b border-gray-200/80 bg-gray-50/40">
-                          <td
-                            colSpan={5}
-                            className="border-b border-gray-200/80 px-4 py-3 sm:px-8"
-                          >
-                            <div className="space-y-3 text-xs">
-                              {/* Due status details card if has due */}
-                              {hasDue && (
-                                <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50/50 p-3 shadow-2xs">
-                                  <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-                                    <div>
-                                      <span className="text-[10px] font-bold text-gray-500 uppercase">
-                                        মোট মূল্য
-                                      </span>
-                                      <p className="font-bold text-gray-900">
-                                        {formatCurrency(
-                                          entry.total_amount ?? entry.amount
-                                        )}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <span className="text-[10px] font-bold text-green-700 uppercase">
-                                        {entry.type === "INCOME"
-                                          ? "নগদ আদায়"
-                                          : "নগদ পরিশোধ"}
-                                      </span>
-                                      <p className="font-bold text-green-800">
-                                        {formatCurrency(entry.paid_amount ?? 0)}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <span className="text-[10px] font-bold text-amber-800 uppercase">
-                                        {entry.type === "INCOME"
-                                          ? "অবশিষ্ট আমি পাবো"
-                                          : "অবশিষ্ট আমাকে দিতে হবে"}
-                                      </span>
-                                      <p className="text-sm font-black text-amber-950">
-                                        {formatCurrency(entry.due_amount ?? 0)}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  {canManageFinance && (
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setSelectedDueEntry(entry);
-                                        setIsDueModalOpen(true);
-                                      }}
-                                      className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-amber-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-amber-700"
-                                    >
-                                      <FaMoneyBillWave className="h-3.5 w-3.5" />
-                                      <span>
-                                        {entry.type === "INCOME"
-                                          ? "বকেয়া আদায় (আমি পাবো)"
-                                          : "দেনা পরিশোধ (আমাকে দিতে হবে)"}
-                                      </span>
-                                    </button>
-                                  )}
-                                </div>
-                              )}
-
-                              {/* Notes */}
-                              {hasNotes && (
-                                <div className="flex items-start gap-2 rounded-lg border border-gray-200/80 bg-white p-2.5 shadow-xs">
-                                  <p className="font-medium text-gray-700">
-                                    {entry.note}
-                                  </p>
-                                </div>
-                              )}
-
-                              {/* Breakdown details */}
-                              {hasDetails && (
-                                <div className="space-y-1.5">
-                                  <p className="text-[9px] font-bold tracking-wider text-gray-500 uppercase">
-                                    Breakdown List:
-                                  </p>
-                                  <div className="divide-y divide-gray-200/70 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
-                                    {entry.details.map(
-                                      (
-                                        item: FinanceDetailItem,
-                                        idx: number
-                                      ) => (
-                                        <div
-                                          key={idx}
-                                          className="flex items-center justify-between px-3 py-2"
-                                        >
-                                          <span className="font-semibold text-gray-700">
-                                            {item.itemName}
-                                          </span>
-                                          <span className="font-bold text-gray-900">
-                                            {formatCurrency(item.amount)}
-                                          </span>
-                                        </div>
-                                      )
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Management Actions: Edit & Delete */}
-                              {canManageFinance && (
-                                <div className="flex items-center justify-end gap-2 border-t border-gray-200/80 pt-2.5">
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setEditingEntry(entry);
-                                      setIsModalOpen(true);
-                                    }}
-                                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
-                                    title="Edit Transaction"
-                                  >
-                                    <FaEdit className="h-3.5 w-3.5 text-blue-500" />
-                                    <span>Edit</span>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDelete(entry);
-                                    }}
-                                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 shadow-2xs transition-colors hover:border-red-300 hover:bg-red-50"
-                                    title="Delete Transaction"
-                                  >
-                                    <FaTrash className="h-3.5 w-3.5 text-red-500" />
-                                    <span>Delete</span>
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
+                        <TransactionExpandedRow
+                          entry={entry}
+                          canManageFinance={!!canManageFinance}
+                          onOpenDueModal={(e) => {
+                            setSelectedDueEntry(e);
+                            setIsDueModalOpen(true);
+                          }}
+                          onEdit={(e) => {
+                            setEditingEntry(e);
+                            setIsModalOpen(true);
+                          }}
+                          onDelete={handleDelete}
+                        />
                       )}
                     </Fragment>
                   );
@@ -712,6 +502,7 @@ const FinanceTransactions = () => {
           )}
         </div>
       )}
+
       {/* Add or Edit Entry Modal */}
       <FinanceAddEntryForm
         isOpen={isModalOpen}

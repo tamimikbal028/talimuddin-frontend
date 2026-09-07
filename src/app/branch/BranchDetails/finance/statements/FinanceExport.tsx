@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFinanceMonthExport } from "@/hooks/useBranchFinance";
-import { formatCurrency, getMonthName } from "./financeUtils";
+import { formatCurrency, getMonthName } from "../financeUtils";
 import {
   ExportStatementSkeleton,
   FetchingIndicator,

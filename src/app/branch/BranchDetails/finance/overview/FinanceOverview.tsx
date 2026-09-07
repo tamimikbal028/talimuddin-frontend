@@ -8,7 +8,7 @@ import {
   FaHandHoldingUsd,
   FaFileInvoiceDollar,
 } from "react-icons/fa";
-import { formatCurrency, getMonthName } from "./financeUtils";
+import { formatCurrency, getMonthName } from "../financeUtils";
 import {
   OverviewSkeleton,
   FetchingIndicator,

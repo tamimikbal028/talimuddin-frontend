@@ -1,0 +1,148 @@
+import { FaMoneyBillWave, FaEdit, FaTrash } from "react-icons/fa";
+import { formatCurrency } from "../../financeUtils";
+import type { FinanceEntry, FinanceDetailItem } from "@/types";
+
+interface TransactionExpandedRowProps {
+  entry: FinanceEntry;
+  canManageFinance: boolean;
+  onOpenDueModal: (entry: FinanceEntry) => void;
+  onEdit: (entry: FinanceEntry) => void;
+  onDelete: (entry: FinanceEntry) => void;
+}
+
+const TransactionExpandedRow = ({
+  entry,
+  canManageFinance,
+  onOpenDueModal,
+  onEdit,
+  onDelete,
+}: TransactionExpandedRowProps) => {
+  const hasDue =
+    (entry.due_amount !== undefined && entry.due_amount > 0) ||
+    entry.payment_status === "PARTIAL" ||
+    entry.payment_status === "DUE";
+  const hasNotes = !!entry.note;
+  const hasDetails = entry.details && entry.details.length > 0;
+
+  return (
+    <tr className="border-b border-gray-200/80 bg-gray-50/40">
+      <td colSpan={5} className="border-b border-gray-200/80 px-4 py-3 sm:px-8">
+        <div className="space-y-3 text-xs">
+          {/* Due status details card if has due */}
+          {hasDue && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50/50 p-3 shadow-2xs">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+                <div>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase">
+                    মোট মূল্য
+                  </span>
+                  <p className="font-bold text-gray-900">
+                    {formatCurrency(entry.total_amount ?? entry.amount)}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-green-700 uppercase">
+                    {entry.type === "INCOME" ? "নগদ আদায়" : "নগদ পরিশোধ"}
+                  </span>
+                  <p className="font-bold text-green-800">
+                    {formatCurrency(entry.paid_amount ?? 0)}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-amber-800 uppercase">
+                    {entry.type === "INCOME"
+                      ? "অবশিষ্ট আমি পাবো"
+                      : "অবশিষ্ট আমাকে দিতে হবে"}
+                  </span>
+                  <p className="text-sm font-black text-amber-950">
+                    {formatCurrency(entry.due_amount ?? 0)}
+                  </p>
+                </div>
+              </div>
+              {canManageFinance && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenDueModal(entry);
+                  }}
+                  className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-amber-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-amber-700"
+                >
+                  <FaMoneyBillWave className="h-3.5 w-3.5" />
+                  <span>
+                    {entry.type === "INCOME"
+                      ? "বকেয়া আদায় (আমি পাবো)"
+                      : "দেনা পরিশোধ (আমাকে দিতে হবে)"}
+                  </span>
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Notes */}
+          {hasNotes && (
+            <div className="flex items-start gap-2 rounded-lg border border-gray-200/80 bg-white p-2.5 shadow-xs">
+              <p className="font-medium text-gray-700">{entry.note}</p>
+            </div>
+          )}
+
+          {/* Breakdown details */}
+          {hasDetails && (
+            <div className="space-y-1.5">
+              <p className="text-[9px] font-bold tracking-wider text-gray-500 uppercase">
+                Breakdown List:
+              </p>
+              <div className="divide-y divide-gray-200/70 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
+                {entry.details.map((item: FinanceDetailItem, idx: number) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between px-3 py-2"
+                  >
+                    <span className="font-semibold text-gray-700">
+                      {item.itemName}
+                    </span>
+                    <span className="font-bold text-gray-900">
+                      {formatCurrency(item.amount)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Management Actions: Edit & Delete */}
+          {canManageFinance && (
+            <div className="flex items-center justify-end gap-2 border-t border-gray-200/80 pt-2.5">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(entry);
+                }}
+                className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+                title="Edit Transaction"
+              >
+                <FaEdit className="h-3.5 w-3.5 text-blue-500" />
+                <span>Edit</span>
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(entry);
+                }}
+                className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 shadow-2xs transition-colors hover:border-red-300 hover:bg-red-50"
+                title="Delete Transaction"
+              >
+                <FaTrash className="h-3.5 w-3.5 text-red-500" />
+                <span>Delete</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+};
+
+export default TransactionExpandedRow;
