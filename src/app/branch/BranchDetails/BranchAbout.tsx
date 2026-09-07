@@ -1,22 +1,30 @@
+import { useState } from "react";
 import {
   FaCalendarAlt,
   FaUsers,
-  FaFileAlt,
-  FaInfoCircle,
-  FaChartBar,
   FaBuilding,
   FaSitemap,
   FaMapMarkerAlt,
   FaExternalLinkAlt,
+  FaUserShield,
+  FaPhoneAlt,
+  FaCopy,
+  FaCheck,
+  FaUser,
+  FaClock,
+  FaKey,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import type { Branch } from "@/types/branch.types";
+import { toast } from "sonner";
 
 interface BranchAboutProps {
   branch: Branch;
 }
 
 const BranchAbout = ({ branch }: BranchAboutProps) => {
+  const [copied, setCopied] = useState(false);
+
   const formatDate = (dateString: string | Date) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -26,47 +34,219 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
     });
   };
 
+  const handleCopyCode = () => {
+    if (branch.join_code) {
+      navigator.clipboard.writeText(branch.join_code);
+      setCopied(true);
+      toast.success("Join code copied to clipboard!");
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   return (
-    <div className="mx-auto max-w-3xl space-y-6 p-4">
-      {/* Header */}
-      <div className="flex items-center gap-3 border-b border-gray-200 pb-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-          <FaInfoCircle className="h-6 w-6 text-blue-600" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Branch Details</h1>
-          <p className="text-gray-500">Learn more about this Branch</p>
+    <div className="w-full space-y-5 pb-6">
+      {/* Hero Overview Card with Branch Name */}
+      <div className="relative overflow-hidden rounded-2xl border border-blue-100 bg-linear-to-br from-blue-50/70 via-white to-indigo-50/50 p-5 shadow-xs sm:p-6">
+        <div className="flex items-start gap-4">
+          <div
+            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md sm:h-14 sm:w-14 ${
+              branch.branch_type === "SUB"
+                ? "bg-linear-to-br from-purple-500 to-indigo-600 shadow-purple-200"
+                : "bg-linear-to-br from-blue-500 to-blue-700 shadow-blue-200"
+            }`}
+          >
+            {branch.branch_type === "SUB" ? (
+              <FaSitemap className="h-6 w-6 sm:h-7 sm:w-7" />
+            ) : (
+              <FaBuilding className="h-6 w-6 sm:h-7 sm:w-7" />
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+                {branch.name}
+              </h1>
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                  branch.branch_type === "SUB"
+                    ? "bg-purple-100 text-purple-700"
+                    : "bg-blue-100 text-blue-700"
+                }`}
+              >
+                {branch.branch_type === "SUB" ? "Sub Branch" : "Main Branch"}
+              </span>
+            </div>
+
+            {branch.branch_type === "SUB" && branch.parent_branch && (
+              <p className="mt-1 text-xs font-medium text-gray-600 sm:text-sm">
+                Affiliated under:{" "}
+                <Link
+                  to={`/branch/branches/${branch.parent_branch.id}`}
+                  className="font-semibold text-blue-600 underline hover:text-blue-800"
+                >
+                  {branch.parent_branch.name}
+                </Link>
+              </p>
+            )}
+
+            {branch.description ? (
+              <p className="mt-3 text-xs leading-relaxed text-gray-700 whitespace-pre-line sm:text-sm">
+                {branch.description}
+              </p>
+            ) : (
+              <p className="mt-2 text-xs italic text-gray-400 sm:text-sm">
+                No description provided for this branch yet.
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Description Card */}
-      {branch.description && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center gap-2">
-            <FaFileAlt className="h-5 w-5 text-gray-600" />
-            <h2 className="text-lg font-semibold text-gray-900">About</h2>
+      {/* 3 Stats Highlights Grid */}
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:gap-4">
+        {/* Total Members */}
+        <div className="flex items-center gap-3.5 rounded-xl border border-gray-200 bg-white p-4 shadow-2xs transition hover:shadow-xs">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+            <FaUsers className="h-5 w-5" />
           </div>
-          <p className="leading-relaxed whitespace-pre-wrap text-gray-700">
-            {branch.description}
-          </p>
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-gray-500">Total Members</p>
+            <p className="text-lg font-bold text-gray-900 sm:text-xl">
+              {(branch.members_count || 0).toLocaleString()}
+            </p>
+          </div>
         </div>
-      )}
 
-      {/* Location Card */}
-      {(branch.location_name || branch.location_url) && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center gap-2">
-            <FaMapMarkerAlt className="h-5 w-5 text-red-500" />
-            <h2 className="text-lg font-semibold text-gray-900">Location</h2>
-          </div>
-          <div className="space-y-2">
-            {branch.location_name && (
-              <p className="text-base font-medium text-gray-800">
-                {branch.location_name}
-              </p>
+        {/* Structure */}
+        <div className="flex items-center gap-3.5 rounded-xl border border-gray-200 bg-white p-4 shadow-2xs transition hover:shadow-xs">
+          <div
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+              branch.branch_type === "SUB"
+                ? "bg-purple-50 text-purple-600"
+                : "bg-indigo-50 text-indigo-600"
+            }`}
+          >
+            {branch.branch_type === "SUB" ? (
+              <FaSitemap className="h-5 w-5" />
+            ) : (
+              <FaBuilding className="h-5 w-5" />
             )}
-            {branch.location_url && (
-              <div>
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-gray-500">Branch Type</p>
+            <p className="truncate text-base font-bold text-gray-900 sm:text-lg">
+              {branch.branch_type === "SUB" ? "Sub Branch" : "Main Branch"}
+            </p>
+          </div>
+        </div>
+
+        {/* Established Date */}
+        <div className="flex items-center gap-3.5 rounded-xl border border-gray-200 bg-white p-4 shadow-2xs transition hover:shadow-xs">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+            <FaCalendarAlt className="h-5 w-5" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-gray-500">Established</p>
+            <p className="truncate text-sm font-bold text-gray-900 sm:text-base">
+              {formatDate(branch.created_at)}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Detailed Information Grid */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {/* Card 1: Branch Admins */}
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-2xs">
+          <div className="mb-4 flex items-center justify-between border-b border-gray-100 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                <FaUserShield className="h-4 w-4" />
+              </div>
+              <h2 className="text-base font-bold text-gray-900">
+                Branch Admins
+              </h2>
+            </div>
+            {branch.admin_info && branch.admin_info.length > 0 && (
+              <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+                {branch.admin_info.length}{" "}
+                {branch.admin_info.length === 1 ? "Admin" : "Admins"}
+              </span>
+            )}
+          </div>
+
+          {branch.admin_info && branch.admin_info.length > 0 ? (
+            <div className="space-y-2.5">
+              {branch.admin_info.map((admin, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50/70 p-3 transition hover:bg-gray-50"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-blue-600 shadow-2xs">
+                      <FaUser className="h-3.5 w-3.5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {admin.name}
+                      </p>
+                      <p className="text-xs text-gray-500">Administrator</p>
+                    </div>
+                  </div>
+                  {admin.number && (
+                    <a
+                      href={`tel:${admin.number}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-2.5 py-1.5 text-xs font-medium text-blue-600 shadow-2xs transition hover:bg-blue-50 hover:text-blue-700 active:scale-95"
+                      title={`Call ${admin.name}`}
+                    >
+                      <FaPhoneAlt className="h-2.5 w-2.5" />
+                      <span>{admin.number}</span>
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-lg border border-dashed border-gray-200 p-4 text-center">
+              <p className="text-xs text-gray-500">
+                No custom admin contacts added yet.
+              </p>
+              {branch.creator && (
+                <p className="mt-1 text-xs text-gray-700">
+                  Branch Creator:{" "}
+                  <span className="font-semibold">
+                    {branch.creator.full_name}
+                  </span>
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Card 2: Location & Address */}
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-2xs">
+          <div className="mb-4 flex items-center gap-2.5 border-b border-gray-100 pb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-500">
+              <FaMapMarkerAlt className="h-4 w-4" />
+            </div>
+            <h2 className="text-base font-bold text-gray-900">
+              Location &amp; Address
+            </h2>
+          </div>
+
+          {branch.location_name || branch.location_url ? (
+            <div className="space-y-3">
+              {branch.location_name && (
+                <div className="rounded-lg border border-gray-100 bg-gray-50/70 p-3.5">
+                  <p className="text-xs font-medium text-gray-500">
+                    Address / Place
+                  </p>
+                  <p className="mt-0.5 text-sm font-semibold text-gray-900">
+                    {branch.location_name}
+                  </p>
+                </div>
+              )}
+              {branch.location_url && (
                 <a
                   href={
                     branch.location_url.startsWith("http://") ||
@@ -76,99 +256,94 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
                   }
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 active:scale-95"
                 >
                   <FaExternalLinkAlt className="h-3 w-3" />
-                  View on Map
+                  <span>View on Google Maps</span>
                 </a>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Stats Card */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="mb-4 flex items-center gap-2">
-          <FaChartBar className="h-5 w-5 text-gray-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Statistics</h2>
-        </div>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="flex items-center gap-4 rounded-lg bg-linear-to-r from-blue-50 to-blue-100 p-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600">
-              <FaUsers className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">
-                {(branch.members_count || 0).toLocaleString()}
-              </p>
-              <p className="text-sm text-gray-600">Members</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Branch Hierarchy / Structure Card */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="mb-4 flex items-center gap-2">
-          <FaInfoCircle className="h-5 w-5 text-gray-600" />
-          <h2 className="text-lg font-semibold text-gray-900">
-            Branch Structure
-          </h2>
-        </div>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-lg bg-gray-50 p-4">
-            <div>
-              <p className="font-medium text-gray-900">Branch Type</p>
-              <p className="text-sm text-gray-600">
-                {branch.branch_type === "SUB"
-                  ? "Sub Branch (অধিভুক্ত শাখা)"
-                  : "Main Branch (মূল শাখা)"}
-              </p>
-              {branch.branch_type === "SUB" && branch.parent_branch && (
-                <p className="mt-1 text-xs font-medium text-blue-600">
-                  Parent Branch:{" "}
-                  <Link
-                    to={`/branch/branches/${branch.parent_branch.id}`}
-                    className="underline hover:text-blue-800"
-                  >
-                    {branch.parent_branch.name}
-                  </Link>
-                </p>
               )}
             </div>
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                branch.branch_type === "SUB"
-                  ? "bg-purple-100 text-purple-600"
-                  : "bg-blue-100 text-blue-600"
-              }`}
-            >
-              {branch.branch_type === "SUB" ? (
-                <FaSitemap className="h-5 w-5" />
-              ) : (
-                <FaBuilding className="h-5 w-5" />
-              )}
+          ) : (
+            <div className="rounded-lg border border-dashed border-gray-200 p-6 text-center">
+              <FaMapMarkerAlt className="mx-auto h-6 w-6 text-gray-300" />
+              <p className="mt-2 text-xs font-medium text-gray-500">
+                No location details provided yet
+              </p>
             </div>
-          </div>
+          )}
         </div>
-      </div>
 
-      {/* History Card */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="mb-4 flex items-center gap-2">
-          <FaCalendarAlt className="h-5 w-5 text-gray-600" />
-          <h2 className="text-lg font-semibold text-gray-900">History</h2>
-        </div>
-        <div className="flex items-center gap-4 rounded-lg bg-gray-50 p-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200">
-            <FaCalendarAlt className="h-5 w-5 text-gray-600" />
+        {/* Card 3: Join Code & Access */}
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-2xs">
+          <div className="mb-4 flex items-center gap-2.5 border-b border-gray-100 pb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+              <FaKey className="h-4 w-4" />
+            </div>
+            <h2 className="text-base font-bold text-gray-900">
+              Join Code &amp; Access
+            </h2>
           </div>
-          <div>
-            <p className="font-medium text-gray-900">Branch Created</p>
-            <p className="text-sm text-gray-600">
-              {formatDate(branch.created_at)}
+
+          <div className="space-y-2.5">
+            <p className="text-xs text-gray-500">
+              Share this unique join code with members to invite them to this
+              branch.
             </p>
+            <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5">
+              <span className="font-mono text-base font-bold tracking-wider text-gray-900">
+                {branch.join_code}
+              </span>
+              <button
+                type="button"
+                onClick={handleCopyCode}
+                className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition hover:bg-gray-50 active:scale-95"
+              >
+                {copied ? (
+                  <>
+                    <FaCheck className="h-3 w-3 text-green-600" />
+                    <span className="text-green-600">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <FaCopy className="h-3 w-3 text-gray-500" />
+                    <span>Copy Code</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 4: Metadata & History */}
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-2xs">
+          <div className="mb-4 flex items-center gap-2.5 border-b border-gray-100 pb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
+              <FaClock className="h-4 w-4" />
+            </div>
+            <h2 className="text-base font-bold text-gray-900">
+              Branch Metadata
+            </h2>
+          </div>
+
+          <div className="space-y-3 text-xs">
+            <div className="flex items-center justify-between rounded-lg bg-gray-50/70 p-2.5">
+              <span className="font-medium text-gray-500">Created By</span>
+              <span className="font-semibold text-gray-900">
+                {branch.creator?.full_name || "Branch Creator"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between rounded-lg bg-gray-50/70 p-2.5">
+              <span className="font-medium text-gray-500">Created On</span>
+              <span className="font-semibold text-gray-900">
+                {formatDate(branch.created_at)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between rounded-lg bg-gray-50/70 p-2.5">
+              <span className="font-medium text-gray-500">Last Updated</span>
+              <span className="font-semibold text-gray-900">
+                {formatDate(branch.updated_at || branch.created_at)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
