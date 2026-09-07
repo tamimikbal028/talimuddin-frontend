@@ -18,7 +18,7 @@ import type { Branch, BranchMeta } from "@/types";
 import branchHooks from "@/hooks/useBranch";
 import confirm from "@/utils/sweetAlert";
 import dropdownHooks from "@/hooks/useDropdown";
-import AddBranchAdminModal from "./AddBranchAdminModal";
+import AddBranchAdminModal from "./members/AddBranchAdminModal";
 
 interface BranchHeaderProps {
   branch: Branch;
