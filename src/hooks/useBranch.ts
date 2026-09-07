@@ -54,6 +54,20 @@ const useMyBranches = () => {
   });
 };
 
+const useAllBranches = () => {
+  return useInfiniteQuery({
+    queryKey: ["allBranches", "infinite"],
+    queryFn: ({ pageParam }) =>
+      branchServices.getAllBranches(pageParam as number),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const { page, totalPages } = lastPage.data.pagination;
+      return page < totalPages ? page + 1 : undefined;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
 const useBranchDetails = () => {
   const { branchId } = useParams();
   return useQuery({
@@ -274,6 +288,7 @@ const branchHooks = {
   useCreateBranch,
   useMainBranches,
   useMyBranches,
+  useAllBranches,
   useBranchDetails,
   useJoinBranch,
   useDeleteBranch,

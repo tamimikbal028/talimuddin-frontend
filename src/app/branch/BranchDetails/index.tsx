@@ -21,7 +21,7 @@ const BranchDetails = () => {
   }
 
   // Error State or Not Found
-  if (error || !branch) {
+  if (error || !branch || !meta) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="max-w-md rounded-xl border-2 border-gray-200 bg-gray-50 p-8 text-center">
@@ -69,7 +69,9 @@ const BranchDetails = () => {
               REASON: Branch Deleted by Creator
             </span>
           </div>
-          <h2 className="mb-2 text-xl font-bold text-gray-900">Branch Deleted</h2>
+          <h2 className="mb-2 text-xl font-bold text-gray-900">
+            Branch Deleted
+          </h2>
           <p className="mb-6 text-gray-600">
             This branch has been deleted by the creator and is no longer
             available.
@@ -86,45 +88,14 @@ const BranchDetails = () => {
     );
   }
 
-  // Not a Member
-  if (!meta?.is_member) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="max-w-md rounded-xl border-2 border-blue-200 bg-blue-50 p-8 text-center">
-          <div className="mb-4 flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-              <FaCodeBranch className="h-8 w-8 text-blue-600" />
-            </div>
-          </div>
-          <h2 className="mb-2 text-xl font-bold text-gray-900">Not a Member</h2>
-          <p className="mb-6 text-gray-600">
-            You are not a member of this branch. Please contact an administrator to get access.
-          </p>
-          <div className="flex flex-col gap-3">
-            <Link
-              to="/branch"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
-            >
-              <FaCodeBranch className="h-4 w-4" />
-              Back to Branches
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Member - Show full branch details
+  // Show full branch details (Non-members view Details tab, Members view Members/Finance)
   return (
     <div className="space-y-4">
       <BranchHeader branch={branch} meta={meta} />
 
       {/* Navigation Tabs (Separated from Branch Header) */}
       <div className="border-y border-gray-200 bg-white shadow-2xs">
-        <BranchDetailsNavBar
-          meta={meta}
-          membersCount={branch.members_count}
-        />
+        <BranchDetailsNavBar meta={meta} membersCount={branch.members_count} />
       </div>
 
       <div className="mx-auto max-w-5xl">
@@ -133,21 +104,32 @@ const BranchDetails = () => {
             <Route
               index
               element={
-                meta?.is_creator || meta?.is_admin ? (
+                meta?.is_creator || meta?.is_admin || meta?.is_admin_user ? (
                   <Navigate to="finance" replace />
-                ) : (
+                ) : meta?.is_member ? (
                   <Navigate to="members" replace />
+                ) : (
+                  <Navigate to="about" replace />
                 )
               }
             />
-            <Route path="members" element={<BranchMembersTab />} />
             <Route path="about" element={<BranchAbout branch={branch} />} />
-            {(meta?.is_creator || meta?.is_admin) && (
+            {(meta?.is_member || meta?.is_admin_user) && (
+              <Route path="members" element={<BranchMembersTab />} />
+            )}
+            {(meta?.is_creator || meta?.is_admin || meta?.is_admin_user) && (
               <Route path="finance/*" element={<BranchFinanceTab />} />
             )}
             <Route
               path="*"
-              element={<Navigate to={`/branch/branches/${branchId}`} replace />}
+              element={
+                <Navigate
+                  to={`/branch/branches/${branchId}/${
+                    meta?.is_member || meta?.is_admin_user ? "members" : "about"
+                  }`}
+                  replace
+                />
+              }
             />
           </Routes>
         </div>

@@ -14,9 +14,14 @@ const BranchDetailsNavBar = ({
   const { branchId } = useParams<{ branchId: string }>();
   const baseUrl = `/branch/branches/${branchId}`;
 
-  const isManagement = meta?.is_creator || meta?.is_admin;
+  const isMember = meta?.is_member || meta?.is_admin_user;
+  const isManagement =
+    meta?.is_creator || meta?.is_admin || meta?.is_admin_user;
 
-  // Tabs list
+  // Tabs list:
+  // Non-members only see "Details" tab
+  // Members see "Members" and "Details"
+  // Admins & Creators additionally see "Finance"
   const tabs = [
     ...(isManagement
       ? [
@@ -28,13 +33,17 @@ const BranchDetailsNavBar = ({
           },
         ]
       : []),
-    {
-      path: `${baseUrl}/members`,
-      label: "Members",
-      icon: FaUsers,
-      count: membersCount,
-      end: true,
-    },
+    ...(isMember
+      ? [
+          {
+            path: `${baseUrl}/members`,
+            label: "Members",
+            icon: FaUsers,
+            count: membersCount,
+            end: true,
+          },
+        ]
+      : []),
     {
       path: `${baseUrl}/about`,
       label: "Details",

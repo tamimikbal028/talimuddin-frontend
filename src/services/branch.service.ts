@@ -45,6 +45,13 @@ const getMyBranches = async (page: number): Promise<MyBranchesResponse> => {
   return response.data;
 };
 
+const getAllBranches = async (page: number): Promise<MyBranchesResponse> => {
+  const response = await api.get<MyBranchesResponse>(
+    `/branches?page=${page}&limit=${BRANCH_LIMIT}`
+  );
+  return response.data;
+};
+
 const getBranchDetails = async (
   branchId: string
 ): Promise<BranchDetailsResponse> => {
@@ -169,6 +176,7 @@ export const branchServices = {
   createBranch,
   getMainBranches,
   getMyBranches,
+  getAllBranches,
   getBranchDetails,
   searchBranches,
   joinBranch,
