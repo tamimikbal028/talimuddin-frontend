@@ -161,7 +161,7 @@ const Branches = () => {
                   </h2>
                 </div>
                 <span className="text-xs font-medium text-gray-400">
-                  Branches where you are a member / admin
+                  Branches where you are admin
                 </span>
               </div>
 
