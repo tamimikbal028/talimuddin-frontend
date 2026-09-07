@@ -310,9 +310,7 @@ const FinanceTransactions = () => {
                           canExpand
                             ? "cursor-pointer select-none hover:bg-gray-50/90"
                             : "hover:bg-gray-50/50"
-                        } ${
-                          isExpanded && canExpand ? "bg-blue-50/30" : ""
-                        }`}
+                        } ${isExpanded && canExpand ? "bg-blue-50/30" : ""}`}
                       >
                         {/* Date */}
                         <td className="border-b border-gray-200/80 px-3 py-3.5 font-medium whitespace-nowrap text-gray-600 sm:px-5">
@@ -336,7 +334,8 @@ const FinanceTransactions = () => {
                             </span>
                             {entry.payment_status === "PARTIAL" ? (
                               <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[9px] font-bold text-amber-800 sm:text-[10px]">
-                                আংশিক বাকি: {formatCurrency(entry.due_amount || 0)}
+                                আংশিক বাকি:{" "}
+                                {formatCurrency(entry.due_amount || 0)}
                               </span>
                             ) : entry.payment_status === "DUE" ? (
                               <span className="inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[9px] font-bold text-rose-800 sm:text-[10px]">
@@ -379,17 +378,23 @@ const FinanceTransactions = () => {
                           <div>
                             <span>
                               {entry.type === "INCOME" ? "+" : "-"}
-                              {formatCurrency(entry.total_amount ?? entry.amount)}
+                              {formatCurrency(
+                                entry.total_amount ?? entry.amount
+                              )}
                             </span>
                             {entry.payment_status === "PARTIAL" && (
                               <p className="mt-0.5 text-[10px] font-semibold text-amber-700">
-                                {entry.type === "INCOME" ? "আদায়: " : "প্রদত্ত: "}
+                                {entry.type === "INCOME"
+                                  ? "আদায়: "
+                                  : "প্রদত্ত: "}
                                 {formatCurrency(entry.paid_amount ?? 0)}
                               </p>
                             )}
                             {entry.payment_status === "DUE" && (
                               <p className="mt-0.5 text-[10px] font-semibold text-rose-600">
-                                {entry.type === "INCOME" ? "আমি পাবো" : "আমাকে দিতে হবে"}
+                                {entry.type === "INCOME"
+                                  ? "আমি পাবো"
+                                  : "আমাকে দিতে হবে"}
                               </p>
                             )}
                           </div>
@@ -399,8 +404,8 @@ const FinanceTransactions = () => {
                         <td className="border-b border-gray-200/80 px-3 py-3.5 text-center whitespace-nowrap sm:px-5">
                           <div className="flex items-center justify-center gap-1.5 sm:gap-2">
                             {/* Slot 1: Due Action button or fixed width spacer */}
-                            {canManageFinance && (
-                              hasDue ? (
+                            {canManageFinance &&
+                              (hasDue ? (
                                 <button
                                   type="button"
                                   onClick={(e) => {
@@ -416,12 +421,15 @@ const FinanceTransactions = () => {
                                   }
                                 >
                                   <FaMoneyBillWave className="h-3 w-3 shrink-0 text-amber-600" />
-                                  <span>{entry.type === "INCOME" ? "আদায়" : "পরিশোধ"}</span>
+                                  <span>
+                                    {entry.type === "INCOME"
+                                      ? "আদায়"
+                                      : "পরিশোধ"}
+                                  </span>
                                 </button>
                               ) : (
                                 <div className="h-7 w-[72px] shrink-0" />
-                              )
-                            )}
+                              ))}
 
                             {/* Slot 2: Expand Chevron button or fixed width spacer */}
                             {canExpand ? (
@@ -504,12 +512,12 @@ const FinanceTransactions = () => {
                                     </div>
                                     <div>
                                       <span className="text-[10px] font-bold text-green-700 uppercase">
-                                        {entry.type === "INCOME" ? "নগদ আদায়" : "নগদ পরিশোধ"}
+                                        {entry.type === "INCOME"
+                                          ? "নগদ আদায়"
+                                          : "নগদ পরিশোধ"}
                                       </span>
                                       <p className="font-bold text-green-800">
-                                        {formatCurrency(
-                                          entry.paid_amount ?? 0
-                                        )}
+                                        {formatCurrency(entry.paid_amount ?? 0)}
                                       </p>
                                     </div>
                                     <div>
@@ -519,9 +527,7 @@ const FinanceTransactions = () => {
                                           : "অবশিষ্ট আমাকে দিতে হবে"}
                                       </span>
                                       <p className="text-sm font-black text-amber-950">
-                                        {formatCurrency(
-                                          entry.due_amount ?? 0
-                                        )}
+                                        {formatCurrency(entry.due_amount ?? 0)}
                                       </p>
                                     </div>
                                   </div>
