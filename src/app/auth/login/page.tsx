@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaBuilding } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -86,7 +86,7 @@ const Login = () => {
       </div>
 
       {/* Right Side - Form */}
-      <div className="flex w-full max-w-[400px] flex-col gap-4 lg:max-w-[420px]">
+      <div className="flex w-full max-w-100 flex-col gap-4 lg:max-w-105">
         {/* Form Container */}
         <div className="w-full rounded-2xl border border-gray-100 bg-white p-6 shadow-xl sm:p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -219,6 +219,17 @@ const Login = () => {
                 Sign up here
               </NavLink>
             </p>
+          </div>
+
+          {/* Browse Branches (Public Access) */}
+          <div className="mt-5 border-t border-gray-100 pt-5">
+            <NavLink
+              to="/branch"
+              className="group flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200/90 bg-gray-50/70 px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-2xs transition-all duration-200 hover:border-blue-300 hover:bg-blue-50/80 hover:text-blue-700 hover:shadow-xs active:scale-98"
+            >
+              <FaBuilding className="h-4 w-4 text-blue-600 transition-transform duration-200 group-hover:scale-110" />
+              <span>View Branches</span>
+            </NavLink>
           </div>
         </div>
       </div>
