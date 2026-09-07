@@ -119,7 +119,7 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
                         </Link>
                       )}
 
-                      {meta.is_creator && (
+                      {(meta.is_creator || meta.is_admin_user) && (
                         <button
                           onClick={handleDelete}
                           disabled={isDeleting}
