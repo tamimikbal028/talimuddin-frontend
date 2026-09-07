@@ -313,16 +313,11 @@ const FinanceTransactions = () => {
                         } ${isExpanded && canExpand ? "bg-blue-50/30" : ""}`}
                       >
                         {/* Date */}
-                        <td className="border-b border-gray-200/80 px-3 py-3.5 font-medium whitespace-nowrap text-gray-600 sm:px-5">
-                          {formatDate(entry.date)}
-                        </td>
-
-                        {/* Category & Status */}
                         <td className="border-b border-gray-200/80 px-3 py-3.5 whitespace-nowrap sm:px-5">
-                          <span className="block font-semibold text-gray-900">
-                            {entry.category?.name}
+                          <span className="block font-medium text-gray-700">
+                            {formatDate(entry.date)}
                           </span>
-                          <div className="mt-1 flex items-center gap-1.5 whitespace-nowrap">
+                          <div className="mt-1">
                             <span
                               className={`inline-block shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold sm:text-[10px] ${
                                 entry.type === "INCOME"
@@ -332,6 +327,15 @@ const FinanceTransactions = () => {
                             >
                               {entry.type === "INCOME" ? "Income" : "Expense"}
                             </span>
+                          </div>
+                        </td>
+
+                        {/* Category & Status */}
+                        <td className="border-b border-gray-200/80 px-3 py-3.5 whitespace-nowrap sm:px-5">
+                          <span className="block font-semibold text-gray-900">
+                            {entry.category?.name}
+                          </span>
+                          <div className="mt-1 flex items-center gap-1.5 whitespace-nowrap">
                             {entry.payment_status === "PARTIAL" ? (
                               <span className="inline-flex shrink-0 items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[9px] font-bold text-amber-800 sm:text-[10px]">
                                 আংশিক বাকি:{" "}
