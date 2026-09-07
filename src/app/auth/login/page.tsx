@@ -71,31 +71,34 @@ const Login = () => {
   };
 
   return (
-    <div className="mx-3 flex w-full flex-col items-center justify-center gap-8 py-10 lg:mx-0 lg:flex-row lg:gap-16">
+    <div className="mx-auto flex w-full max-w-sm flex-col items-center justify-center gap-2.5 py-1 sm:max-w-md sm:gap-6 sm:py-6 lg:max-w-5xl lg:flex-row lg:gap-16">
       {/* Header - Left Side */}
       <div className="text-center lg:text-left">
-        <h1 className="mb-2 text-4xl font-bold text-blue-600 lg:text-5xl">
+        <h1 className="text-2xl font-extrabold text-blue-600 sm:text-4xl lg:mb-2 lg:text-5xl">
           Take Rest
         </h1>
-        <h2 className="mb-2 text-2xl font-semibold text-gray-800 lg:text-3xl">
+        <h2 className="hidden text-xl font-semibold text-gray-800 sm:block sm:text-2xl lg:mb-2 lg:text-3xl">
           Welcome Back
         </h2>
-        <p className="text-sm text-gray-600 sm:text-base">
+        <p className="text-xs text-gray-500 sm:text-sm lg:text-base">
           Sign in to your account to continue
         </p>
       </div>
 
       {/* Right Side - Form */}
-      <div className="flex w-full max-w-100 flex-col gap-4 lg:max-w-105">
+      <div className="w-full max-w-sm sm:max-w-105">
         {/* Form Container */}
-        <div className="w-full rounded-2xl border border-gray-100 bg-white p-6 shadow-xl sm:p-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-4">
+        <div className="w-full rounded-2xl border border-gray-100 bg-white p-4.5 shadow-lg sm:p-8 sm:shadow-xl">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-3.5 sm:space-y-6"
+          >
+            <div className="space-y-2.5 sm:space-y-4">
               {/* Email Field */}
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
+                  className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm"
                 >
                   Email
                 </label>
@@ -107,7 +110,7 @@ const Login = () => {
                   onChange={emailRegister.onChange}
                   onBlur={emailRegister.onBlur}
                   ref={emailRegister.ref}
-                  className={`mt-1 w-full rounded-lg border px-3 py-2 transition-colors focus:ring-2 focus:outline-none ${
+                  className={`w-full rounded-lg border px-3 py-2 text-xs transition-colors focus:ring-2 focus:outline-none sm:text-sm ${
                     errors.email
                       ? "border-red-500 focus:ring-red-500"
                       : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -115,7 +118,7 @@ const Login = () => {
                   placeholder="Enter your email"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-500">
+                  <p className="mt-1 text-xs text-red-500">
                     {errors.email.message}
                   </p>
                 )}
@@ -125,11 +128,11 @@ const Login = () => {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
+                  className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm"
                 >
                   Password
                 </label>
-                <div className="relative mt-1">
+                <div className="relative">
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -141,7 +144,7 @@ const Login = () => {
                       passwordRegister.ref(e);
                       passwordRef.current = e;
                     }}
-                    className={`w-full rounded-lg border px-3 py-2 pr-10 transition-colors focus:ring-2 focus:outline-none ${
+                    className={`w-full rounded-lg border px-3 py-2 pr-10 text-xs transition-colors focus:ring-2 focus:outline-none sm:text-sm ${
                       errors.password
                         ? "border-red-500 focus:ring-red-500"
                         : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -153,11 +156,15 @@ const Login = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
                   >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    {showPassword ? (
+                      <FaEyeSlash className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    ) : (
+                      <FaEye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    )}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-500">
+                  <p className="mt-1 text-xs text-red-500">
                     {errors.password.message}
                   </p>
                 )}
@@ -165,7 +172,7 @@ const Login = () => {
             </div>
 
             {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between text-xs sm:text-sm">
               <div className="flex items-center">
                 <input
                   id="rememberMe"
@@ -174,18 +181,18 @@ const Login = () => {
                   onChange={rememberMeRegister.onChange}
                   onBlur={rememberMeRegister.onBlur}
                   ref={rememberMeRegister.ref}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="h-3.5 w-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 sm:h-4 sm:w-4"
                 />
                 <label
                   htmlFor="rememberMe"
-                  className="ml-2 block text-sm text-gray-700"
+                  className="ml-1.5 block text-xs text-gray-700 sm:ml-2 sm:text-sm"
                 >
                   Remember me
                 </label>
               </div>
               <NavLink
                 to="/forgot-password"
-                className="text-sm font-medium text-blue-600 hover:text-blue-500"
+                className="text-xs font-medium text-blue-600 hover:text-blue-500 sm:text-sm"
               >
                 Forgot password?
               </NavLink>
@@ -195,11 +202,11 @@ const Login = () => {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+              className="w-full rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:py-2.5 sm:text-sm"
             >
               {isPending ? (
                 <div className="flex items-center justify-center">
-                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
+                  <div className="mr-2 h-3.5 w-3.5 animate-spin rounded-full border-b-2 border-white"></div>
                   Signing in...
                 </div>
               ) : (
@@ -209,8 +216,8 @@ const Login = () => {
           </form>
 
           {/* Register NavLink */}
-          <div className="mt-5 text-center">
-            <p className="text-sm text-gray-600">
+          <div className="mt-3 text-center sm:mt-5">
+            <p className="text-xs text-gray-600 sm:text-sm">
               Don't have an account?{" "}
               <NavLink
                 to="/register"
@@ -222,12 +229,12 @@ const Login = () => {
           </div>
 
           {/* Browse Branches (Public Access) */}
-          <div className="mt-5 border-t border-gray-100 pt-5">
+          <div className="mt-3 border-t border-gray-100 pt-3 sm:mt-5 sm:pt-5">
             <NavLink
               to="/branch"
-              className="group flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200/90 bg-gray-50/70 px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-2xs transition-all duration-200 hover:border-blue-300 hover:bg-blue-50/80 hover:text-blue-700 hover:shadow-xs active:scale-98"
+              className="group flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200/90 bg-gray-50/70 px-3.5 py-2 text-xs font-semibold text-gray-700 shadow-2xs transition-all duration-200 hover:border-blue-300 hover:bg-blue-50/80 hover:text-blue-700 hover:shadow-xs active:scale-98 sm:py-2.5 sm:text-sm"
             >
-              <FaBuilding className="h-4 w-4 text-blue-600 transition-transform duration-200 group-hover:scale-110" />
+              <FaBuilding className="h-3.5 w-3.5 text-blue-600 transition-transform duration-200 group-hover:scale-110 sm:h-4 sm:w-4" />
               <span>View Branches</span>
             </NavLink>
           </div>
