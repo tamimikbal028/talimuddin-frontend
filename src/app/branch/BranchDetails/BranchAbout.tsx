@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   FaCalendarAlt,
   FaUsers,
@@ -8,23 +7,17 @@ import {
   FaExternalLinkAlt,
   FaUserShield,
   FaPhoneAlt,
-  FaCopy,
-  FaCheck,
   FaUser,
   FaClock,
-  FaKey,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import type { Branch } from "@/types/branch.types";
-import { toast } from "sonner";
 
 interface BranchAboutProps {
   branch: Branch;
 }
 
 const BranchAbout = ({ branch }: BranchAboutProps) => {
-  const [copied, setCopied] = useState(false);
-
   const formatDate = (dateString: string | Date) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -32,15 +25,6 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
       month: "long",
       day: "numeric",
     });
-  };
-
-  const handleCopyCode = () => {
-    if (branch.join_code) {
-      navigator.clipboard.writeText(branch.join_code);
-      setCopied(true);
-      toast.success("Join code copied to clipboard!");
-      setTimeout(() => setCopied(false), 2000);
-    }
   };
 
   return (
@@ -155,7 +139,7 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
       </div>
 
       {/* Detailed Information Grid */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Card 1: Branch Admins */}
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-2xs">
           <div className="mb-4 flex items-center justify-between border-b border-gray-100 pb-3">
@@ -273,49 +257,8 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
           )}
         </div>
 
-        {/* Card 3: Join Code & Access */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-2xs">
-          <div className="mb-4 flex items-center gap-2.5 border-b border-gray-100 pb-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
-              <FaKey className="h-4 w-4" />
-            </div>
-            <h2 className="text-base font-bold text-gray-900">
-              Join Code &amp; Access
-            </h2>
-          </div>
-
-          <div className="space-y-2.5">
-            <p className="text-xs text-gray-500">
-              Share this unique join code with members to invite them to this
-              branch.
-            </p>
-            <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5">
-              <span className="font-mono text-base font-bold tracking-wider text-gray-900">
-                {branch.join_code}
-              </span>
-              <button
-                type="button"
-                onClick={handleCopyCode}
-                className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition hover:bg-gray-50 active:scale-95"
-              >
-                {copied ? (
-                  <>
-                    <FaCheck className="h-3 w-3 text-green-600" />
-                    <span className="text-green-600">Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <FaCopy className="h-3 w-3 text-gray-500" />
-                    <span>Copy Code</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 4: Metadata & History */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-2xs">
+        {/* Card 3: Metadata & History (spanning across bottom) */}
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-2xs md:col-span-2">
           <div className="mb-4 flex items-center gap-2.5 border-b border-gray-100 pb-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
               <FaClock className="h-4 w-4" />
@@ -325,24 +268,24 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
             </h2>
           </div>
 
-          <div className="space-y-3 text-xs">
-            <div className="flex items-center justify-between rounded-lg bg-gray-50/70 p-2.5">
-              <span className="font-medium text-gray-500">Created By</span>
-              <span className="font-semibold text-gray-900">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="rounded-lg bg-gray-50/80 p-3">
+              <p className="text-xs font-medium text-gray-500">Created By</p>
+              <p className="mt-0.5 text-sm font-semibold text-gray-900">
                 {branch.creator?.full_name || "Branch Creator"}
-              </span>
+              </p>
             </div>
-            <div className="flex items-center justify-between rounded-lg bg-gray-50/70 p-2.5">
-              <span className="font-medium text-gray-500">Created On</span>
-              <span className="font-semibold text-gray-900">
+            <div className="rounded-lg bg-gray-50/80 p-3">
+              <p className="text-xs font-medium text-gray-500">Created On</p>
+              <p className="mt-0.5 text-sm font-semibold text-gray-900">
                 {formatDate(branch.created_at)}
-              </span>
+              </p>
             </div>
-            <div className="flex items-center justify-between rounded-lg bg-gray-50/70 p-2.5">
-              <span className="font-medium text-gray-500">Last Updated</span>
-              <span className="font-semibold text-gray-900">
+            <div className="rounded-lg bg-gray-50/80 p-3">
+              <p className="text-xs font-medium text-gray-500">Last Updated</p>
+              <p className="mt-0.5 text-sm font-semibold text-gray-900">
                 {formatDate(branch.updated_at || branch.created_at)}
-              </span>
+              </p>
             </div>
           </div>
         </div>
