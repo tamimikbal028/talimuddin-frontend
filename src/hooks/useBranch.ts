@@ -238,6 +238,38 @@ const useBranchDirectorySearch = (query: string) => {
   });
 };
 
+const useSearchUsers = (query: string, enabled = true) => {
+  const normalizedQuery = query.trim();
+
+  return useQuery({
+    queryKey: ["users", "search", normalizedQuery],
+    queryFn: () => branchServices.searchUsers(normalizedQuery),
+    staleTime: 1000 * 30,
+    retry: 1,
+    enabled,
+  });
+};
+
+const useAddBranchAdmin = () => {
+  const { branchId } = useParams();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { user_id: string }) =>
+      branchServices.addBranchAdmin(branchId as string, data),
+    onSuccess: (response) => {
+      toast.success(response.message || "Branch admin added successfully");
+      queryClient.invalidateQueries({
+        queryKey: [BRANCH_KEYS.DETAILS, branchId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [BRANCH_KEYS.MEMBERS, branchId],
+      });
+    },
+    onError: handleMutationError("Failed to add branch admin"),
+  });
+};
+
 const branchHooks = {
   useCreateBranch,
   useMainBranches,
@@ -254,6 +286,10 @@ const branchHooks = {
   useUpdateBranchMember,
   useRemoveBranchMember,
   useBranchDirectorySearch,
+
+  // Admins & Users
+  useSearchUsers,
+  useAddBranchAdmin,
 } as const;
 
 export default branchHooks;

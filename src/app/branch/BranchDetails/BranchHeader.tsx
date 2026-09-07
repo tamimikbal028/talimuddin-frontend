@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   FaEllipsisH,
   FaEdit,
@@ -13,6 +14,7 @@ import type { Branch, BranchMeta } from "@/types";
 import branchHooks from "@/hooks/useBranch";
 import confirm from "@/utils/sweetAlert";
 import dropdownHooks from "@/hooks/useDropdown";
+import AddBranchAdminModal from "./AddBranchAdminModal";
 
 interface BranchHeaderProps {
   branch: Branch;
@@ -21,6 +23,7 @@ interface BranchHeaderProps {
 
 const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
   const navigate = useNavigate();
+  const [isAddAdminModalOpen, setIsAddAdminModalOpen] = useState(false);
 
   const { mutate: deleteBranch, isPending: isDeleting } =
     branchHooks.useDeleteBranch();
@@ -70,7 +73,7 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
               </h1>
             </div>
             {/* 3-dot action menu right next to branch name */}
-            {(meta.is_creator || meta.is_admin) && (
+            {(meta.is_creator || meta.is_admin || meta.is_admin_user) && (
               <div
                 className="relative shrink-0 rounded-lg border border-gray-300"
                 ref={menuRef}
@@ -91,6 +94,20 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
                     } animate-in fade-in zoom-in-95 duration-150`}
                   >
                     <div className="py-1">
+                      {meta.is_admin_user && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            closeMenu();
+                            setIsAddAdminModalOpen(true);
+                          }}
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                        >
+                          <FaUserShield className="h-4 w-4 shrink-0 text-blue-600" />
+                          <span className="font-medium">Add Branch Admin</span>
+                        </button>
+                      )}
+
                       {(meta.is_creator || meta.is_admin) && (
                         <Link
                           to={`/branch/branches/${branch.id}/edit`}
@@ -205,6 +222,13 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
           )}
         </div>
       </div>
+
+      {/* App Admin: Add Branch Admin Modal */}
+      <AddBranchAdminModal
+        isOpen={isAddAdminModalOpen}
+        onClose={() => setIsAddAdminModalOpen(false)}
+        branchName={branch.name}
+      />
     </div>
   );
 };

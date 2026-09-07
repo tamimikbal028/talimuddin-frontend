@@ -16,6 +16,9 @@ import type {
   AddBranchMemberData,
   BranchMember,
   UpdateBranchMemberData,
+  SearchUsersResponse,
+  AddBranchAdminData,
+  AddBranchAdminResponse,
 } from "../types";
 
 const createBranch = async (
@@ -144,6 +147,24 @@ const removeMember = async (
   return response.data;
 };
 
+const searchUsers = async (query: string): Promise<SearchUsersResponse> => {
+  const response = await api.get<SearchUsersResponse>(
+    `/branches/users/search?query=${encodeURIComponent(query)}`
+  );
+  return response.data;
+};
+
+const addBranchAdmin = async (
+  branchId: string,
+  data: AddBranchAdminData
+): Promise<AddBranchAdminResponse> => {
+  const response = await api.post<AddBranchAdminResponse>(
+    `/branches/${branchId}/admins`,
+    data
+  );
+  return response.data;
+};
+
 export const branchServices = {
   createBranch,
   getMainBranches,
@@ -157,6 +178,8 @@ export const branchServices = {
   addBranchMember,
   updateBranchMember,
   removeMember,
+  searchUsers,
+  addBranchAdmin,
 } as const;
 
 export default branchServices;

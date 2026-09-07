@@ -223,3 +223,33 @@ export interface MainBranchesResponse {
     branches: MainBranchItem[];
   };
 }
+
+export interface SearchUserItem {
+  id: string;
+  full_name: string;
+  user_name: string;
+  email: string;
+  avatar: string | null;
+}
+
+export interface SearchUsersResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    users: SearchUserItem[];
+  };
+}
+
+export interface AddBranchAdminData {
+  user_id: string;
+}
+
+export interface AddBranchAdminResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    user: SearchUserItem;
+  };
+}
