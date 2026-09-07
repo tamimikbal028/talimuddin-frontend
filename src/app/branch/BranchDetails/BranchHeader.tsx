@@ -122,7 +122,7 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
             )}
           </div>
 
-          {/* Row 2: Badges & Member Count */}
+          {/* Row 2: Badges */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Branch Type Badge */}
             {branch.branch_type === "SUB" ? (
@@ -140,50 +140,35 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
               </span>
             )}
 
-            {/* Separator */}
-            <span className="text-gray-400">•</span>
-
-            {/* Members Count */}
-            <span className="text-xs font-medium text-gray-600 sm:text-sm">
-              <span className="font-semibold text-gray-900">
-                {(branch.members_count || 0).toLocaleString()}
-              </span>{" "}
-              {(branch.members_count || 0) <= 1 ? "Member" : "Members"}
-            </span>
-
             {/* Location Badge */}
-            {(branch.location_name || branch.location_url) && (
-              <>
-                <span className="text-gray-300">•</span>
-                {branch.location_url ? (
-                  <a
-                    href={
-                      branch.location_url.startsWith("http://") ||
-                      branch.location_url.startsWith("https://")
-                        ? branch.location_url
-                        : `https://${branch.location_url}`
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={`Open location: ${branch.location_name || "Map"}`}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-2.5 py-0.5 text-xs font-medium text-gray-700 shadow-2xs transition-all hover:border-blue-400 hover:bg-blue-50/70 hover:text-blue-700 hover:shadow-xs active:scale-95"
-                  >
-                    <FaMapMarkerAlt className="h-3 w-3 shrink-0 text-red-500" />
-                    <span className="max-w-35 truncate font-semibold sm:max-w-50">
-                      {branch.location_name || "View Location"}
-                    </span>
-                    <FaExternalLinkAlt className="h-2.5 w-2.5 shrink-0 text-gray-400" />
-                  </a>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-2.5 py-0.5 text-xs font-medium text-gray-700 shadow-2xs">
-                    <FaMapMarkerAlt className="h-3 w-3 shrink-0 text-red-500" />
-                    <span className="max-w-35 truncate font-semibold sm:max-w-50">
-                      {branch.location_name}
-                    </span>
+            {(branch.location_name || branch.location_url) &&
+              (branch.location_url ? (
+                <a
+                  href={
+                    branch.location_url.startsWith("http://") ||
+                    branch.location_url.startsWith("https://")
+                      ? branch.location_url
+                      : `https://${branch.location_url}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`Open location: ${branch.location_name || "Map"}`}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-2.5 py-0.5 text-xs font-medium text-gray-700 shadow-2xs transition-all hover:border-blue-400 hover:bg-blue-50/70 hover:text-blue-700 hover:shadow-xs active:scale-95"
+                >
+                  <FaMapMarkerAlt className="h-3 w-3 shrink-0 text-red-500" />
+                  <span className="max-w-35 truncate font-semibold sm:max-w-50">
+                    {branch.location_name || "View Location"}
                   </span>
-                )}
-              </>
-            )}
+                  <FaExternalLinkAlt className="h-2.5 w-2.5 shrink-0 text-gray-400" />
+                </a>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-2.5 py-0.5 text-xs font-medium text-gray-700 shadow-2xs">
+                  <FaMapMarkerAlt className="h-3 w-3 shrink-0 text-red-500" />
+                  <span className="max-w-35 truncate font-semibold sm:max-w-50">
+                    {branch.location_name}
+                  </span>
+                </span>
+              ))}
           </div>
 
           {/* Row 2: Description */}
@@ -198,7 +183,10 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
 
         {/* Navigation Tabs */}
         <div>
-          <BranchDetailsNavBar meta={meta} />
+          <BranchDetailsNavBar
+            meta={meta}
+            membersCount={branch.members_count}
+          />
         </div>
       </div>
     </div>

@@ -4,9 +4,13 @@ import type { BranchMeta } from "@/types/branch.types";
 
 interface BranchDetailsNavBarProps {
   meta?: BranchMeta;
+  membersCount?: number;
 }
 
-const BranchDetailsNavBar = ({ meta }: BranchDetailsNavBarProps) => {
+const BranchDetailsNavBar = ({
+  meta,
+  membersCount,
+}: BranchDetailsNavBarProps) => {
   const { branchId } = useParams<{ branchId: string }>();
   const baseUrl = `/branch/branches/${branchId}`;
 
@@ -24,7 +28,13 @@ const BranchDetailsNavBar = ({ meta }: BranchDetailsNavBarProps) => {
           },
         ]
       : []),
-    { path: `${baseUrl}/members`, label: "Members", icon: FaUsers, end: true },
+    {
+      path: `${baseUrl}/members`,
+      label: "Members",
+      icon: FaUsers,
+      count: membersCount,
+      end: true,
+    },
     {
       path: `${baseUrl}/about`,
       label: "Details",
@@ -54,8 +64,23 @@ const BranchDetailsNavBar = ({ meta }: BranchDetailsNavBarProps) => {
                 }`
               }
             >
-              <Icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-105" />
-              <span>{tab.label}</span>
+              {({ isActive }) => (
+                <>
+                  <Icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-105" />
+                  <span>{tab.label}</span>
+                  {typeof tab.count === "number" && (
+                    <span
+                      className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-bold transition-colors ${
+                        isActive
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-gray-100 text-gray-600 group-hover:bg-gray-200 group-hover:text-gray-900"
+                      }`}
+                    >
+                      {tab.count.toLocaleString()}
+                    </span>
+                  )}
+                </>
+              )}
             </NavLink>
           );
         })}
