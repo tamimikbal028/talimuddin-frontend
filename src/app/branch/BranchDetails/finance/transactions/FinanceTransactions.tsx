@@ -300,8 +300,8 @@ const FinanceTransactions = () => {
                             {entry.payment_status === "PARTIAL" && (
                               <p className="mt-0.5 text-[10px] font-semibold text-amber-700">
                                 {entry.type === "INCOME"
-                                  ? "আদায়: "
-                                  : "প্রদত্ত: "}
+                                  ? "পেয়েছি: "
+                                  : "দিয়েছি: "}
                                 {formatCurrency(entry.paid_amount ?? 0)}
                               </p>
                             )}
