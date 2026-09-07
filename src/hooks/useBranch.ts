@@ -26,6 +26,7 @@ const useCreateBranch = () => {
     onSuccess: (data) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["myBranches"] });
+      queryClient.invalidateQueries({ queryKey: ["allBranches"] });
       queryClient.invalidateQueries({ queryKey: ["mainBranches"] });
     },
     onError: handleMutationError("Failed to create branch"),
