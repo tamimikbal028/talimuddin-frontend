@@ -1,5 +1,47 @@
 @import "tailwindcss";
 
+/* Kalpurush Bangla Font with Unicode-Range (Automatically applies to all Bangla text) */
+@font-face {
+  font-family: "Kalpurush";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src:
+    url("/fonts/kalpurush.woff2") format("woff2"),
+    url("/fonts/kalpurush.woff") format("woff");
+  unicode-range:
+    U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8,
+    U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC,
+    U+A8F1;
+}
+
+@theme {
+  --font-sans:
+    "Kalpurush", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family:
+    "Kalpurush",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif;
+}
+
 /* Date picker clickable styles */
 input[type="date"] {
   cursor: pointer;
