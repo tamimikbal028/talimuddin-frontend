@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { FaUserMinus } from "react-icons/fa";
 import {
@@ -18,6 +19,7 @@ interface BranchMemberCardProps {
 }
 
 const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
+  const [isNoteExpanded, setIsNoteExpanded] = useState(false);
   const { user, meta } = member;
   const isManual = meta.is_manual ?? !user?.id;
   const memberName = member.name || user?.full_name || "Student";
@@ -127,13 +129,29 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
               </span>
             )}
             {member.note && (
-              <span
-                className="inline-flex max-w-80 items-center gap-1.5 truncate rounded-lg border border-amber-200/80 bg-amber-50/70 px-2.5 py-1 text-xs font-medium text-amber-800"
-                title={member.note}
+              <button
+                type="button"
+                onClick={() => setIsNoteExpanded((prev) => !prev)}
+                className={`inline-flex items-center gap-1.5 rounded-lg border border-amber-200/80 bg-amber-50/70 px-2.5 py-1 text-left text-xs font-medium text-amber-800 transition-all hover:bg-amber-100/80 cursor-pointer ${
+                  isNoteExpanded
+                    ? "w-full max-w-full whitespace-pre-line"
+                    : "max-w-80 truncate"
+                }`}
+                title={
+                  isNoteExpanded
+                    ? "ক্লিক করে ছোট করুন"
+                    : "ক্লিক করে পুরো নোটটি দেখুন"
+                }
               >
-                <HiDocumentText className="h-3.5 w-3.5 shrink-0 text-amber-600" />
-                <span className="truncate">{member.note}</span>
-              </span>
+                <HiDocumentText className="mt-0.5 h-3.5 w-3.5 shrink-0 self-start text-amber-600" />
+                <span
+                  className={
+                    isNoteExpanded ? "leading-relaxed break-words" : "truncate"
+                  }
+                >
+                  {member.note}
+                </span>
+              </button>
             )}
           </div>
         </div>

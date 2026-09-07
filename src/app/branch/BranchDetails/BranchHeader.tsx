@@ -248,12 +248,10 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
           {/* Branch Type Badge */}
           {branch.branch_type === "SUB" ? (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-200/90 bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 shadow-2xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-600" />
               Sub Branch
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/90 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 shadow-2xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-600" />
               Main Branch
             </span>
           )}
@@ -337,7 +335,7 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
         {/* Row 4: Description */}
         {branch.description && (
           <div className="pt-1">
-            <p className="max-w-3xl text-xs leading-relaxed whitespace-pre-line text-gray-600 sm:text-sm">
+            <p className="w-full text-xs leading-relaxed whitespace-pre-line text-gray-600 sm:text-sm">
               {branch.description}
             </p>
           </div>
