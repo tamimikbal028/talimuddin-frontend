@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import {
-  FaCheckCircle,
-  FaCircle,
-  FaEye,
-  FaEyeSlash,
-  FaTimesCircle,
-} from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,12 +16,7 @@ const registerSchema = z.object({
 
   email: z.string().email("Please enter a valid email address"),
 
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/(?=.*[a-z])/, "Password must contain at least one lowercase letter")
-    .regex(/(?=.*[A-Z])/, "Password must contain at least one uppercase letter")
-    .regex(/(?=.*\d)/, "Password must contain at least one number"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 
   user_type: z.enum([USER_TYPES.USER], {
     message: "User Type is required",
@@ -47,7 +36,6 @@ const Register = () => {
   const {
     register: registerField,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -59,28 +47,6 @@ const Register = () => {
       agree_to_terms: undefined,
     },
   });
-
-  const passwordValue = watch("password") ?? "";
-  const hasPasswordInput = passwordValue.length > 0;
-
-  const passwordRules = [
-    {
-      label: "Min 8 characters",
-      passed: passwordValue.length >= 8,
-    },
-    {
-      label: "1 uppercase letter",
-      passed: /[A-Z]/.test(passwordValue),
-    },
-    {
-      label: "1 lowercase letter",
-      passed: /[a-z]/.test(passwordValue),
-    },
-    {
-      label: "1 number",
-      passed: /\d/.test(passwordValue),
-    },
-  ] as const;
 
   // Form submit handler
   const onSubmit = (registerData: RegisterFormData) => {
@@ -239,42 +205,6 @@ const Register = () => {
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
-              </div>
-              {/* Password Requirements Hint */}
-              <div className="mt-2 rounded-2xl border border-gray-200 bg-gray-50 p-3">
-                <p className="text-[11px] font-semibold tracking-[0.16em] text-gray-400 uppercase">
-                  Password requirements
-                </p>
-                <div className="mt-2 space-y-2">
-                  {passwordRules.map((rule) => {
-                    const statusClass = !hasPasswordInput
-                      ? "text-gray-500"
-                      : rule.passed
-                        ? "text-emerald-600"
-                        : "text-red-500";
-
-                    const Icon = !hasPasswordInput
-                      ? FaCircle
-                      : rule.passed
-                        ? FaCheckCircle
-                        : FaTimesCircle;
-
-                    const iconClass = !hasPasswordInput
-                      ? "text-gray-300"
-                      : rule.passed
-                        ? "text-emerald-500"
-                        : "text-red-400";
-
-                    return (
-                      <div key={rule.label} className="flex items-center gap-2">
-                        <Icon className={`h-3.5 w-3.5 shrink-0 ${iconClass}`} />
-                        <span className={`text-xs font-medium ${statusClass}`}>
-                          {rule.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
               </div>
               {errors.password && (
                 <p className="mt-1 text-sm text-red-500">
