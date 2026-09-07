@@ -251,7 +251,7 @@ const FinanceTransactions = () => {
                     Amount
                   </th>
                   <th className="px-3 py-3 text-center whitespace-nowrap sm:px-5">
-                    Actions
+                    {canManageFinance ? "Actions" : ""}
                   </th>
                 </tr>
               </thead>
@@ -280,7 +280,7 @@ const FinanceTransactions = () => {
                         }`}
                       >
                         {/* Date */}
-                        <td className="border-b border-gray-200/80 px-3 py-3.5 font-medium whitespace-nowrap text-gray-700 sm:px-5">
+                        <td className="border-b border-gray-200/80 px-3 py-3.5 font-medium whitespace-nowrap text-gray-600 sm:px-5">
                           {formatDate(entry.date)}
                         </td>
 
@@ -350,29 +350,36 @@ const FinanceTransactions = () => {
                                 )}
                               </button>
                             )}
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setEditingEntry(entry);
-                                setIsModalOpen(true);
-                              }}
-                              className="cursor-pointer p-1 text-gray-400 transition-colors hover:text-blue-600"
-                              title="Edit Transaction"
-                            >
-                              <FaEdit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(entry);
-                              }}
-                              className="cursor-pointer p-1 text-gray-400 transition-colors hover:text-red-600"
-                              title="Delete Transaction"
-                            >
-                              <FaTrash className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                            </button>
+                            {canManageFinance && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingEntry(entry);
+                                    setIsModalOpen(true);
+                                  }}
+                                  className="cursor-pointer p-1 text-gray-400 transition-colors hover:text-blue-600"
+                                  title="Edit Transaction"
+                                >
+                                  <FaEdit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDelete(entry);
+                                  }}
+                                  className="cursor-pointer p-1 text-gray-400 transition-colors hover:text-red-600"
+                                  title="Delete Transaction"
+                                >
+                                  <FaTrash className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                </button>
+                              </>
+                            )}
+                            {!canManageFinance && !hasDetails && !hasNotes && (
+                              <span className="text-gray-300">-</span>
+                            )}
                           </div>
                         </td>
                       </tr>
