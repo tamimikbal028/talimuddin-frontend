@@ -81,7 +81,7 @@ const FinanceOverview = () => {
         <FetchingIndicator isFetching={isFetching} isLoading={isLoading} />
       </div>
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-5 sm:gap-4">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-5">
         {metricCards.map((card, index) => {
           const Icon = card.icon;
           return (
@@ -131,7 +131,8 @@ const FinanceOverview = () => {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
             {monthlyStats.map((stat) => {
               const monthBalance = stat.income - stat.expense;
-              const hasDue = (stat.receivable ?? 0) > 0 || (stat.payable ?? 0) > 0;
+              const hasDue =
+                (stat.receivable ?? 0) > 0 || (stat.payable ?? 0) > 0;
 
               return (
                 <div
@@ -155,7 +156,7 @@ const FinanceOverview = () => {
                     </span>
                   </div>
 
-                  <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
+                  <div className="flex flex-1 flex-col p-4 sm:p-5">
                     {/* Monthly Totals */}
                     <div className="mb-3 grid grid-cols-2 gap-4 border-b border-gray-50 pb-3">
                       <div className="space-y-1">
@@ -176,23 +177,43 @@ const FinanceOverview = () => {
                       </div>
                     </div>
 
-                    {/* Dues Status in Month if any */}
-                    {hasDue && (
-                      <div className="mb-3 flex items-center justify-between rounded-lg border border-amber-100 bg-amber-50/50 px-3 py-2 text-xs">
-                        {(stat.receivable ?? 0) > 0 && (
+                    {/* Dues Status in Month */}
+                    <div
+                      className={`mb-3 flex min-h-[38px] items-center justify-between rounded-lg px-3 py-2 text-xs ${
+                        hasDue
+                          ? "border border-amber-100 bg-amber-50/50"
+                          : "border border-gray-100 bg-gray-50/50 text-gray-400"
+                      }`}
+                    >
+                      {hasDue ? (
+                        <>
                           <div className="text-amber-900">
-                            <span className="text-[10px] font-semibold opacity-75">আমি পাবো:</span>{" "}
-                            <span className="font-bold">{formatCurrency(stat.receivable || 0)}</span>
+                            <span className="text-[10px] font-semibold opacity-75">
+                              আমি পাবো:
+                            </span>{" "}
+                            <span className="font-bold">
+                              {(stat.receivable ?? 0) > 0
+                                ? formatCurrency(stat.receivable || 0)
+                                : "০"}
+                            </span>
                           </div>
-                        )}
-                        {(stat.payable ?? 0) > 0 && (
                           <div className="text-rose-900">
-                            <span className="text-[10px] font-semibold opacity-75">আমাকে দিতে হবে:</span>{" "}
-                            <span className="font-bold">{formatCurrency(stat.payable || 0)}</span>
+                            <span className="text-[10px] font-semibold opacity-75">
+                              আমাকে দিতে হবে:
+                            </span>{" "}
+                            <span className="font-bold">
+                              {(stat.payable ?? 0) > 0
+                                ? formatCurrency(stat.payable || 0)
+                                : "০"}
+                            </span>
                           </div>
-                        )}
-                      </div>
-                    )}
+                        </>
+                      ) : (
+                        <div className="w-full text-center text-[11px] font-medium text-gray-400">
+                          কোনো বকেয়া নেই
+                        </div>
+                      )}
+                    </div>
 
                     {/* Monthly Category Breakdown */}
                     <div className="space-y-2.5">

@@ -3,7 +3,6 @@ import branchHooks from "@/hooks/useBranch";
 import BranchHeader from "./BranchHeader";
 import BranchDetailsNavBar from "./BranchDetailsNavBar";
 import BranchMembersTab from "./members/BranchMembersTab";
-import BranchAbout from "./about/BranchAbout";
 import BranchFinanceTab from "./finance/BranchFinanceTab";
 import BranchDetailsSkeleton from "@/app/shared/LoadingSkeleton/BranchDetailsSkeleton";
 import { FaCodeBranch, FaBan } from "react-icons/fa";
@@ -87,52 +86,67 @@ const BranchDetails = () => {
     );
   }
 
-  // Show full branch details (Non-members view Details tab, Members view Members/Finance)
+  const isMember = meta?.is_member || meta?.is_admin_user || meta?.is_admin;
+  const isManagement = meta?.is_admin || meta?.is_admin_user;
+
+  // Show full branch details
   return (
     <div className="space-y-3">
       <BranchHeader branch={branch} meta={meta} />
 
-      {/* Navigation Tabs (Separated from Branch Header) */}
-      <div className="border-y border-gray-200 bg-white shadow-2xs">
-        <BranchDetailsNavBar meta={meta} membersCount={branch.members_count} />
-      </div>
+      {/* Members & Admins View */}
+      {isMember ? (
+        <>
+          {/* Navigation Tabs (Separated from Branch Header) */}
+          <div className="border-y border-gray-200 bg-white shadow-2xs">
+            <BranchDetailsNavBar
+              meta={meta}
+              membersCount={branch.members_count}
+            />
+          </div>
 
-      <div className="mx-auto max-w-5xl">
-        <div className="space-y-3">
-          <Routes>
-            <Route
-              index
-              element={
-                meta?.is_admin || meta?.is_admin_user ? (
-                  <Navigate to="finance" replace />
-                ) : meta?.is_member ? (
-                  <Navigate to="members" replace />
-                ) : (
-                  <Navigate to="about" replace />
-                )
-              }
-            />
-            <Route path="about" element={<BranchAbout branch={branch} />} />
-            {(meta?.is_member || meta?.is_admin_user) && (
-              <Route path="members" element={<BranchMembersTab />} />
-            )}
-            {(meta?.is_admin || meta?.is_admin_user) && (
-              <Route path="finance/*" element={<BranchFinanceTab />} />
-            )}
-            <Route
-              path="*"
-              element={
-                <Navigate
-                  to={`/branch/branches/${branchId}/${
-                    meta?.is_member || meta?.is_admin_user ? "members" : "about"
-                  }`}
-                  replace
+          <div className="mx-auto max-w-5xl">
+            <div className="space-y-3">
+              <Routes>
+                <Route
+                  index
+                  element={
+                    isManagement ? (
+                      <Navigate to="finance" replace />
+                    ) : (
+                      <Navigate to="members" replace />
+                    )
+                  }
                 />
-              }
-            />
-          </Routes>
-        </div>
-      </div>
+                <Route path="members" element={<BranchMembersTab />} />
+                {isManagement && (
+                  <Route path="finance/*" element={<BranchFinanceTab />} />
+                )}
+                <Route
+                  path="*"
+                  element={
+                    <Navigate
+                      to={`/branch/branches/${branchId}/${
+                        isManagement ? "finance" : "members"
+                      }`}
+                      replace
+                    />
+                  }
+                />
+              </Routes>
+            </div>
+          </div>
+        </>
+      ) : (
+        /* Guest View: Only header is shown, no tabs or tab routes */
+        <Routes>
+          <Route
+            path="*"
+            element={<Navigate to={`/branch/branches/${branchId}`} replace />}
+          />
+          <Route index element={null} />
+        </Routes>
+      )}
     </div>
   );
 };
