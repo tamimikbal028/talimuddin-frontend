@@ -41,7 +41,7 @@ const SettingsItem = ({
         <select
           value={value}
           onChange={(e) => onSelect?.(e.target.value)}
-          className="rounded border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:outline-none"
+          className="appearance-none rounded border border-gray-300 bg-white px-3 py-1 text-sm focus:border-blue-500 focus:outline-none"
         >
           {options.map((option) => (
             <option key={option.value} value={option.value}>

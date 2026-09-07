@@ -88,7 +88,7 @@ const FinanceExport = () => {
                 setYear(Number(e.target.value));
                 setShouldFetch(true);
               }}
-              className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
             >
               {years.map((y) => (
                 <option key={y} value={y}>
@@ -109,7 +109,7 @@ const FinanceExport = () => {
                 setMonth(Number(e.target.value));
                 setShouldFetch(true);
               }}
-              className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
             >
               {months.map((m) => (
                 <option key={m} value={m}>
