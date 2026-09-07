@@ -187,7 +187,7 @@ const useAddBranchMember = () => {
     mutationFn: (data: AddBranchMemberData) =>
       branchServices.addBranchMember(branchId as string, data),
     onSuccess: (response) => {
-      toast.success(response.message || "Member added successfully");
+      toast.success(response.message || "Student added successfully");
       queryClient.invalidateQueries({
         queryKey: [BRANCH_KEYS.MEMBERS, branchId],
       });
@@ -195,7 +195,7 @@ const useAddBranchMember = () => {
         queryKey: [BRANCH_KEYS.DETAILS, branchId],
       });
     },
-    onError: handleMutationError("Failed to add member"),
+    onError: handleMutationError("Failed to add student"),
   });
 };
 
@@ -212,12 +212,12 @@ const useUpdateBranchMember = () => {
       data: UpdateBranchMemberData;
     }) => branchServices.updateBranchMember(branchId as string, memberId, data),
     onSuccess: (response) => {
-      toast.success(response.message || "Member updated successfully");
+      toast.success(response.message || "Student updated successfully");
       queryClient.invalidateQueries({
         queryKey: [BRANCH_KEYS.MEMBERS, branchId],
       });
     },
-    onError: handleMutationError("Failed to update member"),
+    onError: handleMutationError("Failed to update student"),
   });
 };
 
@@ -237,7 +237,7 @@ const useRemoveBranchMember = () => {
         queryKey: [BRANCH_KEYS.DETAILS, branchId],
       });
     },
-    onError: handleMutationError("Failed to remove member"),
+    onError: handleMutationError("Failed to remove student"),
   });
 };
 

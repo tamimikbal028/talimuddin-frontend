@@ -67,7 +67,7 @@ const AddEditMemberModal = ({
   const validate = () => {
     const newErrors: { name?: string; phone?: string } = {};
     if (!formData.name.trim()) {
-      newErrors.name = "Member name is required";
+      newErrors.name = "Student name is required";
     }
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
@@ -142,12 +142,12 @@ const AddEditMemberModal = ({
             </div>
             <div>
               <h3 className="text-base font-semibold text-gray-800">
-                {isEdit ? "Edit Member Details" : "Add Branch Member"}
+                {isEdit ? "Edit Student Details" : "Add Branch Student"}
               </h3>
               <p className="text-xs text-gray-500">
                 {isEdit
-                  ? "Update member profile information"
-                  : "Manually add a new member to this branch"}
+                  ? "Update student profile information"
+                  : "Manually add a new student to this branch"}
               </p>
             </div>
           </div>
@@ -341,7 +341,7 @@ const AddEditMemberModal = ({
               ) : isEdit ? (
                 "Save Changes"
               ) : (
-                "Add Member"
+                "Add Student"
               )}
             </button>
           </div>

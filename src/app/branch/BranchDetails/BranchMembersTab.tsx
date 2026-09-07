@@ -107,7 +107,7 @@ const BranchMembersTab = () => {
             className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-98 sm:gap-2 sm:px-4 sm:py-2.5"
           >
             <FaUserPlus className="h-3.5 w-3.5" />
-            <span>Add Member</span>
+            <span>Add Student</span>
           </button>
         )}
       </div>

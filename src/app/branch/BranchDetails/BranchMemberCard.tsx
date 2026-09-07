@@ -20,7 +20,7 @@ interface BranchMemberCardProps {
 const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
   const { user, meta } = member;
   const isManual = meta.is_manual ?? !user?.id;
-  const memberName = member.name || user?.full_name || "Member";
+  const memberName = member.name || user?.full_name || "Student";
 
   const {
     isOpen: showMenu,
@@ -40,7 +40,7 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
   const handleRemove = async () => {
     closeMenu();
     const ok = await confirm({
-      title: "Remove Member?",
+      title: "Remove Student?",
       text: `${memberName} will be removed from this branch.`,
       confirmButtonText: "Yes, remove",
       icon: "warning",

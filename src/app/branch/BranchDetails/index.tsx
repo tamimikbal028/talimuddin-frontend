@@ -90,7 +90,7 @@ const BranchDetails = () => {
 
   // Show full branch details (Non-members view Details tab, Members view Members/Finance)
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <BranchHeader branch={branch} meta={meta} />
 
       {/* Navigation Tabs (Separated from Branch Header) */}
