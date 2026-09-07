@@ -6,6 +6,8 @@ import {
   FaChartBar,
   FaBuilding,
   FaSitemap,
+  FaMapMarkerAlt,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import type { Branch } from "@/types/branch.types";
@@ -47,6 +49,41 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
           <p className="leading-relaxed whitespace-pre-wrap text-gray-700">
             {branch.description}
           </p>
+        </div>
+      )}
+
+      {/* Location Card */}
+      {(branch.location_name || branch.location_url) && (
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center gap-2">
+            <FaMapMarkerAlt className="h-5 w-5 text-red-500" />
+            <h2 className="text-lg font-semibold text-gray-900">Location</h2>
+          </div>
+          <div className="space-y-2">
+            {branch.location_name && (
+              <p className="text-base font-medium text-gray-800">
+                {branch.location_name}
+              </p>
+            )}
+            {branch.location_url && (
+              <div>
+                <a
+                  href={
+                    branch.location_url.startsWith("http://") ||
+                    branch.location_url.startsWith("https://")
+                      ? branch.location_url
+                      : `https://${branch.location_url}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline"
+                >
+                  <FaExternalLinkAlt className="h-3 w-3" />
+                  View on Map
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

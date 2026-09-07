@@ -13,6 +13,11 @@ const branchSchema = z
       .max(50, "Branch name must not exceed 50 characters")
       .trim(),
     description: z.string().optional(),
+    location_name: z
+      .string()
+      .max(100, "Location name cannot exceed 100 characters")
+      .optional(),
+    location_url: z.string().optional(),
     branch_type: z.enum(["MAIN", "SUB"]),
     parent_branch_id: z.string().optional().nullable(),
   })
@@ -48,6 +53,8 @@ const CreateBranchForm = () => {
       defaultValues: {
         name: "",
         description: "",
+        location_name: "",
+        location_url: "",
         branch_type: "MAIN",
         parent_branch_id: "",
       },
@@ -61,6 +68,8 @@ const CreateBranchForm = () => {
       {
         name: data.name,
         description: data.description?.trim() || undefined,
+        location_name: data.location_name?.trim() || undefined,
+        location_url: data.location_url?.trim() || undefined,
         branch_type: data.branch_type,
         parent_branch_id:
           data.branch_type === "SUB" ? data.parent_branch_id : null,
@@ -251,6 +260,33 @@ const CreateBranchForm = () => {
           rows={3}
           className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 shadow-xs transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none sm:text-base"
         />
+      </div>
+
+      {/* Location Fields */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className="mb-2 block text-xs font-semibold text-gray-700 sm:text-sm">
+            Location Name
+          </label>
+          <input
+            type="text"
+            {...register("location_name")}
+            placeholder="e.g., Mirpur 10, Dhaka (optional)"
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 shadow-xs transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none sm:text-base"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-xs font-semibold text-gray-700 sm:text-sm">
+            Location Map URL
+          </label>
+          <input
+            type="url"
+            {...register("location_url")}
+            placeholder="e.g., Google Maps URL (optional)"
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 shadow-xs transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none sm:text-base"
+          />
+        </div>
       </div>
 
       {/* Action Buttons */}

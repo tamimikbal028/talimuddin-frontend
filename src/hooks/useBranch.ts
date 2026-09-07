@@ -9,6 +9,7 @@ import { uploadSingleImage } from "@/services/common/fileUpload.service";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
 import type {
+  CreateBranchData,
   UpdateBranchData,
   AddBranchMemberData,
   UpdateBranchMemberData,
@@ -20,12 +21,8 @@ const useCreateBranch = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (branchData: {
-      name: string;
-      description?: string;
-      branch_type?: "MAIN" | "SUB";
-      parent_branch_id?: string | null;
-    }) => branchServices.createBranch(branchData),
+    mutationFn: (branchData: CreateBranchData) =>
+      branchServices.createBranch(branchData),
     onSuccess: (data) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["myBranches"] });

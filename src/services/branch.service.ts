@@ -2,6 +2,7 @@ import api from "@/config/axios";
 import { BRANCH_LIMIT, MEMBERS_LIMIT } from "@/constants";
 import type {
   CreateBranchResponse,
+  CreateBranchData,
   MyBranchesResponse,
   BranchDetailsResponse,
   JoinBranchResponse,
@@ -17,12 +18,9 @@ import type {
   UpdateBranchMemberData,
 } from "../types";
 
-const createBranch = async (branchData: {
-  name: string;
-  description?: string;
-  branch_type?: "MAIN" | "SUB";
-  parent_branch_id?: string | null;
-}): Promise<CreateBranchResponse> => {
+const createBranch = async (
+  branchData: CreateBranchData
+): Promise<CreateBranchResponse> => {
   const response = await api.post<CreateBranchResponse>(
     "/branches",
     branchData

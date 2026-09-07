@@ -13,6 +13,8 @@ const BranchGeneralTab = ({ branch }: BranchGeneralTabProps) => {
   const [formData, setFormData] = useState({
     name: branch.name,
     description: branch.description || "",
+    location_name: branch.location_name || "",
+    location_url: branch.location_url || "",
   });
 
   const { mutate: updateDetails, isPending } =
@@ -25,6 +27,8 @@ const BranchGeneralTab = ({ branch }: BranchGeneralTabProps) => {
         updated_data: {
           name: formData.name.trim(),
           description: formData.description.trim() || null,
+          location_name: formData.location_name.trim() || null,
+          location_url: formData.location_url.trim() || null,
         },
       },
       {
@@ -83,6 +87,47 @@ const BranchGeneralTab = ({ branch }: BranchGeneralTabProps) => {
               className="mt-1.5 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
             />
           </div>
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div>
+              <label
+                htmlFor="location_name"
+                className="block text-sm font-semibold text-gray-700"
+              >
+                Location Name
+              </label>
+              <input
+                type="text"
+                id="location_name"
+                maxLength={100}
+                value={formData.location_name}
+                onChange={(e) =>
+                  setFormData({ ...formData, location_name: e.target.value })
+                }
+                placeholder="e.g., Mirpur 10, Dhaka"
+                className="mt-1.5 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="location_url"
+                className="block text-sm font-semibold text-gray-700"
+              >
+                Location Map URL
+              </label>
+              <input
+                type="url"
+                id="location_url"
+                value={formData.location_url}
+                onChange={(e) =>
+                  setFormData({ ...formData, location_url: e.target.value })
+                }
+                placeholder="e.g., Google Maps URL"
+                className="mt-1.5 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center justify-end gap-3">
@@ -92,7 +137,11 @@ const BranchGeneralTab = ({ branch }: BranchGeneralTabProps) => {
               isPending ||
               (formData.name.trim() === branch.name &&
                 (formData.description.trim() || null) ===
-                  (branch.description?.trim() || null))
+                  (branch.description?.trim() || null) &&
+                (formData.location_name.trim() || null) ===
+                  (branch.location_name?.trim() || null) &&
+                (formData.location_url.trim() || null) ===
+                  (branch.location_url?.trim() || null))
             }
             className="flex min-w-35 items-center justify-center rounded-lg bg-blue-600 px-6 py-3 font-bold text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-blue-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
           >
