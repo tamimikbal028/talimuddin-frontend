@@ -30,18 +30,18 @@ const BranchDetailsSkeleton = () => {
               <div className="h-4 w-3/4 animate-pulse rounded bg-gray-100"></div>
             </div>
           </div>
+        </div>
 
-          {/* Tab Navigation Skeleton */}
+        {/* Tab Navigation Skeleton (Separated) */}
+        <div className="border-y border-gray-200 bg-white shadow-2xs">
           <div className="mx-auto max-w-5xl px-6">
-            <div className="flex items-center justify-between sm:gap-4 md:gap-8">
-              {[...Array(4)].map((_, i) => (
+            <div className="flex items-center justify-center gap-6 sm:gap-16">
+              {[...Array(3)].map((_, i) => (
                 <div
                   key={i}
                   className="h-10 w-24 animate-pulse rounded bg-gray-100"
                 ></div>
               ))}
-              {/* More Button Skeleton */}
-              <div className="h-10 w-20 animate-pulse rounded bg-gray-100"></div>
             </div>
           </div>
         </div>

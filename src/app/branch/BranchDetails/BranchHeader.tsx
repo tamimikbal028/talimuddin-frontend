@@ -12,7 +12,6 @@ import { Link, useNavigate } from "react-router-dom";
 import type { Branch, BranchMeta } from "@/types";
 import branchHooks from "@/hooks/useBranch";
 import confirm from "@/utils/sweetAlert";
-import BranchDetailsNavBar from "@/app/branch/BranchDetails/BranchDetailsNavBar";
 import dropdownHooks from "@/hooks/useDropdown";
 
 interface BranchHeaderProps {
@@ -52,10 +51,8 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
 
   return (
     <div>
-      {/* Header Content */}
-      <div className="border-b border-gray-200 bg-white">
+      <div className="bg-blue-50">
         <div className="mx-auto max-w-5xl space-y-3 p-3.5 sm:p-5">
-          {/* Row 1: Back + Name (truncated) + 3-dot menu directly to right */}
           <div className="flex items-center justify-between gap-2.5 sm:gap-3">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
@@ -211,14 +208,6 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
               </p>
             </div>
           )}
-        </div>
-
-        {/* Navigation Tabs */}
-        <div>
-          <BranchDetailsNavBar
-            meta={meta}
-            membersCount={branch.members_count}
-          />
         </div>
       </div>
     </div>

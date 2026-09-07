@@ -1,6 +1,7 @@
 import { Routes, Route, Link, useParams, Navigate } from "react-router-dom";
 import branchHooks from "@/hooks/useBranch";
 import BranchHeader from "./BranchHeader";
+import BranchDetailsNavBar from "./BranchDetailsNavBar";
 import BranchMembersTab from "./BranchMembersTab";
 import BranchAbout from "./BranchAbout";
 import BranchFinanceTab from "./finance/BranchFinanceTab";
@@ -115,8 +116,16 @@ const BranchDetails = () => {
 
   // Member - Show full branch details
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <BranchHeader branch={branch} meta={meta} />
+
+      {/* Navigation Tabs (Separated from Branch Header) */}
+      <div className="border-y border-gray-200 bg-white shadow-2xs">
+        <BranchDetailsNavBar
+          meta={meta}
+          membersCount={branch.members_count}
+        />
+      </div>
 
       <div className="mx-auto max-w-5xl">
         <div className="space-y-3">
