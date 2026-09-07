@@ -17,7 +17,6 @@ export interface Branch {
     id: string;
     name: string;
   } | null;
-  join_code: string;
   creator: User;
   members_count: number;
   is_deleted: boolean;
@@ -42,7 +41,6 @@ export interface BranchMeta {
   is_admin_user: boolean;
   is_creator: boolean;
   is_admin: boolean;
-  join_code: string;
 }
 
 // Branch Member (from getBranchMembers)
@@ -164,7 +162,6 @@ export interface JoinBranchResponse {
     branch_name: string;
   };
 }
-
 
 export interface DeleteBranchResponse {
   statusCode: number;
