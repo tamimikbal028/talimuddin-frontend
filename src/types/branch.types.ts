@@ -17,11 +17,8 @@ export interface Branch {
     id: string;
     name: string;
   } | null;
-  creator: User;
   members_count: number;
   is_deleted: boolean;
-  created_at: string;
-  updated_at: string;
 }
 
 // Branch in list (getMyBranches response) - minimal fields for card display

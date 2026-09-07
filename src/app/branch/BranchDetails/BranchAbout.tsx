@@ -1,5 +1,4 @@
 import {
-  FaCalendarAlt,
   FaUsers,
   FaBuilding,
   FaSitemap,
@@ -8,7 +7,6 @@ import {
   FaUserShield,
   FaPhoneAlt,
   FaUser,
-  FaClock,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import type { Branch } from "@/types/branch.types";
@@ -18,76 +16,52 @@ interface BranchAboutProps {
 }
 
 const BranchAbout = ({ branch }: BranchAboutProps) => {
-  const formatDate = (dateString: string | Date) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   return (
     <div className="w-full space-y-5 pb-6">
       {/* Hero Overview Card with Branch Name */}
       <div className="relative overflow-hidden rounded-2xl border border-blue-100 bg-linear-to-br from-blue-50/70 via-white to-indigo-50/50 p-5 shadow-xs sm:p-6">
-        <div className="flex items-start gap-4">
-          <div
-            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md sm:h-14 sm:w-14 ${
-              branch.branch_type === "SUB"
-                ? "bg-linear-to-br from-purple-500 to-indigo-600 shadow-purple-200"
-                : "bg-linear-to-br from-blue-500 to-blue-700 shadow-blue-200"
-            }`}
-          >
-            {branch.branch_type === "SUB" ? (
-              <FaSitemap className="h-6 w-6 sm:h-7 sm:w-7" />
-            ) : (
-              <FaBuilding className="h-6 w-6 sm:h-7 sm:w-7" />
-            )}
+        <div className="min-w-0 flex-1">
+          <div className="mb-2 flex flex-wrap items-center justify-center gap-2">
+            <h1 className="text-center text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+              {branch.name}
+            </h1>
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                branch.branch_type === "SUB"
+                  ? "bg-purple-100 text-purple-700"
+                  : "bg-blue-100 text-blue-700"
+              }`}
+            >
+              {branch.branch_type === "SUB" ? "Sub Branch" : "Main Branch"}
+            </span>
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
-                {branch.name}
-              </h1>
-              <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                  branch.branch_type === "SUB"
-                    ? "bg-purple-100 text-purple-700"
-                    : "bg-blue-100 text-blue-700"
-                }`}
+
+          {branch.branch_type === "SUB" && branch.parent_branch?.name && (
+            <p className="mt-1 text-xs font-medium text-gray-600 sm:text-sm">
+              Parent Branch:{" "}
+              <Link
+                to={`/branch/branches/${branch.parent_branch.id}`}
+                className="font-semibold text-blue-600 hover:text-blue-800"
               >
-                {branch.branch_type === "SUB" ? "Sub Branch" : "Main Branch"}
-              </span>
-            </div>
+                {branch.parent_branch.name}
+              </Link>
+            </p>
+          )}
 
-            {branch.branch_type === "SUB" && branch.parent_branch && (
-              <p className="mt-1 text-xs font-medium text-gray-600 sm:text-sm">
-                Affiliated under:{" "}
-                <Link
-                  to={`/branch/branches/${branch.parent_branch.id}`}
-                  className="font-semibold text-blue-600 underline hover:text-blue-800"
-                >
-                  {branch.parent_branch.name}
-                </Link>
-              </p>
-            )}
-
-            {branch.description ? (
-              <p className="mt-3 text-xs leading-relaxed text-gray-700 whitespace-pre-line sm:text-sm">
-                {branch.description}
-              </p>
-            ) : (
-              <p className="mt-2 text-xs italic text-gray-400 sm:text-sm">
-                No description provided for this branch yet.
-              </p>
-            )}
-          </div>
+          {branch.description ? (
+            <p className="mt-3 text-xs leading-relaxed whitespace-pre-line text-gray-700 sm:text-sm">
+              {branch.description}
+            </p>
+          ) : (
+            <p className="mt-2 text-xs text-gray-400 italic sm:text-sm">
+              No description provided for this branch yet.
+            </p>
+          )}
         </div>
       </div>
 
-      {/* 3 Stats Highlights Grid */}
-      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:gap-4">
+      {/* Stats Highlights Grid */}
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4">
         {/* Total Members */}
         <div className="flex items-center gap-3.5 rounded-xl border border-gray-200 bg-white p-4 shadow-2xs transition hover:shadow-xs">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
@@ -120,19 +94,6 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
             <p className="text-xs font-medium text-gray-500">Branch Type</p>
             <p className="truncate text-base font-bold text-gray-900 sm:text-lg">
               {branch.branch_type === "SUB" ? "Sub Branch" : "Main Branch"}
-            </p>
-          </div>
-        </div>
-
-        {/* Established Date */}
-        <div className="flex items-center gap-3.5 rounded-xl border border-gray-200 bg-white p-4 shadow-2xs transition hover:shadow-xs">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-            <FaCalendarAlt className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-xs font-medium text-gray-500">Established</p>
-            <p className="truncate text-sm font-bold text-gray-900 sm:text-base">
-              {formatDate(branch.created_at)}
             </p>
           </div>
         </div>
@@ -191,18 +152,11 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
               ))}
             </div>
           ) : (
-            <div className="rounded-lg border border-dashed border-gray-200 p-4 text-center">
-              <p className="text-xs text-gray-500">
-                No custom admin contacts added yet.
+            <div className="rounded-lg border border-dashed border-gray-200 p-6 text-center">
+              <FaUserShield className="mx-auto h-6 w-6 text-gray-300" />
+              <p className="mt-2 text-xs font-medium text-gray-500">
+                No custom admin contacts added yet
               </p>
-              {branch.creator && (
-                <p className="mt-1 text-xs text-gray-700">
-                  Branch Creator:{" "}
-                  <span className="font-semibold">
-                    {branch.creator.full_name}
-                  </span>
-                </p>
-              )}
             </div>
           )}
         </div>
@@ -255,39 +209,6 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
               </p>
             </div>
           )}
-        </div>
-
-        {/* Card 3: Metadata & History (spanning across bottom) */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-2xs md:col-span-2">
-          <div className="mb-4 flex items-center gap-2.5 border-b border-gray-100 pb-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
-              <FaClock className="h-4 w-4" />
-            </div>
-            <h2 className="text-base font-bold text-gray-900">
-              Branch Metadata
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div className="rounded-lg bg-gray-50/80 p-3">
-              <p className="text-xs font-medium text-gray-500">Created By</p>
-              <p className="mt-0.5 text-sm font-semibold text-gray-900">
-                {branch.creator?.full_name || "Branch Creator"}
-              </p>
-            </div>
-            <div className="rounded-lg bg-gray-50/80 p-3">
-              <p className="text-xs font-medium text-gray-500">Created On</p>
-              <p className="mt-0.5 text-sm font-semibold text-gray-900">
-                {formatDate(branch.created_at)}
-              </p>
-            </div>
-            <div className="rounded-lg bg-gray-50/80 p-3">
-              <p className="text-xs font-medium text-gray-500">Last Updated</p>
-              <p className="mt-0.5 text-sm font-semibold text-gray-900">
-                {formatDate(branch.updated_at || branch.created_at)}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
