@@ -82,7 +82,9 @@ const TransactionExpandedRow = ({
           {/* Notes */}
           {hasNotes && (
             <div className="flex items-start gap-2 rounded-lg border border-gray-200/80 bg-white p-2.5 shadow-xs">
-              <p className="font-medium text-gray-700">{entry.note}</p>
+              <p className="font-medium whitespace-pre-line text-gray-700">
+                {entry.note}
+              </p>
             </div>
           )}
 

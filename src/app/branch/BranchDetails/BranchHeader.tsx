@@ -337,7 +337,7 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
         {/* Row 4: Description */}
         {branch.description && (
           <div className="pt-1">
-            <p className="max-w-3xl text-xs leading-relaxed text-gray-600 sm:text-sm">
+            <p className="max-w-3xl text-xs leading-relaxed whitespace-pre-line text-gray-600 sm:text-sm">
               {branch.description}
             </p>
           </div>
