@@ -9,6 +9,9 @@ import type {
   FinanceMonthExportResponse,
   DeleteFinanceEntryResponse,
   CreateFinanceEntryRequest,
+  RecordFinancePaymentRequest,
+  RecordFinancePaymentResponse,
+  FinancePaymentsResponse,
 } from "../types";
 
 const getCategoriesList = async (branchId: string): Promise<CategoriesListResponse> => {
@@ -45,6 +48,7 @@ const getFinanceEntries = async (
   filters: {
     type?: string;
     category_id?: string;
+    payment_status?: string;
     page?: number;
     limit?: number;
     startDate?: string;
@@ -54,6 +58,7 @@ const getFinanceEntries = async (
   const params = new URLSearchParams();
   if (filters.type) params.append("type", filters.type);
   if (filters.category_id) params.append("category_id", filters.category_id);
+  if (filters.payment_status) params.append("payment_status", filters.payment_status);
   if (filters.page) params.append("page", String(filters.page));
   if (filters.limit) params.append("limit", String(filters.limit));
   if (filters.startDate) params.append("startDate", filters.startDate);
@@ -117,6 +122,28 @@ const updateFinanceEntry = async (
   return response.data;
 };
 
+const recordFinancePayment = async (
+  branchId: string,
+  entryId: string,
+  data: RecordFinancePaymentRequest
+): Promise<RecordFinancePaymentResponse> => {
+  const response = await api.post<RecordFinancePaymentResponse>(
+    `/branches/${branchId}/finance/${entryId}/payments`,
+    data
+  );
+  return response.data;
+};
+
+const getFinancePayments = async (
+  branchId: string,
+  entryId: string
+): Promise<FinancePaymentsResponse> => {
+  const response = await api.get<FinancePaymentsResponse>(
+    `/branches/${branchId}/finance/${entryId}/payments`
+  );
+  return response.data;
+};
+
 export const branchFinanceServices = {
   getCategoriesList,
   createCategory,
@@ -127,6 +154,8 @@ export const branchFinanceServices = {
   getFinanceMonthExport,
   updateFinanceEntry,
   deleteFinanceEntry,
+  recordFinancePayment,
+  getFinancePayments,
 };
 
 export default branchFinanceServices;

@@ -139,6 +139,31 @@ const useDeleteFinanceEntry = (branchId: string) => {
   });
 };
 
+const useRecordFinancePayment = (branchId: string, entryId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { amount: number; date: string; note?: string }) =>
+      branchFinanceServices.recordFinancePayment(branchId, entryId, data),
+    onSuccess: (response) => {
+      toast.success(response.message);
+      queryClient.invalidateQueries({ queryKey: [FINANCE_KEYS.ENTRIES, branchId] });
+      queryClient.invalidateQueries({ queryKey: [FINANCE_KEYS.SUMMARY, branchId] });
+      queryClient.invalidateQueries({ queryKey: [FINANCE_KEYS.CATEGORIES, branchId] });
+      queryClient.invalidateQueries({ queryKey: [FINANCE_KEYS.PAYMENTS, branchId, entryId] });
+    },
+    onError: handleMutationError("Failed to record payment"),
+  });
+};
+
+const useFinancePayments = (branchId: string, entryId: string, enabled = true) => {
+  return useQuery({
+    queryKey: [FINANCE_KEYS.PAYMENTS, branchId, entryId],
+    queryFn: () => branchFinanceServices.getFinancePayments(branchId, entryId),
+    enabled: enabled && !!branchId && !!entryId,
+  });
+};
+
 const financeHooks = {
   useCategoriesList,
   useCreateCategory,
@@ -149,6 +174,8 @@ const financeHooks = {
   useFinanceCategories,
   useFinanceMonthExport,
   useDeleteFinanceEntry,
+  useRecordFinancePayment,
+  useFinancePayments,
 };
 
 export default financeHooks;
@@ -162,5 +189,7 @@ export {
   useFinanceCategories,
   useFinanceMonthExport,
   useDeleteFinanceEntry,
+  useRecordFinancePayment,
+  useFinancePayments,
 };
 

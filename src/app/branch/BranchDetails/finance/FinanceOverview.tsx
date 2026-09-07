@@ -1,6 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useFinanceSummary } from "@/hooks/useBranchFinance";
-import { FaWallet, FaArrowUp, FaArrowDown, FaChartBar } from "react-icons/fa";
+import {
+  FaWallet,
+  FaArrowUp,
+  FaArrowDown,
+  FaChartBar,
+  FaHandHoldingUsd,
+  FaFileInvoiceDollar,
+} from "react-icons/fa";
 import { formatCurrency, getMonthName } from "./financeUtils";
 import {
   OverviewSkeleton,
@@ -20,7 +27,7 @@ const FinanceOverview = () => {
       icon: FaWallet,
       iconBg: "bg-blue-50 text-blue-600",
       amount: overall?.balance ?? 0,
-      subtext: "Net remaining fund",
+      subtext: "হাতে নগদ ফান্ড (Cash)",
       subtextColor: "text-gray-500",
     },
     {
@@ -28,7 +35,7 @@ const FinanceOverview = () => {
       icon: FaArrowUp,
       iconBg: "bg-green-50 text-green-600",
       amount: overall?.income ?? 0,
-      subtext: "All collections recorded",
+      subtext: "মোট আয়ের হিসাব",
       subtextColor: "text-green-600",
     },
     {
@@ -36,8 +43,24 @@ const FinanceOverview = () => {
       icon: FaArrowDown,
       iconBg: "bg-red-50 text-red-600",
       amount: overall?.expense ?? 0,
-      subtext: "All payouts recorded",
+      subtext: "মোট ব্যয়ের হিসাব",
       subtextColor: "text-red-600",
+    },
+    {
+      label: "Total Receivable",
+      icon: FaHandHoldingUsd,
+      iconBg: "bg-amber-50 text-amber-700",
+      amount: overall?.total_receivable ?? 0,
+      subtext: "বাকি টাকা আমি পাবো",
+      subtextColor: "text-amber-700",
+    },
+    {
+      label: "Total Payable",
+      icon: FaFileInvoiceDollar,
+      iconBg: "bg-rose-50 text-rose-700",
+      amount: overall?.total_payable ?? 0,
+      subtext: "বাকি টাকা আমাকে দিতে হবে",
+      subtextColor: "text-rose-700",
     },
   ];
 
@@ -53,18 +76,18 @@ const FinanceOverview = () => {
     >
       <div className="flex items-center justify-between">
         <h3 className="text-xs font-bold tracking-wider text-gray-500 uppercase sm:text-sm">
-          Financial Overview
+          Financial Overview (আর্থিক সংক্ষিপ্ত বিবরণী)
         </h3>
         <FetchingIndicator isFetching={isFetching} isLoading={isLoading} />
       </div>
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:gap-5">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-5 sm:gap-4">
         {metricCards.map((card, index) => {
           const Icon = card.icon;
           return (
             <div
               key={index}
-              className="rounded-xl border border-gray-100 bg-white p-4 shadow-xs sm:p-5"
+              className="rounded-xl border border-gray-100 bg-white p-4 shadow-xs transition-shadow hover:shadow-sm sm:p-5"
             >
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold tracking-wider text-gray-500 uppercase sm:text-xs">
@@ -95,7 +118,7 @@ const FinanceOverview = () => {
       <div className="space-y-3">
         <h3 className="flex items-center gap-2 text-xs font-bold tracking-wider text-gray-500 uppercase sm:text-sm">
           <FaChartBar className="h-4 w-4" />
-          Monthly Summary
+          Monthly Summary & Dues
         </h3>
 
         {monthlyStats.length === 0 ? (
@@ -108,6 +131,8 @@ const FinanceOverview = () => {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
             {monthlyStats.map((stat) => {
               const monthBalance = stat.income - stat.expense;
+              const hasDue = (stat.receivable ?? 0) > 0 || (stat.payable ?? 0) > 0;
+
               return (
                 <div
                   key={`${stat.year}-${stat.month}`}
@@ -132,7 +157,7 @@ const FinanceOverview = () => {
 
                   <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
                     {/* Monthly Totals */}
-                    <div className="mb-4 grid grid-cols-2 gap-4 border-b border-gray-50 pb-4">
+                    <div className="mb-3 grid grid-cols-2 gap-4 border-b border-gray-50 pb-3">
                       <div className="space-y-1">
                         <p className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">
                           Income
@@ -150,6 +175,24 @@ const FinanceOverview = () => {
                         </p>
                       </div>
                     </div>
+
+                    {/* Dues Status in Month if any */}
+                    {hasDue && (
+                      <div className="mb-3 flex items-center justify-between rounded-lg border border-amber-100 bg-amber-50/50 px-3 py-2 text-xs">
+                        {(stat.receivable ?? 0) > 0 && (
+                          <div className="text-amber-900">
+                            <span className="text-[10px] font-semibold opacity-75">আমি পাবো:</span>{" "}
+                            <span className="font-bold">{formatCurrency(stat.receivable || 0)}</span>
+                          </div>
+                        )}
+                        {(stat.payable ?? 0) > 0 && (
+                          <div className="text-rose-900">
+                            <span className="text-[10px] font-semibold opacity-75">আমাকে দিতে হবে:</span>{" "}
+                            <span className="font-bold">{formatCurrency(stat.payable || 0)}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {/* Monthly Category Breakdown */}
                     <div className="space-y-2.5">

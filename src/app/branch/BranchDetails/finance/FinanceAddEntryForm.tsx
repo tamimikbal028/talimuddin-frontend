@@ -24,6 +24,12 @@ import type { FinanceEntry } from "@/types";
 const entrySchema = z.object({
   type: z.enum(["INCOME", "EXPENSE"]),
   amount: z.coerce.number().positive("Amount must be greater than 0"),
+  total_amount: z.coerce.number().optional(),
+  paid_amount: z.coerce
+    .number()
+    .min(0, "Paid amount cannot be negative")
+    .optional(),
+  payment_status: z.enum(["PAID", "PARTIAL", "DUE"]).default("PAID"),
   category_id: z.string().trim().min(1, "Category is required"),
   note: z.string().trim().optional(),
   date: z.string().min(1, "Date is required"),
@@ -85,6 +91,7 @@ const FinanceAddEntryForm = ({
     resolver: zodResolver(entrySchema) as Resolver<EntryFormData>,
     defaultValues: {
       type: "INCOME",
+      payment_status: "PAID",
       date: new Date().toISOString().split("T")[0],
       details: [],
     },
@@ -100,7 +107,9 @@ const FinanceAddEntryForm = ({
       if (entryToEdit) {
         reset({
           type: entryToEdit.type,
-          amount: entryToEdit.amount,
+          amount: entryToEdit.total_amount ?? entryToEdit.amount,
+          paid_amount: entryToEdit.paid_amount ?? entryToEdit.amount,
+          payment_status: entryToEdit.payment_status || "PAID",
           category_id: entryToEdit.category?.id || "",
           date: entryToEdit.date
             ? new Date(entryToEdit.date).toISOString().split("T")[0]
@@ -114,6 +123,8 @@ const FinanceAddEntryForm = ({
         reset({
           type: "INCOME",
           amount: undefined,
+          paid_amount: undefined,
+          payment_status: "PAID",
           category_id: "",
           date: new Date().toISOString().split("T")[0],
           note: "",
@@ -130,6 +141,9 @@ const FinanceAddEntryForm = ({
   if (!isOpen) return null;
 
   const selectedType = watch("type");
+  const selectedPaymentStatus = watch("payment_status") || "PAID";
+  const enteredAmount = watch("amount");
+  const enteredPaidAmount = watch("paid_amount");
 
   // Filter categories by selected type (INCOME / EXPENSE)
   const filteredCategories = categories.filter(
@@ -160,9 +174,25 @@ const FinanceAddEntryForm = ({
   };
 
   const onSubmit = (data: EntryFormData) => {
+    const totalAmount = data.amount;
+    let paidAmount = totalAmount;
+    let dueAmount = 0;
+
+    if (data.payment_status === "DUE") {
+      paidAmount = 0;
+      dueAmount = totalAmount;
+    } else if (data.payment_status === "PARTIAL") {
+      paidAmount = Number(data.paid_amount || 0);
+      dueAmount = Math.max(0, totalAmount - paidAmount);
+    }
+
     const payload = {
       type: data.type,
-      amount: data.amount,
+      amount: totalAmount,
+      total_amount: totalAmount,
+      paid_amount: paidAmount,
+      due_amount: dueAmount,
+      payment_status: data.payment_status,
       category_id: data.category_id,
       note: data.note || undefined,
       date: data.date,
@@ -187,6 +217,7 @@ const FinanceAddEntryForm = ({
         onSuccess: () => {
           reset({
             type: "INCOME",
+            payment_status: "PAID",
             date: new Date().toISOString().split("T")[0],
             details: [],
           });
@@ -289,7 +320,7 @@ const FinanceAddEntryForm = ({
               {/* Amount field */}
               <div>
                 <label className="mb-1.5 block text-xs font-semibold text-gray-600">
-                  Amount (BDT) *
+                  Amount *
                 </label>
                 <input
                   type="number"
@@ -370,6 +401,138 @@ const FinanceAddEntryForm = ({
                   <p className="mt-1 text-xs text-red-600">
                     {errors.category_id.message}
                   </p>
+                )}
+              </div>
+
+              {/* Payment Status: PAID / PARTIAL / DUE */}
+              <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-3.5 sm:col-span-2">
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="text-xs font-bold text-gray-700">
+                    পরিশোধের অবস্থা (Payment Status)
+                  </label>
+                  <span className="text-[11px] text-gray-500">
+                    {selectedType === "INCOME"
+                      ? selectedPaymentStatus === "PAID"
+                        ? "নগদ আদায়"
+                        : "বাকি (আমি পাবো)"
+                      : selectedPaymentStatus === "PAID"
+                        ? "নগদ পরিশোধ"
+                        : "বাকি (আমাকে দিতে হবে)"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    {
+                      value: "PAID",
+                      label:
+                        selectedType === "INCOME"
+                          ? "সম্পূর্ণ আদায়"
+                          : "সম্পূর্ণ পরিশোধ",
+                      desc:
+                        selectedType === "INCOME"
+                          ? "নগদ পাওয়া গেছে"
+                          : "নগদ দেওয়া হয়েছে",
+                      activeColor:
+                        "border-green-500 bg-green-50 text-green-800 ring-2 ring-green-500/20",
+                    },
+                    {
+                      value: "PARTIAL",
+                      label: "আংশিক বাকি",
+                      desc:
+                        selectedType === "INCOME"
+                          ? "কিছু আদায়, বাকি আমি পাবো"
+                          : "কিছু পরিশোধ, বাকি আমাকে দিতে হবে",
+                      activeColor:
+                        "border-amber-500 bg-amber-50 text-amber-800 ring-2 ring-amber-500/20",
+                    },
+                    {
+                      value: "DUE",
+                      label: "সম্পূর্ণ বাকি",
+                      desc:
+                        selectedType === "INCOME"
+                          ? "টাকা দেয়নি (আমি পাবো)"
+                          : "টাকা দিইনি (আমাকে দিতে হবে)",
+                      activeColor:
+                        "border-red-500 bg-red-50 text-red-800 ring-2 ring-red-500/20",
+                    },
+                  ].map((item) => (
+                    <label
+                      key={item.value}
+                      className={`flex cursor-pointer flex-col rounded-xl border-2 p-2 text-center transition-all ${
+                        selectedPaymentStatus === item.value
+                          ? `${item.activeColor} font-bold shadow-xs`
+                          : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        value={item.value}
+                        {...register("payment_status")}
+                        className="sr-only"
+                        onChange={(e) => {
+                          register("payment_status").onChange(e);
+                          if (e.target.value === "PAID") {
+                            setValue("paid_amount", undefined);
+                          } else if (e.target.value === "DUE") {
+                            setValue("paid_amount", 0);
+                          }
+                        }}
+                      />
+                      <span className="text-xs">{item.label}</span>
+                      <span className="mt-0.5 text-[10px] font-normal opacity-75">
+                        {item.desc}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                {/* If PARTIAL, show Paid Amount input & calculated Due */}
+                {selectedPaymentStatus === "PARTIAL" && (
+                  <div className="mt-3 grid grid-cols-2 gap-3 border-t border-gray-200/70 pt-3">
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-gray-700">
+                        {selectedType === "INCOME"
+                          ? "নগদ আদায়কৃত টাকা (Received) *"
+                          : "নগদ প্রদত্ত টাকা (Paid Amount) *"}
+                      </label>
+                      <input
+                        type="number"
+                        step="any"
+                        {...register("paid_amount")}
+                        placeholder="e.g. 200"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-bold text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-gray-700">
+                        {selectedType === "INCOME"
+                          ? "অবশিষ্ট টাকা আমি পাবো"
+                          : "অবশিষ্ট টাকা আমাকে দিতে হবে"}
+                      </label>
+                      <div className="flex h-8.5 items-center rounded-lg border border-amber-200 bg-amber-100/60 px-3 text-xs font-black text-amber-950">
+                        {Math.max(
+                          0,
+                          (Number(enteredAmount) || 0) -
+                            (Number(enteredPaidAmount) || 0)
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* If DUE, show full amount is due */}
+                {selectedPaymentStatus === "DUE" && (
+                  <div className="mt-2.5 flex items-center justify-between rounded-lg bg-red-50 px-3 py-2 text-xs text-red-800">
+                    <span className="font-medium">
+                      সম্পূর্ণ{" "}
+                      {selectedType === "INCOME"
+                        ? "আমি পাবো:"
+                        : "আমাকে দিতে হবে:"}
+                    </span>
+                    <span className="font-bold">
+                      {Number(enteredAmount) || 0}
+                    </span>
+                  </div>
                 )}
               </div>
 
@@ -465,7 +628,7 @@ const FinanceAddEntryForm = ({
                   <div className="flex items-center gap-2 border-b border-gray-100 bg-gray-50/80 px-3 py-2 text-[10px] font-bold tracking-wider text-gray-500 uppercase">
                     <div className="min-w-0 flex-1">Item Name</div>
                     <div className="w-24 shrink-0 text-right sm:w-32">
-                      Amount (BDT)
+                      Amount
                     </div>
                     <div className="w-7 shrink-0"></div>
                   </div>
@@ -524,8 +687,7 @@ const FinanceAddEntryForm = ({
                           (acc, item) => acc + (Number(item?.amount) || 0),
                           0
                         )
-                        .toLocaleString()}{" "}
-                      BDT
+                        .toLocaleString()}
                     </span>
                   </div>
                 </div>

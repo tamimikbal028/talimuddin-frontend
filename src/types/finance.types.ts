@@ -13,11 +13,25 @@ export interface FinanceDetailItem {
   amount: number;
 }
 
+export interface FinancePayment {
+  id: string;
+  finance_id: string;
+  amount: number;
+  payment_date: string;
+  note: string;
+  created_at: string;
+  recorded_by?: User;
+}
+
 export interface FinanceEntry {
   id: string;
   branch_id: string;
   type: "INCOME" | "EXPENSE";
   amount: number;
+  total_amount?: number;
+  paid_amount?: number;
+  due_amount?: number;
+  payment_status?: "PAID" | "PARTIAL" | "DUE";
   category_id: string;
   note: string;
   date: string;
@@ -37,6 +51,10 @@ export interface FinanceOverallSummary {
   income: number;
   expense: number;
   balance: number;
+  total_cash_in?: number;
+  total_cash_out?: number;
+  total_receivable?: number;
+  total_payable?: number;
 }
 
 export interface FinanceCategoryBreakdown {
@@ -46,6 +64,8 @@ export interface FinanceCategoryBreakdown {
   income: number;
   expense: number;
   balance: number;
+  paid?: number;
+  due?: number;
   count: number;
 }
 
@@ -54,10 +74,17 @@ export interface FinanceMonthlyStat {
   month: number;
   income: number;
   expense: number;
+  cash_in?: number;
+  cash_out?: number;
+  balance?: number;
+  receivable?: number;
+  payable?: number;
   breakdown: Array<{
     category: string;
     type: "INCOME" | "EXPENSE";
     total: number;
+    paid?: number;
+    due?: number;
     count: number;
   }>;
 }
@@ -75,12 +102,41 @@ export interface FinanceSummaryResponse {
 export interface CreateFinanceEntryRequest {
   type: "INCOME" | "EXPENSE";
   amount: number;
+  total_amount?: number;
+  paid_amount?: number;
+  due_amount?: number;
+  payment_status?: "PAID" | "PARTIAL" | "DUE";
   category_id: string;
   note?: string;
   date: string;
   personName?: string;
   personPhone?: string;
   details?: FinanceDetailItem[];
+}
+
+export interface RecordFinancePaymentRequest {
+  amount: number;
+  date: string;
+  note?: string;
+}
+
+export interface RecordFinancePaymentResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    entry: FinanceEntry;
+    payment: FinancePayment;
+  };
+}
+
+export interface FinancePaymentsResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    payments: FinancePayment[];
+  };
 }
 
 export interface CategoriesListResponse {

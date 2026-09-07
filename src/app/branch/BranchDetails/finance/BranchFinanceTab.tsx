@@ -5,7 +5,7 @@ import FinanceTransactions from "./FinanceTransactions";
 import FinanceCategories from "./FinanceCategories";
 import FinanceOverview from "./FinanceOverview";
 
-type SubTab = "TRANSACTIONS" | "CATEGORIES" | "OVERVIEW" | "DOWNLOADS";
+type SubTab = "TRANSACTIONS" | "OVERVIEW" | "CATEGORIES" | "DOWNLOADS";
 
 const BranchFinanceTab = () => {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>("TRANSACTIONS");
@@ -39,8 +39,8 @@ const BranchFinanceTab = () => {
             {(
               [
                 { id: "TRANSACTIONS", label: "Transactions" },
-                { id: "CATEGORIES", label: "Categories" },
                 { id: "OVERVIEW", label: "Overview & Reports" },
+                { id: "CATEGORIES", label: "Categories" },
                 { id: "DOWNLOADS", label: "Monthly Statement" },
               ] as const
             ).map((tab) => (
@@ -61,8 +61,8 @@ const BranchFinanceTab = () => {
       </div>
 
       {activeSubTab === "TRANSACTIONS" && <FinanceTransactions />}
-      {activeSubTab === "CATEGORIES" && <FinanceCategories />}
       {activeSubTab === "OVERVIEW" && <FinanceOverview />}
+      {activeSubTab === "CATEGORIES" && <FinanceCategories />}
       {activeSubTab === "DOWNLOADS" && <FinanceExport />}
     </div>
   );

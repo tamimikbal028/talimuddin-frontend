@@ -7,6 +7,7 @@ import {
 } from "@/hooks/useBranchFinance";
 import branchHooks from "@/hooks/useBranch";
 import FinanceAddEntryForm from "./FinanceAddEntryForm";
+import CollectDueModal from "./CollectDueModal";
 import { confirmDelete } from "@/utils/sweetAlert";
 import { formatCurrency, getMonthName } from "./financeUtils";
 import {
@@ -20,6 +21,7 @@ import {
   FaEdit,
   FaChevronDown,
   FaChevronUp,
+  FaMoneyBillWave,
 } from "react-icons/fa";
 
 const FinanceTransactions = () => {
@@ -34,10 +36,17 @@ const FinanceTransactions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<FinanceEntry | null>(null);
 
+  // State for collecting/paying due modal
+  const [isDueModalOpen, setIsDueModalOpen] = useState(false);
+  const [selectedDueEntry, setSelectedDueEntry] = useState<FinanceEntry | null>(
+    null
+  );
+
   // Pagination & Filtering state
   const [page, setPage] = useState(1);
   const [type, setType] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string>("");
+  const [paymentStatus, setPaymentStatus] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
@@ -53,6 +62,7 @@ const FinanceTransactions = () => {
   const filters = {
     type: type || undefined,
     category_id: categoryId || undefined,
+    payment_status: paymentStatus || undefined,
     page,
     limit,
     startDate: startDate || undefined,
@@ -115,7 +125,7 @@ const FinanceTransactions = () => {
 
       {/* Filters Bar */}
       <div className="rounded-xl border border-gray-100 bg-white p-3 shadow-xs sm:p-4">
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
           {/* Type Filter */}
           <div>
             <label className="mb-1 block text-[10px] font-bold tracking-wider text-gray-400 uppercase">
@@ -154,6 +164,27 @@ const FinanceTransactions = () => {
                   {cat.name} ({cat.type === "INCOME" ? "Income" : "Expense"})
                 </option>
               ))}
+            </select>
+          </div>
+
+          {/* Payment Status Filter */}
+          <div>
+            <label className="mb-1 block text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+              Status
+            </label>
+            <select
+              value={paymentStatus}
+              onChange={(e) => {
+                setPaymentStatus(e.target.value);
+                setPage(1);
+              }}
+              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+            >
+              <option value="">All Statuses</option>
+              <option value="PAID">পরিশোধিত (Paid)</option>
+              <option value="HAS_DUE">সকল বকেয়া (Has Due)</option>
+              <option value="PARTIAL">আংশিক বাকি (Partial)</option>
+              <option value="DUE">সম্পূর্ণ বাকি (Full Due)</option>
             </select>
           </div>
 
@@ -204,16 +235,17 @@ const FinanceTransactions = () => {
           </div>
 
           {/* Clear Filters */}
-          <div className="col-span-2 flex items-end lg:col-span-1">
+          <div className="col-span-2 flex items-end sm:col-span-1">
             <button
               onClick={() => {
                 setType("");
                 setCategoryId("");
+                setPaymentStatus("");
                 setStartDate("");
                 setEndDate("");
                 setPage(1);
               }}
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-100"
+              className="w-full cursor-pointer rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-100"
             >
               Clear Filters
             </button>
@@ -260,23 +292,26 @@ const FinanceTransactions = () => {
                   const isExpanded = expandedRows[entry.id];
                   const hasDetails = entry.details && entry.details.length > 0;
                   const hasNotes = !!entry.note;
+                  const hasDue =
+                    (entry.due_amount !== undefined && entry.due_amount > 0) ||
+                    entry.payment_status === "PARTIAL" ||
+                    entry.payment_status === "DUE";
+                  const canExpand = hasDetails || hasNotes || hasDue;
 
                   return (
                     <Fragment key={entry.id}>
                       <tr
                         onClick={() => {
-                          if (hasDetails || hasNotes) {
+                          if (canExpand) {
                             toggleRow(entry.id);
                           }
                         }}
                         className={`border-b border-gray-200/80 transition-colors ${
-                          hasDetails || hasNotes
+                          canExpand
                             ? "cursor-pointer select-none hover:bg-gray-50/90"
                             : "hover:bg-gray-50/50"
                         } ${
-                          isExpanded && (hasDetails || hasNotes)
-                            ? "bg-blue-50/30"
-                            : ""
+                          isExpanded && canExpand ? "bg-blue-50/30" : ""
                         }`}
                       >
                         {/* Date */}
@@ -284,20 +319,35 @@ const FinanceTransactions = () => {
                           {formatDate(entry.date)}
                         </td>
 
-                        {/* Category */}
+                        {/* Category & Status */}
                         <td className="border-b border-gray-200/80 px-3 py-3.5 whitespace-nowrap sm:px-5">
                           <span className="block font-semibold text-gray-900">
                             {entry.category?.name}
                           </span>
-                          <span
-                            className={`mt-0.5 inline-block rounded-full px-2 py-0.5 text-[9px] font-bold sm:text-[10px] ${
-                              entry.type === "INCOME"
-                                ? "bg-green-50 text-green-700"
-                                : "bg-red-50 text-red-700"
-                            }`}
-                          >
-                            {entry.type === "INCOME" ? "Income" : "Expense"}
-                          </span>
+                          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                            <span
+                              className={`inline-block rounded-full px-2 py-0.5 text-[9px] font-bold sm:text-[10px] ${
+                                entry.type === "INCOME"
+                                  ? "bg-green-50 text-green-700"
+                                  : "bg-red-50 text-red-700"
+                              }`}
+                            >
+                              {entry.type === "INCOME" ? "Income" : "Expense"}
+                            </span>
+                            {entry.payment_status === "PARTIAL" ? (
+                              <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[9px] font-bold text-amber-800 sm:text-[10px]">
+                                আংশিক বাকি: {formatCurrency(entry.due_amount || 0)}
+                              </span>
+                            ) : entry.payment_status === "DUE" ? (
+                              <span className="inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[9px] font-bold text-rose-800 sm:text-[10px]">
+                                সম্পূর্ণ বাকি
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 sm:text-[10px]">
+                                পরিশোধিত
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         {/* Person Name / Details */}
@@ -326,31 +376,76 @@ const FinanceTransactions = () => {
                               : "text-red-600"
                           }`}
                         >
-                          {entry.type === "INCOME" ? "+" : "-"}
-                          {formatCurrency(entry.amount)}
+                          <div>
+                            <span>
+                              {entry.type === "INCOME" ? "+" : "-"}
+                              {formatCurrency(entry.total_amount ?? entry.amount)}
+                            </span>
+                            {entry.payment_status === "PARTIAL" && (
+                              <p className="mt-0.5 text-[10px] font-semibold text-amber-700">
+                                {entry.type === "INCOME" ? "আদায়: " : "প্রদত্ত: "}
+                                {formatCurrency(entry.paid_amount ?? 0)}
+                              </p>
+                            )}
+                            {entry.payment_status === "DUE" && (
+                              <p className="mt-0.5 text-[10px] font-semibold text-rose-600">
+                                {entry.type === "INCOME" ? "আমি পাবো" : "আমাকে দিতে হবে"}
+                              </p>
+                            )}
+                          </div>
                         </td>
 
                         {/* Actions */}
                         <td className="border-b border-gray-200/80 px-3 py-3.5 text-center whitespace-nowrap sm:px-5">
-                          <div className="flex items-center justify-center gap-2 sm:gap-3">
-                            {(hasDetails || hasNotes) && (
+                          <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                            {/* Slot 1: Due Action button or fixed width spacer */}
+                            {canManageFinance && (
+                              hasDue ? (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedDueEntry(entry);
+                                    setIsDueModalOpen(true);
+                                  }}
+                                  className="flex h-7 w-[72px] shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[11px] font-bold text-amber-800 transition-colors hover:bg-amber-100"
+                                  title={
+                                    entry.type === "INCOME"
+                                      ? "বকেয়া আদায় করুন"
+                                      : "দেনা পরিশোধ করুন"
+                                  }
+                                >
+                                  <FaMoneyBillWave className="h-3 w-3 shrink-0 text-amber-600" />
+                                  <span>{entry.type === "INCOME" ? "আদায়" : "পরিশোধ"}</span>
+                                </button>
+                              ) : (
+                                <div className="h-7 w-[72px] shrink-0" />
+                              )
+                            )}
+
+                            {/* Slot 2: Expand Chevron button or fixed width spacer */}
+                            {canExpand ? (
                               <button
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   toggleRow(entry.id);
                                 }}
-                                className="cursor-pointer p-1 text-gray-400 transition-colors hover:text-gray-700"
+                                className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                                 title="View Details"
                               >
                                 {isExpanded ? (
-                                  <FaChevronUp className="h-3.5 w-3.5 text-blue-600 sm:h-4 sm:w-4" />
+                                  <FaChevronUp className="h-3.5 w-3.5 text-blue-600" />
                                 ) : (
-                                  <FaChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                  <FaChevronDown className="h-3.5 w-3.5" />
                                 )}
                               </button>
+                            ) : (
+                              <div className="h-7 w-7 shrink-0" />
                             )}
-                            {canManageFinance && (
+
+                            {/* Slot 3 & 4: Edit & Delete buttons */}
+                            {canManageFinance ? (
                               <>
                                 <button
                                   type="button"
@@ -359,10 +454,10 @@ const FinanceTransactions = () => {
                                     setEditingEntry(entry);
                                     setIsModalOpen(true);
                                   }}
-                                  className="cursor-pointer p-1 text-gray-400 transition-colors hover:text-blue-600"
+                                  className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
                                   title="Edit Transaction"
                                 >
-                                  <FaEdit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                  <FaEdit className="h-3.5 w-3.5" />
                                 </button>
                                 <button
                                   type="button"
@@ -370,14 +465,15 @@ const FinanceTransactions = () => {
                                     e.stopPropagation();
                                     handleDelete(entry);
                                   }}
-                                  className="cursor-pointer p-1 text-gray-400 transition-colors hover:text-red-600"
+                                  className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
                                   title="Delete Transaction"
                                 >
-                                  <FaTrash className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                  <FaTrash className="h-3.5 w-3.5" />
                                 </button>
                               </>
-                            )}
-                            {!canManageFinance && !hasDetails && !hasNotes && (
+                            ) : null}
+
+                            {!canManageFinance && !canExpand && (
                               <span className="text-gray-300">-</span>
                             )}
                           </div>
@@ -385,13 +481,71 @@ const FinanceTransactions = () => {
                       </tr>
 
                       {/* Expanded Row Detail view */}
-                      {isExpanded && (hasDetails || hasNotes) && (
+                      {isExpanded && canExpand && (
                         <tr className="border-b border-gray-200/80 bg-gray-50/40">
                           <td
                             colSpan={5}
                             className="border-b border-gray-200/80 px-4 py-3 sm:px-8"
                           >
                             <div className="space-y-3 text-xs">
+                              {/* Due status details card if has due */}
+                              {hasDue && (
+                                <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50/50 p-3 shadow-2xs">
+                                  <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+                                    <div>
+                                      <span className="text-[10px] font-bold text-gray-500 uppercase">
+                                        মোট মূল্য
+                                      </span>
+                                      <p className="font-bold text-gray-900">
+                                        {formatCurrency(
+                                          entry.total_amount ?? entry.amount
+                                        )}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="text-[10px] font-bold text-green-700 uppercase">
+                                        {entry.type === "INCOME" ? "নগদ আদায়" : "নগদ পরিশোধ"}
+                                      </span>
+                                      <p className="font-bold text-green-800">
+                                        {formatCurrency(
+                                          entry.paid_amount ?? 0
+                                        )}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="text-[10px] font-bold text-amber-800 uppercase">
+                                        {entry.type === "INCOME"
+                                          ? "অবশিষ্ট আমি পাবো"
+                                          : "অবশিষ্ট আমাকে দিতে হবে"}
+                                      </span>
+                                      <p className="text-sm font-black text-amber-950">
+                                        {formatCurrency(
+                                          entry.due_amount ?? 0
+                                        )}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  {canManageFinance && (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedDueEntry(entry);
+                                        setIsDueModalOpen(true);
+                                      }}
+                                      className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-amber-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-amber-700"
+                                    >
+                                      <FaMoneyBillWave className="h-3.5 w-3.5" />
+                                      <span>
+                                        {entry.type === "INCOME"
+                                          ? "বকেয়া আদায় (আমি পাবো)"
+                                          : "দেনা পরিশোধ (আমাকে দিতে হবে)"}
+                                      </span>
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+
                               {/* Notes */}
                               {hasNotes && (
                                 <div className="flex items-start gap-2 rounded-lg border border-gray-200/80 bg-white p-2.5 shadow-xs">
@@ -556,6 +710,17 @@ const FinanceTransactions = () => {
         onClose={() => {
           setIsModalOpen(false);
           setEditingEntry(null);
+        }}
+      />
+
+      {/* Collect or Pay Due Modal */}
+      <CollectDueModal
+        isOpen={isDueModalOpen}
+        branchId={branchId as string}
+        entry={selectedDueEntry}
+        onClose={() => {
+          setIsDueModalOpen(false);
+          setSelectedDueEntry(null);
         }}
       />
     </div>
