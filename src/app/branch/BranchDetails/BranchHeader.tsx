@@ -127,11 +127,6 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
             {branch.branch_type === "SUB" ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-semibold text-purple-700 sm:px-3 sm:py-1">
                 Sub Branch
-                {branch.parent_branch?.name && (
-                  <span className="font-normal text-purple-500">
-                    ({branch.parent_branch.name})
-                  </span>
-                )}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-700 sm:px-3 sm:py-1">
