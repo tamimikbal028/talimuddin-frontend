@@ -11,7 +11,7 @@ import {
   FaCodeBranch,
   FaSearch,
   FaTimes,
-  FaGlobe,
+  FaBuilding,
   FaUserCheck,
 } from "react-icons/fa";
 
@@ -40,8 +40,6 @@ const Branches = () => {
     fetchNextPage: fetchNextMyBranches,
     hasNextPage: hasNextMyBranches,
     isFetchingNextPage: isFetchingNextMyBranches,
-    isLoading: isMyBranchesLoading,
-    error: myBranchesError,
   } = branchHooks.useMyBranches();
 
   // All Branches Query
@@ -145,84 +143,53 @@ const Branches = () => {
       ) : (
         // Normal View: Section 1 (My Branches) + Section 2 (All Branches)
         <div className="space-y-8">
-          {/* SECTION 1: MY BRANCHES */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                  <FaUserCheck className="h-3.5 w-3.5" />
-                </div>
-                <h2 className="text-base font-bold text-gray-900 sm:text-lg">
-                  My Branches{" "}
-                  {myTotalDocs
-                    ? `(${myTotalDocs})`
-                    : myBranches.length
-                      ? `(${myBranches.length})`
-                      : ""}
-                </h2>
-              </div>
-              <span className="text-xs font-medium text-gray-400">
-                Branches where you are a member / admin
-              </span>
-            </div>
-
-            {isMyBranchesLoading ? (
-              <div className="xs:grid-cols-2 grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
-                {[...Array(BRANCH_LIMIT)].map((_, i) => (
-                  <BranchCardSkeleton key={i} />
-                ))}
-              </div>
-            ) : myBranchesError ? (
-              <ErrorState
-                message={
-                  myBranchesError instanceof Error
-                    ? myBranchesError.message
-                    : "Failed to load your branches"
-                }
-              />
-            ) : myBranches.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50/60 p-6 text-center">
-                <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-blue-50 text-blue-500">
-                  <FaCodeBranch className="h-5 w-5" />
-                </div>
-                <h3 className="mt-2.5 text-sm font-semibold text-gray-800">
-                  You haven't joined any branch yet
-                </h3>
-                <p className="mt-1 text-xs text-gray-500">
-                  Once an administrator adds you to a branch, it will appear
-                  here. Explore available branches below!
-                </p>
-              </div>
-            ) : (
-              <>
-                <div className="xs:grid-cols-2 grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
-                  {myBranches.map((b) => (
-                    <BranchCard key={b.id} branch={b} />
-                  ))}
-                  {isFetchingNextMyBranches &&
-                    [...Array(3)].map((_, i) => (
-                      <BranchCardSkeleton key={`my-skel-${i}`} />
-                    ))}
-                </div>
-
-                {hasNextMyBranches && (
-                  <div className="flex justify-center pt-2">
-                    <LoadMoreButton
-                      onClick={() => fetchNextMyBranches()}
-                      isLoading={isFetchingNextMyBranches}
-                    />
+          {/* SECTION 1: MY BRANCHES (Only shown if user has joined at least one branch) */}
+          {myBranches.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                    <FaUserCheck className="h-3.5 w-3.5" />
                   </div>
-                )}
-              </>
-            )}
-          </div>
+                  <h2 className="text-base font-bold text-gray-900 sm:text-lg">
+                    My Branches{" "}
+                    {myTotalDocs
+                      ? `(${myTotalDocs})`
+                      : `(${myBranches.length})`}
+                  </h2>
+                </div>
+                <span className="text-xs font-medium text-gray-400">
+                  Branches where you are a member / admin
+                </span>
+              </div>
+
+              <div className="xs:grid-cols-2 grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
+                {myBranches.map((b) => (
+                  <BranchCard key={b.id} branch={b} />
+                ))}
+                {isFetchingNextMyBranches &&
+                  [...Array(3)].map((_, i) => (
+                    <BranchCardSkeleton key={`my-skel-${i}`} />
+                  ))}
+              </div>
+
+              {hasNextMyBranches && (
+                <div className="flex justify-center pt-2">
+                  <LoadMoreButton
+                    onClick={() => fetchNextMyBranches()}
+                    isLoading={isFetchingNextMyBranches}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* SECTION 2: ALL BRANCHES */}
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
-                  <FaGlobe className="h-3.5 w-3.5" />
+                  <FaBuilding className="h-3.5 w-3.5" />
                 </div>
                 <h2 className="text-base font-bold text-gray-900 sm:text-lg">
                   All Branches{" "}
