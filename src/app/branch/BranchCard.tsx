@@ -21,9 +21,9 @@ const BranchCard = ({ branch }: Props) => {
         />
       </Link>
 
-      <div className="absolute top-0 right-0 left-0 bg-linear-to-b from-black/90 via-black/60 to-transparent p-3 text-white">
+      <div className="absolute top-0 right-0 left-0 bg-black/80 p-3 text-white">
         <Link to={`/branch/branches/${branch.id}`} className="block">
-          <p className="truncate text-sm font-bold text-white transition-colors group-hover:text-blue-200 sm:text-base">
+          <p className="truncate text-2xl font-bold text-white">
             {branch.name}
           </p>
         </Link>
