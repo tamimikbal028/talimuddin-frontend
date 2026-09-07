@@ -322,9 +322,9 @@ const FinanceTransactions = () => {
                           <span className="block font-semibold text-gray-900">
                             {entry.category?.name}
                           </span>
-                          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                          <div className="mt-1 flex items-center gap-1.5 whitespace-nowrap">
                             <span
-                              className={`inline-block rounded-full px-2 py-0.5 text-[9px] font-bold sm:text-[10px] ${
+                              className={`inline-block shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold sm:text-[10px] ${
                                 entry.type === "INCOME"
                                   ? "bg-green-50 text-green-700"
                                   : "bg-red-50 text-red-700"
@@ -333,16 +333,16 @@ const FinanceTransactions = () => {
                               {entry.type === "INCOME" ? "Income" : "Expense"}
                             </span>
                             {entry.payment_status === "PARTIAL" ? (
-                              <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[9px] font-bold text-amber-800 sm:text-[10px]">
+                              <span className="inline-flex shrink-0 items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[9px] font-bold text-amber-800 sm:text-[10px]">
                                 আংশিক বাকি:{" "}
                                 {formatCurrency(entry.due_amount || 0)}
                               </span>
                             ) : entry.payment_status === "DUE" ? (
-                              <span className="inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[9px] font-bold text-rose-800 sm:text-[10px]">
+                              <span className="inline-flex shrink-0 items-center rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[9px] font-bold text-rose-800 sm:text-[10px]">
                                 সম্পূর্ণ বাকি
                               </span>
                             ) : (
-                              <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 sm:text-[10px]">
+                              <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 sm:text-[10px]">
                                 পরিশোধিত
                               </span>
                             )}
