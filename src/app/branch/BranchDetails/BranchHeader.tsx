@@ -180,7 +180,7 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
             </div>
 
             {/* 3-dot Action Menu */}
-            {(meta.is_creator || meta.is_admin || meta.is_admin_user) && (
+            {(meta.is_admin || meta.is_admin_user) && (
               <div className="relative shrink-0" ref={menuRef}>
                 <button
                   ref={buttonRef}
@@ -212,7 +212,7 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
                         </button>
                       )}
 
-                      {(meta.is_creator || meta.is_admin) && (
+                      {(meta.is_admin || meta.is_admin_user) && (
                         <Link
                           to={`/branch/branches/${branch.id}/edit`}
                           className="flex w-full items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
@@ -223,7 +223,7 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
                         </Link>
                       )}
 
-                      {(meta.is_creator || meta.is_admin_user) && (
+                      {meta.is_admin_user && (
                         <button
                           onClick={handleDelete}
                           disabled={isDeleting}

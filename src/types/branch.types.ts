@@ -26,17 +26,12 @@ export interface BranchListItem {
   id: string;
   name: string;
   cover_image: string | null;
-  creator: {
-    full_name: string;
-    user_name: string;
-  };
 }
 
 // Branch Meta (from getBranchDetails)
 export interface BranchMeta {
   is_member: boolean;
   is_admin_user: boolean;
-  is_creator: boolean;
   is_admin: boolean;
 }
 
@@ -55,7 +50,6 @@ export interface BranchMember {
     member_id: string;
     is_self: boolean;
     is_admin: boolean;
-    is_creator: boolean;
     is_manual?: boolean;
     joined_at: string;
     user_relation_status: string;
@@ -144,7 +138,6 @@ export interface CreateBranchResponse {
     branch: Branch;
     meta?: {
       is_member: boolean;
-      is_creator: boolean;
       is_admin: boolean;
     };
   };
@@ -186,7 +179,6 @@ export interface BranchMembersResponse {
     members: BranchMember[];
     pagination: Pagination;
     meta: {
-      is_creator: boolean;
       is_admin: boolean;
     };
   };

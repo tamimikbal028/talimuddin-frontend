@@ -66,15 +66,14 @@ const BranchDetails = () => {
           </div>
           <div className="mb-3 inline-block rounded-full bg-red-100 px-3 py-1">
             <span className="text-xs font-semibold text-red-700">
-              REASON: Branch Deleted by Creator
+              REASON: Branch Deleted
             </span>
           </div>
           <h2 className="mb-2 text-xl font-bold text-gray-900">
             Branch Deleted
           </h2>
           <p className="mb-6 text-gray-600">
-            This branch has been deleted by the creator and is no longer
-            available.
+            This branch has been deleted and is no longer available.
           </p>
           <Link
             to="/branch"
@@ -104,7 +103,7 @@ const BranchDetails = () => {
             <Route
               index
               element={
-                meta?.is_creator || meta?.is_admin || meta?.is_admin_user ? (
+                meta?.is_admin || meta?.is_admin_user ? (
                   <Navigate to="finance" replace />
                 ) : meta?.is_member ? (
                   <Navigate to="members" replace />
@@ -117,7 +116,7 @@ const BranchDetails = () => {
             {(meta?.is_member || meta?.is_admin_user) && (
               <Route path="members" element={<BranchMembersTab />} />
             )}
-            {(meta?.is_creator || meta?.is_admin || meta?.is_admin_user) && (
+            {(meta?.is_admin || meta?.is_admin_user) && (
               <Route path="finance/*" element={<BranchFinanceTab />} />
             )}
             <Route

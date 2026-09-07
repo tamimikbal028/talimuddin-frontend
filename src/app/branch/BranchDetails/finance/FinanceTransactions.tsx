@@ -5,6 +5,7 @@ import {
   useDeleteFinanceEntry,
   useCategoriesList,
 } from "@/hooks/useBranchFinance";
+import branchHooks from "@/hooks/useBranch";
 import FinanceAddEntryForm from "./FinanceAddEntryForm";
 import { confirmDelete } from "@/utils/sweetAlert";
 import { formatCurrency, getMonthName } from "./financeUtils";
@@ -23,6 +24,11 @@ import {
 
 const FinanceTransactions = () => {
   const { branchId } = useParams<{ branchId: string }>();
+
+  // Check if current user is branch admin
+  const { data: branchDetailsData } = branchHooks.useBranchDetails();
+  const meta = branchDetailsData?.data?.meta;
+  const canManageFinance = meta?.is_admin;
 
   // State for adding/editing entry modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,16 +99,18 @@ const FinanceTransactions = () => {
           </h3>
           <FetchingIndicator isFetching={isFetching} isLoading={isLoading} />
         </div>
-        <button
-          onClick={() => {
-            setEditingEntry(null);
-            setIsModalOpen(true);
-          }}
-          className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-98 sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm"
-        >
-          <FaPlus className="h-3.5 w-3.5" />
-          <span>Add Entry</span>
-        </button>
+        {canManageFinance && (
+          <button
+            onClick={() => {
+              setEditingEntry(null);
+              setIsModalOpen(true);
+            }}
+            className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-98 sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm"
+          >
+            <FaPlus className="h-3.5 w-3.5" />
+            <span>Add Entry</span>
+          </button>
+        )}
       </div>
 
       {/* Filters Bar */}

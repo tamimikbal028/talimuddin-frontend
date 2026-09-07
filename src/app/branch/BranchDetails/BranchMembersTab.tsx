@@ -29,7 +29,7 @@ const BranchMembersTab = () => {
   } = branchHooks.useBranchMembers(searchTerm);
 
   const members = (data?.pages.flatMap((page) => page.data.members) || [])
-    .filter((member) => !member.meta?.is_admin && !member.meta?.is_creator)
+    .filter((member) => !member.meta?.is_admin)
     .sort((a, b) => {
       const aSerial = a.serial_no;
       const bSerial = b.serial_no;
@@ -46,9 +46,8 @@ const BranchMembersTab = () => {
     return member.blood_group === selectedBloodGroup;
   });
 
-  const isCreator = data?.pages[0]?.data.meta?.is_creator ?? false;
   const isAdmin = data?.pages[0]?.data.meta?.is_admin ?? false;
-  const canAddMember = isCreator || isAdmin;
+  const canAddMember = isAdmin;
 
   const totalDocs =
     data?.pages[0]?.data.pagination?.totalDocs || members.length;

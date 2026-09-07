@@ -42,8 +42,8 @@ const EditBranchPage = () => {
 
   const { branch, meta } = branchData.data;
 
-  // Security: Only creator and admin can access
-  if (!meta.is_creator && !meta.is_admin) {
+  // Security: Only branch admin and app admin can access
+  if (!meta.is_admin && !meta.is_admin_user) {
     navigate(`/branch/branches/${branch.id}`);
     return null;
   }

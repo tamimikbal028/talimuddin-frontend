@@ -16,12 +16,12 @@ const BranchDetailsNavBar = ({
 
   const isMember = meta?.is_member || meta?.is_admin_user;
   const isManagement =
-    meta?.is_creator || meta?.is_admin || meta?.is_admin_user;
+    meta?.is_admin || meta?.is_admin_user;
 
   // Tabs list:
   // Non-members only see "Details" tab
   // Members see "Members" and "Details"
-  // Admins & Creators additionally see "Finance"
+  // Admins additionally see "Finance"
   const tabs = [
     ...(isManagement
       ? [

@@ -54,13 +54,6 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
   };
 
   const getRoleBadge = () => {
-    if (meta.is_creator) {
-      return (
-        <span className="shrink-0 rounded-full border border-purple-200/90 bg-purple-50 px-2.5 py-0.5 text-[10px] font-bold text-purple-700 shadow-2xs">
-          Creator
-        </span>
-      );
-    }
     if (meta.is_admin) {
       return (
         <span className="shrink-0 rounded-full border border-indigo-200/90 bg-indigo-50 px-2.5 py-0.5 text-[10px] font-bold text-indigo-700 shadow-2xs">
