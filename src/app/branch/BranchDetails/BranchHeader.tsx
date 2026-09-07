@@ -8,8 +8,12 @@ import {
   FaExternalLinkAlt,
   FaUserShield,
   FaPhoneAlt,
+  FaShareAlt,
+  FaWhatsapp,
+  FaLink,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import type { Branch, BranchMeta } from "@/types";
 import branchHooks from "@/hooks/useBranch";
 import confirm from "@/utils/sweetAlert";
@@ -36,6 +40,49 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
     toggle: toggleMenu,
     close: closeMenu,
   } = dropdownHooks.useDropdown();
+
+  const {
+    isOpen: showShareMenu,
+    openUpward: openShareUpward,
+    menuRef: shareMenuRef,
+    triggerRef: shareButtonRef,
+    toggle: toggleShareMenu,
+    close: closeShareMenu,
+  } = dropdownHooks.useDropdown();
+
+  const handleWhatsAppShare = () => {
+    closeShareMenu();
+    const text = `Check out ${branch.name} on Talimuddin:\n${window.location.href}`;
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleCopyLink = async () => {
+    closeShareMenu();
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success("Branch link copied to clipboard!");
+    } catch {
+      toast.error("Failed to copy link");
+    }
+  };
+
+  const hasNativeShare = typeof navigator !== "undefined" && !!navigator.share;
+
+  const handleNativeShare = async () => {
+    closeShareMenu();
+    try {
+      await navigator.share({
+        title: branch.name,
+        text: `Check out ${branch.name} on Talimuddin Academy`,
+        url: window.location.href,
+      });
+    } catch (err: unknown) {
+      if ((err as Error)?.name !== "AbortError") {
+        console.error("Native share failed", err);
+      }
+    }
+  };
 
   const handleDelete = async () => {
     closeMenu();
@@ -75,67 +122,125 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
             </div>
           </div>
 
-          {/* 3-dot Action Menu */}
-          {(meta.is_creator || meta.is_admin || meta.is_admin_user) && (
-            <div className="relative shrink-0" ref={menuRef}>
+          {/* Action Buttons: Share + 3-dot Menu */}
+          <div className="flex shrink-0 items-center gap-2">
+            {/* Share Menu */}
+            <div className="relative" ref={shareMenuRef}>
               <button
-                ref={buttonRef}
-                onClick={toggleMenu}
-                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-gray-200/80 bg-white text-gray-600 shadow-2xs transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 hover:shadow-xs active:scale-95 sm:h-10 sm:w-10"
-                title="More actions"
+                ref={shareButtonRef}
+                onClick={toggleShareMenu}
+                className="group flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border border-gray-200/80 bg-white px-2.5 text-xs font-semibold text-gray-700 shadow-2xs transition-all duration-200 hover:border-blue-300 hover:bg-blue-50/80 hover:text-blue-600 hover:shadow-xs active:scale-95 sm:h-10 sm:px-3.5 sm:text-sm"
+                title="Share branch"
               >
-                <FaEllipsisH className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <FaShareAlt className="h-3.5 w-3.5 text-blue-600 transition-transform duration-200 group-hover:scale-110" />
+                <span className="hidden sm:inline">Share</span>
               </button>
 
-              {showMenu && (
+              {showShareMenu && (
                 <div
-                  className={`absolute right-0 z-50 w-52 rounded-2xl border border-gray-200/90 bg-white p-1.5 shadow-xl ${
-                    openUpward ? "bottom-full mb-2" : "top-full mt-2"
+                  className={`absolute right-0 z-50 w-48 rounded-2xl border border-gray-200/90 bg-white p-1.5 shadow-xl ${
+                    openShareUpward ? "bottom-full mb-2" : "top-full mt-2"
                   } animate-in fade-in zoom-in-95 duration-150`}
                 >
                   <div className="space-y-0.5">
-                    {meta.is_admin_user && (
+                    {/* Share on WhatsApp */}
+                    <button
+                      type="button"
+                      onClick={handleWhatsAppShare}
+                      className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                    >
+                      <FaWhatsapp className="h-4 w-4 shrink-0 text-emerald-600" />
+                      <span>Share on WhatsApp</span>
+                    </button>
+
+                    {/* Copy Link */}
+                    <button
+                      type="button"
+                      onClick={handleCopyLink}
+                      className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      <FaLink className="h-3.5 w-3.5 shrink-0 text-blue-600" />
+                      <span>Copy Link</span>
+                    </button>
+
+                    {/* Native Share on supported devices */}
+                    {hasNativeShare && (
                       <button
                         type="button"
-                        onClick={() => {
-                          closeMenu();
-                          setIsAddAdminModalOpen(true);
-                        }}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
+                        onClick={handleNativeShare}
+                        className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-purple-50 hover:text-purple-700"
                       >
-                        <FaUserShield className="h-4 w-4 shrink-0 text-blue-600" />
-                        <span>Add Branch Admin</span>
-                      </button>
-                    )}
-
-                    {(meta.is_creator || meta.is_admin) && (
-                      <Link
-                        to={`/branch/branches/${branch.id}/edit`}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
-                        onClick={closeMenu}
-                      >
-                        <FaEdit className="h-4 w-4 shrink-0 text-gray-500" />
-                        <span>Edit Branch</span>
-                      </Link>
-                    )}
-
-                    {(meta.is_creator || meta.is_admin_user) && (
-                      <button
-                        onClick={handleDelete}
-                        disabled={isDeleting}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-xs font-medium text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        <FaTrash className="h-4 w-4 shrink-0 text-red-500" />
-                        <span>
-                          {isDeleting ? "Deleting..." : "Delete Branch"}
-                        </span>
+                        <FaShareAlt className="h-3.5 w-3.5 shrink-0 text-purple-600" />
+                        <span>More Options...</span>
                       </button>
                     )}
                   </div>
                 </div>
               )}
             </div>
-          )}
+
+            {/* 3-dot Action Menu */}
+            {(meta.is_creator || meta.is_admin || meta.is_admin_user) && (
+              <div className="relative shrink-0" ref={menuRef}>
+                <button
+                  ref={buttonRef}
+                  onClick={toggleMenu}
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-gray-200/80 bg-white text-gray-600 shadow-2xs transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 hover:shadow-xs active:scale-95 sm:h-10 sm:w-10"
+                  title="More actions"
+                >
+                  <FaEllipsisH className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </button>
+
+                {showMenu && (
+                  <div
+                    className={`absolute right-0 z-50 w-52 rounded-2xl border border-gray-200/90 bg-white p-1.5 shadow-xl ${
+                      openUpward ? "bottom-full mb-2" : "top-full mt-2"
+                    } animate-in fade-in zoom-in-95 duration-150`}
+                  >
+                    <div className="space-y-0.5">
+                      {meta.is_admin_user && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            closeMenu();
+                            setIsAddAdminModalOpen(true);
+                          }}
+                          className="flex w-full items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
+                        >
+                          <FaUserShield className="h-4 w-4 shrink-0 text-blue-600" />
+                          <span>Add Branch Admin</span>
+                        </button>
+                      )}
+
+                      {(meta.is_creator || meta.is_admin) && (
+                        <Link
+                          to={`/branch/branches/${branch.id}/edit`}
+                          className="flex w-full items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                          onClick={closeMenu}
+                        >
+                          <FaEdit className="h-4 w-4 shrink-0 text-gray-500" />
+                          <span>Edit Branch</span>
+                        </Link>
+                      )}
+
+                      {(meta.is_creator || meta.is_admin_user) && (
+                        <button
+                          onClick={handleDelete}
+                          disabled={isDeleting}
+                          className="flex w-full items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-xs font-medium text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <FaTrash className="h-4 w-4 shrink-0 text-red-500" />
+                          <span>
+                            {isDeleting ? "Deleting..." : "Delete Branch"}
+                          </span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Row 2: Badges (Branch Type + Location) */}

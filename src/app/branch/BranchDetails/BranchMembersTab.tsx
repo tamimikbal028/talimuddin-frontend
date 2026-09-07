@@ -4,16 +4,18 @@ import {
   HiUsers,
   HiMagnifyingGlass,
 } from "react-icons/hi2";
-import { FaUserPlus } from "react-icons/fa";
+import { FaUserPlus, FaTint } from "react-icons/fa";
 import BranchMemberCard from "@/app/branch/BranchDetails/BranchMemberCard";
 import AddEditMemberModal from "@/app/branch/BranchDetails/AddEditMemberModal";
 import FriendCardSkeleton from "@/app/shared/LoadingSkeleton/FriendCardSkeleton";
 import branchHooks from "@/hooks/useBranch";
 import LoadMoreButton from "@/app/shared/Button/LoadMoreButton";
+import { BLOOD_GROUPS } from "@/constants";
 import type { BranchMember } from "@/types";
 
 const BranchMembersTab = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBloodGroup, setSelectedBloodGroup] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [memberToEdit, setMemberToEdit] = useState<BranchMember | null>(null);
 
@@ -38,6 +40,12 @@ const BranchMembersTab = () => {
       if (bSerial != null) return 1;
       return 0;
     });
+
+  const filteredMembers = members.filter((member) => {
+    if (!selectedBloodGroup) return true;
+    return member.blood_group === selectedBloodGroup;
+  });
+
   const isCreator = data?.pages[0]?.data.meta?.is_creator ?? false;
   const isAdmin = data?.pages[0]?.data.meta?.is_admin ?? false;
   const canAddMember = isCreator || isAdmin;
@@ -93,7 +101,9 @@ const BranchMembersTab = () => {
               Students
             </h2>
             <span className="inline-flex items-center rounded-full border border-blue-200/80 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 sm:px-2.5">
-              {totalDocs}
+              {selectedBloodGroup
+                ? `${filteredMembers.length} of ${totalDocs}`
+                : totalDocs}
             </span>
           </div>
           <p className="mt-0.5 text-xs text-gray-500">
@@ -120,22 +130,66 @@ const BranchMembersTab = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search students by name, phone or serial..."
-          className="w-full rounded-xl border border-gray-500 bg-white py-2.5 pr-10 pl-10 text-xs text-gray-800 shadow-xs transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 focus:outline-none sm:text-sm"
+          className="w-full rounded-xl border border-gray-300 bg-white py-2.5 pr-10 pl-10 text-xs text-gray-800 shadow-xs transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 focus:outline-none sm:text-sm"
         />
         {searchTerm && (
           <button
             onClick={() => setSearchTerm("")}
-            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-md px-1.5 py-0.5 text-xs font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer rounded-md px-1.5 py-0.5 text-xs font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           >
             Clear
           </button>
         )}
       </div>
 
+      {/* Blood Group Filter Pills */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
+        <span className="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-gray-500">
+          <FaTint className="h-3 w-3 text-rose-500" /> Blood:
+        </span>
+        <button
+          type="button"
+          onClick={() => setSelectedBloodGroup("")}
+          className={`shrink-0 cursor-pointer rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+            !selectedBloodGroup
+              ? "bg-blue-600 text-white shadow-2xs"
+              : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-100"
+          }`}
+        >
+          All
+        </button>
+        {BLOOD_GROUPS.map((bg) => {
+          const isSelected = selectedBloodGroup === bg;
+          return (
+            <button
+              key={bg}
+              type="button"
+              onClick={() => setSelectedBloodGroup(isSelected ? "" : bg)}
+              className={`shrink-0 cursor-pointer rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+                isSelected
+                  ? "border border-rose-500 bg-rose-600 text-white shadow-2xs"
+                  : "border border-gray-200 bg-white text-gray-700 hover:border-rose-300 hover:bg-rose-50/60 hover:text-rose-600"
+              }`}
+            >
+              {bg}
+            </button>
+          );
+        })}
+        {selectedBloodGroup && (
+          <button
+            type="button"
+            onClick={() => setSelectedBloodGroup("")}
+            className="shrink-0 cursor-pointer rounded-lg border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          >
+            Reset
+          </button>
+        )}
+      </div>
+
       {/* Members List */}
-      {members.length > 0 ? (
+      {filteredMembers.length > 0 ? (
         <div className="space-y-3">
-          {members.map((member) => (
+          {filteredMembers.map((member) => (
             <BranchMemberCard
               key={member.meta.member_id}
               member={member}
@@ -147,17 +201,30 @@ const BranchMembersTab = () => {
         <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/50 p-12 text-center">
           <HiUsers className="mx-auto mb-3 h-12 w-12 text-gray-300" />
           <p className="font-medium text-gray-700">
-            {searchTerm
+            {searchTerm || selectedBloodGroup
               ? "No matching students found"
               : "No students found in this branch"}
           </p>
           <p className="mt-1 text-xs text-gray-400">
-            {searchTerm
-              ? "Try searching with a different name or phone number"
-              : canAddMember
-                ? "Click 'Add Student' above to enter students to this branch"
-                : "No students have joined this branch yet"}
+            {selectedBloodGroup
+              ? `No students found with blood group ${selectedBloodGroup}`
+              : searchTerm
+                ? "Try searching with a different name or phone number"
+                : canAddMember
+                  ? "Click 'Add Student' above to enter students to this branch"
+                  : "No students have joined this branch yet"}
           </p>
+          {(searchTerm || selectedBloodGroup) && (
+            <button
+              onClick={() => {
+                setSearchTerm("");
+                setSelectedBloodGroup("");
+              }}
+              className="mt-3 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs hover:bg-gray-50"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
       )}
 

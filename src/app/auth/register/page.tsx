@@ -55,7 +55,7 @@ const Register = () => {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-col items-center justify-center gap-2.5 py-1 sm:max-w-md sm:gap-6 sm:py-6 lg:max-w-5xl lg:flex-row lg:gap-16">
+    <div className="mx-auto flex w-full max-w-sm flex-col items-center justify-center gap-2 py-1 sm:max-w-md sm:gap-6 sm:py-6 lg:max-w-5xl lg:flex-row lg:gap-16">
       {/* Header - Left Side */}
       <div className="text-center lg:text-left">
         <h1 className="text-2xl font-extrabold text-blue-600 sm:text-4xl lg:mb-2 lg:text-5xl">
@@ -71,17 +71,17 @@ const Register = () => {
 
       {/* Register Form - Right Side */}
       <div className="w-full max-w-sm sm:max-w-105">
-        <div className="w-full rounded-2xl border border-gray-100 bg-white p-4.5 shadow-lg sm:p-8 sm:shadow-xl">
+        <div className="w-full rounded-2xl border border-gray-100 bg-white p-3.5 shadow-md sm:p-7 sm:shadow-xl">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-3 sm:space-y-5"
+            className="space-y-2.5 sm:space-y-4"
           >
-            <div className="space-y-2.5 sm:space-y-3.5">
+            <div className="space-y-2 sm:space-y-3">
               {/* Full Name Field */}
               <div>
                 <label
                   htmlFor="full_name"
-                  className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm"
+                  className="mb-0.5 block text-xs font-medium text-gray-700 sm:mb-1 sm:text-sm"
                 >
                   Full Name
                 </label>
@@ -89,7 +89,7 @@ const Register = () => {
                   id="full_name"
                   type="text"
                   {...registerField("full_name")}
-                  className={`w-full rounded-lg border px-3 py-2 text-xs transition-colors focus:ring-2 focus:outline-none sm:text-sm ${
+                  className={`w-full rounded-lg border px-3 py-1.5 text-xs transition-colors focus:ring-2 focus:outline-none sm:py-2 sm:text-sm ${
                     errors.full_name
                       ? "border-red-500 focus:ring-red-500"
                       : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -97,7 +97,7 @@ const Register = () => {
                   placeholder="Enter your full name"
                 />
                 {errors.full_name && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-0.5 text-xs text-red-500">
                     {errors.full_name.message}
                   </p>
                 )}
@@ -107,7 +107,7 @@ const Register = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm"
+                  className="mb-0.5 block text-xs font-medium text-gray-700 sm:mb-1 sm:text-sm"
                 >
                   Email Address
                 </label>
@@ -115,7 +115,7 @@ const Register = () => {
                   id="email"
                   type="email"
                   {...registerField("email")}
-                  className={`w-full rounded-lg border px-3 py-2 text-xs transition-colors focus:ring-2 focus:outline-none sm:text-sm ${
+                  className={`w-full rounded-lg border px-3 py-1.5 text-xs transition-colors focus:ring-2 focus:outline-none sm:py-2 sm:text-sm ${
                     errors.email
                       ? "border-red-500 focus:ring-red-500"
                       : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -123,7 +123,7 @@ const Register = () => {
                   placeholder="Enter your email"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-0.5 text-xs text-red-500">
                     {errors.email.message}
                   </p>
                 )}
@@ -133,7 +133,7 @@ const Register = () => {
               <div>
                 <label
                   htmlFor="password"
-                  className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm"
+                  className="mb-0.5 block text-xs font-medium text-gray-700 sm:mb-1 sm:text-sm"
                 >
                   Password
                 </label>
@@ -142,7 +142,7 @@ const Register = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     {...registerField("password")}
-                    className={`w-full rounded-lg border px-3 py-2 pr-10 text-xs transition-colors focus:ring-2 focus:outline-none sm:text-sm ${
+                    className={`w-full rounded-lg border px-3 py-1.5 pr-10 text-xs transition-colors focus:ring-2 focus:outline-none sm:py-2 sm:text-sm ${
                       errors.password
                         ? "border-red-500 focus:ring-red-500"
                         : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -162,7 +162,7 @@ const Register = () => {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-0.5 text-xs text-red-500">
                     {errors.password.message}
                   </p>
                 )}
@@ -180,7 +180,7 @@ const Register = () => {
                 />
                 <label
                   htmlFor="agree_to_terms"
-                  className="ml-2 block text-xs text-gray-600 sm:text-sm"
+                  className="ml-2 block text-[11px] text-gray-600 sm:text-sm"
                 >
                   I agree to the{" "}
                   <NavLink
@@ -199,7 +199,7 @@ const Register = () => {
                 </label>
               </div>
               {errors.agree_to_terms && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-0.5 text-xs text-red-500">
                   {errors.agree_to_terms.message}
                 </p>
               )}
@@ -223,7 +223,7 @@ const Register = () => {
           </form>
 
           {/* Login NavLink */}
-          <div className="mt-3 text-center sm:mt-5">
+          <div className="mt-2.5 text-center sm:mt-4">
             <p className="text-xs text-gray-600 sm:text-sm">
               Already have an account?{" "}
               <NavLink
@@ -236,10 +236,10 @@ const Register = () => {
           </div>
 
           {/* Browse Branches (Public Access) */}
-          <div className="mt-3 border-t border-gray-100 pt-3 sm:mt-5 sm:pt-5">
+          <div className="mt-2.5 border-t border-gray-100 pt-2.5 sm:mt-4 sm:pt-4">
             <NavLink
               to="/branch"
-              className="group flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200/90 bg-gray-50/70 px-3.5 py-2 text-xs font-semibold text-gray-700 shadow-2xs transition-all duration-200 hover:border-blue-300 hover:bg-blue-50/80 hover:text-blue-700 hover:shadow-xs active:scale-98 sm:py-2.5 sm:text-sm"
+              className="group flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200/90 bg-gray-50/70 px-3.5 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-all duration-200 hover:border-blue-300 hover:bg-blue-50/80 hover:text-blue-700 hover:shadow-xs active:scale-98 sm:py-2.5 sm:text-sm"
             >
               <FaBuilding className="h-3.5 w-3.5 text-blue-600 transition-transform duration-200 group-hover:scale-110 sm:h-4 sm:w-4" />
               <span>View Branches</span>
