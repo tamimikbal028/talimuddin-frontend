@@ -12,10 +12,6 @@ const MobileTopNavbar = () => {
   const { mutate: logout, isPending: isLoggingOut } = authHooks.useLogout();
   const location = useLocation();
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
   const navItems = [
     {
       to: "/branch",
@@ -27,7 +23,7 @@ const MobileTopNavbar = () => {
       to: "/settings",
       icon: FaCog,
       label: "Settings",
-      display: flags.SETTINGS,
+      display: flags.SETTINGS && isAuthenticated,
     },
   ];
 
@@ -53,7 +49,7 @@ const MobileTopNavbar = () => {
         </div>
       </NavLink>
 
-      {/* Right: Quick Navigation Options & Logout */}
+      {/* Right: Quick Navigation Options & Logout / Sign In */}
       <div className="flex items-center gap-1.5">
         <nav className="flex items-center gap-1">
           {displayNavItems.map(({ to, icon: Icon, label }) => {
@@ -84,17 +80,27 @@ const MobileTopNavbar = () => {
           })}
         </nav>
 
-        {/* Sign Out Button */}
-        <button
-          type="button"
-          onClick={() => logout()}
-          disabled={isLoggingOut}
-          title="Sign Out"
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-200/80 bg-red-50/60 text-red-600 transition-colors hover:bg-red-100 active:scale-95 disabled:opacity-50"
-          aria-label="Sign Out"
-        >
-          <FaSignOutAlt className="h-3.5 w-3.5" />
-        </button>
+        {isAuthenticated ? (
+          /* Sign Out Button */
+          <button
+            type="button"
+            onClick={() => logout()}
+            disabled={isLoggingOut}
+            title="Sign Out"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-200/80 bg-red-50/60 text-red-600 transition-colors hover:bg-red-100 active:scale-95 disabled:opacity-50"
+            aria-label="Sign Out"
+          >
+            <FaSignOutAlt className="h-3.5 w-3.5" />
+          </button>
+        ) : (
+          /* Sign In Button */
+          <NavLink
+            to="/login"
+            className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 active:scale-95"
+          >
+            Sign In
+          </NavLink>
+        )}
       </div>
     </header>
   );

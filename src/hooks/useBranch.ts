@@ -40,7 +40,7 @@ const useMainBranches = () => {
   });
 };
 
-const useMyBranches = () => {
+const useMyBranches = (enabled = true) => {
   return useInfiniteQuery({
     queryKey: ["myBranches", "infinite"],
     queryFn: ({ pageParam }) =>
@@ -51,6 +51,7 @@ const useMyBranches = () => {
       return page < totalPages ? page + 1 : undefined;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled,
   });
 };
 

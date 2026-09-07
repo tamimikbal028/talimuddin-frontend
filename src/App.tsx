@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import Sidebar from "@/layout/Sidebar";
 import MobileTopNavbar from "@/layout/MobileTopNavbar";
@@ -8,6 +9,7 @@ import { AUTH_KEYS } from "@/constants";
 import AuthLoading from "@/app/shared/LoadingSkeleton/AuthLoading";
 
 const App = () => {
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { isCheckingAuth, isAuthenticated } = authHooks.useUser();
 
@@ -29,7 +31,9 @@ const App = () => {
     return <AuthLoading />;
   }
 
-  if (!isAuthenticated) {
+  const isAuthPage = ["/login", "/register"].includes(location.pathname);
+
+  if (!isAuthenticated && isAuthPage) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-gray-50 px-4 py-6">
         <MainContent />

@@ -4,6 +4,7 @@ import BranchCardSkeleton from "@/app/shared/LoadingSkeleton/BranchCardSkeleton"
 import ErrorState from "@/app/shared/Error/ErrorState";
 import EmptyState from "@/app/shared/EmptyState";
 import branchHooks from "@/hooks/useBranch";
+import authHooks from "@/hooks/useAuth";
 import LoadMoreButton from "@/app/shared/Button/LoadMoreButton";
 import { BRANCH_LIMIT } from "@/constants";
 import type { BranchListItem } from "@/types";
@@ -16,6 +17,7 @@ import {
 } from "react-icons/fa";
 
 const Branches = () => {
+  const { isAuthenticated } = authHooks.useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedTerm, setDebouncedTerm] = useState("");
 
@@ -34,13 +36,13 @@ const Branches = () => {
     setDebouncedTerm("");
   };
 
-  // My Branches Query
+  // My Branches Query (only enabled if authenticated)
   const {
     data: myBranchesData,
     fetchNextPage: fetchNextMyBranches,
     hasNextPage: hasNextMyBranches,
     isFetchingNextPage: isFetchingNextMyBranches,
-  } = branchHooks.useMyBranches();
+  } = branchHooks.useMyBranches(isAuthenticated);
 
   // All Branches Query
   const {

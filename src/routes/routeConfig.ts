@@ -14,6 +14,7 @@ interface RouteConfig {
   path: string;
   Component: LazyExoticComponent<ComponentType> | ComponentType;
   requireAuth: boolean;
+  guestOnly?: boolean;
   title: string;
   preload?: boolean;
   category?: string;
@@ -26,12 +27,13 @@ interface RouteConfig {
 }
 
 export const routes: RouteConfig[] = [
-  // Public routes
+  // Public routes (Auth only: guests can view, logged in users redirected)
   {
     path: "/login",
     display: true,
     Component: Login,
     requireAuth: false,
+    guestOnly: true,
     title: "Login",
     category: "auth",
     meta: {
@@ -44,6 +46,7 @@ export const routes: RouteConfig[] = [
     display: true,
     Component: Register,
     requireAuth: false,
+    guestOnly: true,
     title: "Register",
     category: "auth",
     meta: {
@@ -57,7 +60,7 @@ export const routes: RouteConfig[] = [
     path: "/",
     display: true,
     Component: () => createElement(Navigate, { to: "/branch", replace: true }),
-    requireAuth: true,
+    requireAuth: false,
     title: "Home",
     preload: true,
     category: "main",
@@ -67,13 +70,13 @@ export const routes: RouteConfig[] = [
     path: "/branch/*",
     display: FEATURE_FLAGS.BRANCH,
     Component: lazy(() => import("../app/branch/page")),
-    requireAuth: true,
+    requireAuth: false,
     title: "Branch",
     category: "management",
     meta: { description: "Attend and manage branches" },
   },
 
-  // Settings routes
+  // Settings routes (Authenticated only)
   {
     path: "/settings",
     display: FEATURE_FLAGS.SETTINGS,

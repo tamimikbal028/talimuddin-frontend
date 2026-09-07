@@ -18,7 +18,7 @@ const Sidebar = () => {
     },
     {
       icon: FaCog,
-      display: flags.SETTINGS,
+      display: flags.SETTINGS && !!user,
       label: "Settings",
       path: "/settings",
       active: location.pathname.startsWith("/settings"),

@@ -27,7 +27,10 @@ const MainContent = () => {
               key={idx}
               path={path}
               element={
-                <ProtectedRoute requireAuth={requireAuth}>
+                <ProtectedRoute
+                  requireAuth={requireAuth}
+                  guestOnly={route.guestOnly}
+                >
                   <Component />
                 </ProtectedRoute>
               }
