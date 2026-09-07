@@ -296,7 +296,8 @@ const FinanceTransactions = () => {
                     (entry.due_amount !== undefined && entry.due_amount > 0) ||
                     entry.payment_status === "PARTIAL" ||
                     entry.payment_status === "DUE";
-                  const canExpand = hasDetails || hasNotes || hasDue;
+                  const canExpand =
+                    hasDetails || hasNotes || hasDue || canManageFinance;
 
                   return (
                     <Fragment key={entry.id}>
@@ -456,35 +457,6 @@ const FinanceTransactions = () => {
                               <div className="h-7 w-7 shrink-0" />
                             )}
 
-                            {/* Slot 3 & 4: Edit & Delete buttons */}
-                            {canManageFinance ? (
-                              <>
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEditingEntry(entry);
-                                    setIsModalOpen(true);
-                                  }}
-                                  className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
-                                  title="Edit Transaction"
-                                >
-                                  <FaEdit className="h-3.5 w-3.5" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDelete(entry);
-                                  }}
-                                  className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                                  title="Delete Transaction"
-                                >
-                                  <FaTrash className="h-3.5 w-3.5" />
-                                </button>
-                              </>
-                            ) : null}
-
                             {!canManageFinance && !canExpand && (
                               <span className="text-gray-300">-</span>
                             )}
@@ -559,9 +531,6 @@ const FinanceTransactions = () => {
                               {/* Notes */}
                               {hasNotes && (
                                 <div className="flex items-start gap-2 rounded-lg border border-gray-200/80 bg-white p-2.5 shadow-xs">
-                                  <p className="rounded-lg bg-blue-500 px-2 py-1 font-bold text-white">
-                                    Note
-                                  </p>
                                   <p className="font-medium text-gray-700">
                                     {entry.note}
                                   </p>
@@ -594,6 +563,37 @@ const FinanceTransactions = () => {
                                       )
                                     )}
                                   </div>
+                                </div>
+                              )}
+
+                              {/* Management Actions: Edit & Delete */}
+                              {canManageFinance && (
+                                <div className="flex items-center justify-end gap-2 border-t border-gray-200/80 pt-2.5">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setEditingEntry(entry);
+                                      setIsModalOpen(true);
+                                    }}
+                                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+                                    title="Edit Transaction"
+                                  >
+                                    <FaEdit className="h-3.5 w-3.5 text-blue-500" />
+                                    <span>Edit</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDelete(entry);
+                                    }}
+                                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 shadow-2xs transition-colors hover:border-red-300 hover:bg-red-50"
+                                    title="Delete Transaction"
+                                  >
+                                    <FaTrash className="h-3.5 w-3.5 text-red-500" />
+                                    <span>Delete</span>
+                                  </button>
                                 </div>
                               )}
                             </div>
