@@ -5,6 +5,8 @@ import {
   FaArrowLeft,
   FaMapMarkerAlt,
   FaExternalLinkAlt,
+  FaUserShield,
+  FaPhoneAlt,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import type { Branch, BranchMeta } from "@/types";
@@ -171,7 +173,37 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
               ))}
           </div>
 
-          {/* Row 2: Description */}
+          {/* Row 3: Admin Info (displayed below type & location if present) */}
+          {branch.admin_info && branch.admin_info.length > 0 && (
+            <div className="mt-2.5 flex flex-wrap items-center gap-2">
+              {branch.admin_info.map((admin, idx) => (
+                <div
+                  key={idx}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50/90 px-2.5 py-1 text-xs text-gray-800 shadow-2xs"
+                >
+                  <FaUserShield className="h-3 w-3 shrink-0 text-blue-600" />
+                  <span className="font-semibold text-gray-900">
+                    {admin.name}
+                  </span>
+                  {admin.number && (
+                    <>
+                      <span className="text-gray-300">•</span>
+                      <a
+                        href={`tel:${admin.number}`}
+                        className="inline-flex items-center gap-1 font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                        title={`Call ${admin.name}`}
+                      >
+                        <FaPhoneAlt className="h-2.5 w-2.5" />
+                        <span>{admin.number}</span>
+                      </a>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Row 4: Description */}
           {branch.description && (
             <div className="mt-3">
               <p className="text-xs leading-relaxed text-gray-700 sm:text-sm">

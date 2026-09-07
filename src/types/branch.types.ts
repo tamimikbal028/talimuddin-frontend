@@ -9,6 +9,7 @@ export interface Branch {
   description: string | null;
   location_name?: string | null;
   location_url?: string | null;
+  admin_info?: BranchAdminInfo[];
   cover_image: string | null;
   branch_type: (typeof BRANCH_TYPES)[keyof typeof BRANCH_TYPES];
   parent_branch_id?: string | null;
@@ -91,12 +92,19 @@ export interface UpdateBranchMemberData {
   note?: string | null;
 }
 
+// Branch Admin Info item
+export interface BranchAdminInfo {
+  name: string;
+  number: string;
+}
+
 // Create Branch Data (for createBranch API)
 export interface CreateBranchData {
   name: string;
   description?: string | null;
   location_name?: string | null;
   location_url?: string | null;
+  admin_info?: BranchAdminInfo[];
   branch_type?: (typeof BRANCH_TYPES)[keyof typeof BRANCH_TYPES];
   parent_branch_id?: string | null;
 }
@@ -107,6 +115,7 @@ export interface UpdateBranchData {
   description: string | null;
   location_name?: string | null;
   location_url?: string | null;
+  admin_info?: BranchAdminInfo[];
   branch_type?: (typeof BRANCH_TYPES)[keyof typeof BRANCH_TYPES];
   parent_branch_id?: string | null;
 }
