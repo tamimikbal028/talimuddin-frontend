@@ -146,17 +146,13 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
           </div>
 
           {/* Row 2: Description */}
-          <div className="mt-3">
-            <p
-              className={
-                branch.description
-                  ? "text-xs leading-relaxed text-gray-700 sm:text-sm"
-                  : "text-xs font-medium text-gray-500 italic sm:text-sm"
-              }
-            >
-              {branch.description}
-            </p>
-          </div>
+          {branch.description && (
+            <div className="mt-3">
+              <p className="text-xs leading-relaxed text-gray-700 sm:text-sm">
+                {branch.description}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Navigation Tabs */}

@@ -38,15 +38,17 @@ const BranchAbout = ({ branch }: BranchAboutProps) => {
       </div>
 
       {/* Description Card */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="mb-4 flex items-center gap-2">
-          <FaFileAlt className="h-5 w-5 text-gray-600" />
-          <h2 className="text-lg font-semibold text-gray-900">About</h2>
+      {branch.description && (
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center gap-2">
+            <FaFileAlt className="h-5 w-5 text-gray-600" />
+            <h2 className="text-lg font-semibold text-gray-900">About</h2>
+          </div>
+          <p className="leading-relaxed whitespace-pre-wrap text-gray-700">
+            {branch.description}
+          </p>
         </div>
-        <p className="leading-relaxed text-gray-700">
-          {branch.description || "No description provided."}
-        </p>
-      </div>
+      )}
 
       {/* Stats Card */}
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">

@@ -60,7 +60,7 @@ const CreateBranchForm = () => {
     createBranch(
       {
         name: data.name,
-        description: data.description,
+        description: data.description?.trim() || undefined,
         branch_type: data.branch_type,
         parent_branch_id:
           data.branch_type === "SUB" ? data.parent_branch_id : null,

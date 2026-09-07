@@ -23,8 +23,8 @@ const BranchGeneralTab = ({ branch }: BranchGeneralTabProps) => {
     updateDetails(
       {
         updated_data: {
-          name: formData.name,
-          description: formData.description,
+          name: formData.name.trim(),
+          description: formData.description.trim() || null,
         },
       },
       {
@@ -90,8 +90,9 @@ const BranchGeneralTab = ({ branch }: BranchGeneralTabProps) => {
             type="submit"
             disabled={
               isPending ||
-              (formData.name === branch.name &&
-                formData.description === branch.description)
+              (formData.name.trim() === branch.name &&
+                (formData.description.trim() || null) ===
+                  (branch.description?.trim() || null))
             }
             className="flex min-w-35 items-center justify-center rounded-lg bg-blue-600 px-6 py-3 font-bold text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-blue-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
           >
