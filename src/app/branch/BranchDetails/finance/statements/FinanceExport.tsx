@@ -65,23 +65,6 @@ const FinanceExport = () => {
           .filter((e) => e.type === "EXPENSE")
           .reduce((s, e) => s + (e.due_amount ?? 0), 0);
 
-  const cashIn =
-    summary?.cash_in !== undefined
-      ? summary.cash_in
-      : entries
-          .filter((e) => e.type === "INCOME")
-          .reduce((s, e) => s + (e.paid_amount ?? e.amount ?? 0), 0);
-
-  const cashOut =
-    summary?.cash_out !== undefined
-      ? summary.cash_out
-      : entries
-          .filter((e) => e.type === "EXPENSE")
-          .reduce((s, e) => s + (e.paid_amount ?? e.amount ?? 0), 0);
-
-  const cashBalance =
-    summary?.balance !== undefined ? summary.balance : cashIn - cashOut;
-
   const netDue = receivable - payable;
   const overallNet = totalIncome - totalExpense;
 
@@ -262,13 +245,7 @@ const FinanceExport = () => {
                   {formatCurrency(totalIncome)}
                 </p>
               </div>
-              <div className="mt-2.5 space-y-1 border-t border-gray-100 pt-2 text-[11px]">
-                <div className="flex items-center justify-between text-gray-500">
-                  <span>নগদ আদায়:</span>
-                  <span className="font-semibold text-gray-700">
-                    {formatCurrency(cashIn)}
-                  </span>
-                </div>
+              <div className="mt-2.5 border-t border-gray-100 pt-2 text-[11px]">
                 <div className="flex items-center justify-between text-amber-700">
                   <span className="font-medium">বাকি (নিতে হবে):</span>
                   <span className="font-bold">
@@ -289,13 +266,7 @@ const FinanceExport = () => {
                   {formatCurrency(totalExpense)}
                 </p>
               </div>
-              <div className="mt-2.5 space-y-1 border-t border-gray-100 pt-2 text-[11px]">
-                <div className="flex items-center justify-between text-gray-500">
-                  <span>নগদ পরিশোধ:</span>
-                  <span className="font-semibold text-gray-700">
-                    {formatCurrency(cashOut)}
-                  </span>
-                </div>
+              <div className="mt-2.5 border-t border-gray-100 pt-2 text-[11px]">
                 <div className="flex items-center justify-between text-rose-700">
                   <span className="font-medium">বাকি (দিতে হবে):</span>
                   <span className="font-bold">{formatCurrency(payable)}</span>
@@ -317,17 +288,7 @@ const FinanceExport = () => {
                   {formatCurrency(overallNet)}
                 </p>
               </div>
-              <div className="mt-2.5 space-y-1 border-t border-gray-100 pt-2 text-[11px]">
-                <div className="flex items-center justify-between text-gray-500">
-                  <span>হাতে নগদ (Cash):</span>
-                  <span
-                    className={`font-semibold ${
-                      cashBalance >= 0 ? "text-emerald-600" : "text-rose-600"
-                    }`}
-                  >
-                    {formatCurrency(cashBalance)}
-                  </span>
-                </div>
+              <div className="mt-2.5 border-t border-gray-100 pt-2 text-[11px]">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">নেট বাকি:</span>
                   {netDue > 0 ? (
