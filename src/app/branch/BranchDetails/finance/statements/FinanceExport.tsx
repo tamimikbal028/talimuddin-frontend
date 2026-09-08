@@ -97,9 +97,22 @@ const FinanceExport = () => {
 
   return (
     <div className="space-y-5">
-      {/* Dynamic media print stylesheet to hide page shell when printing */}
+      {/* Dynamic media print stylesheet to hide page shell and remove browser headers/footers when printing */}
       <style>{`
+        @page {
+          size: auto;
+          margin: 0;
+        }
         @media print {
+          @page {
+            size: auto;
+            margin: 0;
+          }
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+          }
           body * {
             visibility: hidden;
           }
@@ -112,9 +125,11 @@ const FinanceExport = () => {
             position: absolute;
             left: 0;
             top: 0;
-            width: 100%;
-            margin: 0;
-            padding: 20px;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 10mm 12mm !important;
+            box-sizing: border-box !important;
+            box-shadow: none !important;
           }
           .no-print {
             display: none !important;
