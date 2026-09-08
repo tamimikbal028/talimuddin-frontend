@@ -1,11 +1,18 @@
-import { FaMoneyBillWave, FaEdit, FaTrash, FaPhoneAlt } from "react-icons/fa";
+import {
+  FaMoneyBillWave,
+  FaEdit,
+  FaTrash,
+  FaPhoneAlt,
+  FaLock,
+} from "react-icons/fa";
 import { formatCurrency } from "../../financeUtils";
 import type { FinanceEntry, FinanceDetailItem } from "@/types";
-import authHooks from "@/hooks/useAuth";
 
 interface TransactionExpandedRowProps {
   entry: FinanceEntry;
   canManageFinance: boolean;
+  isAdmin?: boolean;
+  isModerator?: boolean;
   onOpenDueModal: (entry: FinanceEntry) => void;
   onEdit: (entry: FinanceEntry) => void;
   onDelete: (entry: FinanceEntry) => void;
@@ -14,13 +21,12 @@ interface TransactionExpandedRowProps {
 const TransactionExpandedRow = ({
   entry,
   canManageFinance,
+  isAdmin,
+  isModerator,
   onOpenDueModal,
   onEdit,
   onDelete,
 }: TransactionExpandedRowProps) => {
-  const { user } = authHooks.useUser();
-  const isOwner = !!user?.id && user.id === entry.recorded_by?.id;
-
   const hasDue =
     (entry.due_amount !== undefined && entry.due_amount > 0) ||
     entry.payment_status === "PARTIAL" ||
@@ -144,44 +150,55 @@ const TransactionExpandedRow = ({
             </div>
           )}
 
-          {/* Management Actions: Edit & Delete (Creator only) */}
+          {/* Management Actions: Edit & Delete */}
           {canManageFinance && (
             <div className="flex flex-wrap items-center justify-end gap-2.5 border-t border-gray-200/80 pt-2.5">
-              {isOwner ? (
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEdit(entry);
-                    }}
-                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
-                    title="Edit Transaction"
-                  >
-                    <FaEdit className="h-3.5 w-3.5 text-blue-500" />
-                    <span>Edit</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDelete(entry);
-                    }}
-                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 shadow-2xs transition-colors hover:border-red-300 hover:bg-red-50 active:scale-95"
-                    title="Delete Transaction"
-                  >
-                    <FaTrash className="h-3.5 w-3.5 text-red-500" />
-                    <span>Delete</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-800">
-                  <span>
-                    শুধুমাত্র যিনি এন্ট্রি করেছেন তিনিই এডিট বা ডিলিট করতে
-                    পারবেন
-                  </span>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(entry);
+                  }}
+                  className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                  title={
+                    isModerator && !isAdmin
+                      ? "এডিট করতে এডমিন সিকিউরিটি কোড প্রয়োজন"
+                      : "Edit Transaction"
+                  }
+                >
+                  <FaEdit className="h-3.5 w-3.5 text-blue-500" />
+                  <span>Edit</span>
+                  {isModerator && !isAdmin && (
+                    <FaLock
+                      className="h-2.5 w-2.5 text-amber-500"
+                      title="কোড প্রয়োজন"
+                    />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(entry);
+                  }}
+                  className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 shadow-2xs transition-colors hover:border-red-300 hover:bg-red-50 active:scale-95"
+                  title={
+                    isModerator && !isAdmin
+                      ? "ডিলিট করতে এডমিন সিকিউরিটি কোড প্রয়োজন"
+                      : "Delete Transaction"
+                  }
+                >
+                  <FaTrash className="h-3.5 w-3.5 text-red-500" />
+                  <span>Delete</span>
+                  {isModerator && !isAdmin && (
+                    <FaLock
+                      className="h-2.5 w-2.5 text-amber-500"
+                      title="কোড প্রয়োজন"
+                    />
+                  )}
+                </button>
+              </div>
             </div>
           )}
         </div>

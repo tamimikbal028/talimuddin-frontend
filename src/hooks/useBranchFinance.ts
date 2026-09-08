@@ -124,8 +124,11 @@ const useDeleteFinanceEntry = (branchId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (entryId: string) =>
-      branchFinanceServices.deleteFinanceEntry(branchId, entryId),
+    mutationFn: (args: string | { entryId: string; actionCode?: string }) => {
+      const entryId = typeof args === "string" ? args : args.entryId;
+      const actionCode = typeof args === "string" ? undefined : args.actionCode;
+      return branchFinanceServices.deleteFinanceEntry(branchId, entryId, actionCode);
+    },
     onSuccess: (response) => {
       toast.success(response.message);
       // Invalidate all related queries
@@ -164,6 +167,32 @@ const useFinancePayments = (branchId: string, entryId: string, enabled = true) =
   });
 };
 
+const useBranchActionCode = (branchId: string, enabled = true) => {
+  return useQuery({
+    queryKey: [FINANCE_KEYS.ACTION_CODE, branchId],
+    queryFn: () => branchFinanceServices.getBranchActionCode(branchId),
+    enabled: enabled && !!branchId,
+  });
+};
+
+const useUpdateBranchActionCode = (branchId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (actionCode: string) =>
+      branchFinanceServices.updateBranchActionCode(branchId, actionCode),
+    onSuccess: (response) => {
+      toast.success(
+        response.message || "মডারেটর সিকিউরিটি কোড সফলভাবে আপডেট হয়েছে"
+      );
+      queryClient.invalidateQueries({
+        queryKey: [FINANCE_KEYS.ACTION_CODE, branchId],
+      });
+    },
+    onError: handleMutationError("Failed to update security code"),
+  });
+};
+
 const financeHooks = {
   useCategoriesList,
   useCreateCategory,
@@ -176,6 +205,8 @@ const financeHooks = {
   useDeleteFinanceEntry,
   useRecordFinancePayment,
   useFinancePayments,
+  useBranchActionCode,
+  useUpdateBranchActionCode,
 };
 
 export default financeHooks;
@@ -191,5 +222,7 @@ export {
   useDeleteFinanceEntry,
   useRecordFinancePayment,
   useFinancePayments,
+  useBranchActionCode,
+  useUpdateBranchActionCode,
 };
 

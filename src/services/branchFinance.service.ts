@@ -12,6 +12,7 @@ import type {
   RecordFinancePaymentRequest,
   RecordFinancePaymentResponse,
   FinancePaymentsResponse,
+  BranchActionCodeResponse,
 } from "../types";
 
 const getCategoriesList = async (branchId: string): Promise<CategoriesListResponse> => {
@@ -102,10 +103,15 @@ const getFinanceMonthExport = async (
 
 const deleteFinanceEntry = async (
   branchId: string,
-  entryId: string
+  entryId: string,
+  actionCode?: string
 ): Promise<DeleteFinanceEntryResponse> => {
   const response = await api.delete<DeleteFinanceEntryResponse>(
-    `/branches/${branchId}/finance/${entryId}`
+    `/branches/${branchId}/finance/${entryId}`,
+    {
+      data: actionCode ? { actionCode } : undefined,
+      headers: actionCode ? { "x-action-code": actionCode } : undefined,
+    }
   );
   return response.data;
 };
@@ -117,7 +123,12 @@ const updateFinanceEntry = async (
 ): Promise<CreateFinanceEntryResponse> => {
   const response = await api.put<CreateFinanceEntryResponse>(
     `/branches/${branchId}/finance/${entryId}`,
-    data
+    data,
+    {
+      headers: data.actionCode
+        ? { "x-action-code": data.actionCode }
+        : undefined,
+    }
   );
   return response.data;
 };
@@ -144,6 +155,26 @@ const getFinancePayments = async (
   return response.data;
 };
 
+const getBranchActionCode = async (
+  branchId: string
+): Promise<BranchActionCodeResponse> => {
+  const response = await api.get<BranchActionCodeResponse>(
+    `/branches/${branchId}/finance/action-code`
+  );
+  return response.data;
+};
+
+const updateBranchActionCode = async (
+  branchId: string,
+  actionCode: string
+): Promise<BranchActionCodeResponse> => {
+  const response = await api.patch<BranchActionCodeResponse>(
+    `/branches/${branchId}/finance/action-code`,
+    { actionCode }
+  );
+  return response.data;
+};
+
 export const branchFinanceServices = {
   getCategoriesList,
   createCategory,
@@ -156,6 +187,8 @@ export const branchFinanceServices = {
   deleteFinanceEntry,
   recordFinancePayment,
   getFinancePayments,
+  getBranchActionCode,
+  updateBranchActionCode,
 };
 
 export default branchFinanceServices;

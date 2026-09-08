@@ -1,20 +1,30 @@
 import { useState } from "react";
-import { FaWallet } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import { FaWallet, FaShieldAlt } from "react-icons/fa";
+import branchHooks from "@/hooks/useBranch";
 import FinanceExport from "./statements/FinanceExport";
 import FinanceTransactions from "./transactions/FinanceTransactions";
 import FinanceCategories from "./categories/FinanceCategories";
 import FinanceOverview from "./overview/FinanceOverview";
+import ModeratorCodeModal from "./components/ModeratorCodeModal";
 
 type SubTab = "TRANSACTIONS" | "OVERVIEW" | "CATEGORIES" | "DOWNLOADS";
 
 const BranchFinanceTab = () => {
+  const { branchId } = useParams<{ branchId: string }>();
   const [activeSubTab, setActiveSubTab] = useState<SubTab>("TRANSACTIONS");
+  const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
+
+  // Check if current user is Branch Admin
+  const { data: branchDetailsData } = branchHooks.useBranchDetails();
+  const meta = branchDetailsData?.data?.meta;
+  const isBranchAdmin = !!meta?.is_admin;
 
   return (
     <div className="space-y-5">
       {/* Header & Sub-tabs */}
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-gray-100 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 p-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
               <FaWallet className="h-5 w-5 text-blue-600" />
@@ -28,6 +38,19 @@ const BranchFinanceTab = () => {
               </p>
             </div>
           </div>
+
+          {/* Branch Admin only: Moderator Action Code Button */}
+          {isBranchAdmin && (
+            <button
+              type="button"
+              onClick={() => setIsCodeModalOpen(true)}
+              className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-900 shadow-2xs transition-all hover:bg-amber-100 active:scale-95 sm:px-3.5 sm:py-2 sm:text-xs"
+              title="মডারেটরদের জন্য অ্যাকশন সিকিউরিটি কোড দেখুন বা পরিবর্তন করুন"
+            >
+              <FaShieldAlt className="h-3.5 w-3.5 text-amber-600" />
+              <span>মডারেটর কোড</span>
+            </button>
+          )}
         </div>
 
         {/* Sub-navigation */}
@@ -64,6 +87,15 @@ const BranchFinanceTab = () => {
       {activeSubTab === "OVERVIEW" && <FinanceOverview />}
       {activeSubTab === "CATEGORIES" && <FinanceCategories />}
       {activeSubTab === "DOWNLOADS" && <FinanceExport />}
+
+      {/* Moderator Action Code Modal */}
+      {isBranchAdmin && (
+        <ModeratorCodeModal
+          isOpen={isCodeModalOpen}
+          branchId={branchId as string}
+          onClose={() => setIsCodeModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

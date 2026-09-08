@@ -10,7 +10,7 @@ import FinanceAddEntryForm from "./components/FinanceAddEntryForm";
 import CollectDueModal from "./components/CollectDueModal";
 import TransactionFilters from "./components/TransactionFilters";
 import TransactionExpandedRow from "./components/TransactionExpandedRow";
-import { confirmDelete } from "@/utils/sweetAlert";
+import { confirmDelete, promptFinanceActionCode } from "@/utils/sweetAlert";
 import { formatCurrency, getMonthName } from "../financeUtils";
 import {
   TransactionsTableSkeleton,
@@ -31,11 +31,15 @@ const FinanceTransactions = () => {
   const { data: branchDetailsData } = branchHooks.useBranchDetails();
   const meta = branchDetailsData?.data?.meta;
   const canManageFinance = !!meta?.is_admin || !!meta?.is_moderator;
-
+  const isAdmin = !!meta?.is_admin;
+  const isModerator = !!meta?.is_moderator && !isAdmin;
 
   // State for adding/editing entry modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<FinanceEntry | null>(null);
+  const [editingActionCode, setEditingActionCode] = useState<string | undefined>(
+    undefined
+  );
 
   // State for collecting/paying due modal
   const [isDueModalOpen, setIsDueModalOpen] = useState(false);
@@ -83,12 +87,34 @@ const FinanceTransactions = () => {
   };
 
   const handleDelete = async (entry: FinanceEntry) => {
-    const label = `${entry.type === "INCOME" ? "Income" : "Expense"}: ${formatCurrency(
-      entry.amount
-    )} (${entry.category?.name})`;
-    const confirmed = await confirmDelete(label);
-    if (confirmed) {
-      deleteEntry(entry.id);
+    let actionCode: string | undefined = undefined;
+
+    if (isModerator) {
+      const code = await promptFinanceActionCode("delete");
+      if (!code) return;
+      actionCode = code;
+    } else {
+      const label = `${entry.type === "INCOME" ? "Income" : "Expense"}: ${formatCurrency(
+        entry.amount
+      )} (${entry.category?.name})`;
+      const confirmed = await confirmDelete(label);
+      if (!confirmed) return;
+    }
+
+    deleteEntry({ entryId: entry.id, actionCode });
+  };
+
+  const handleEdit = async (entry: FinanceEntry) => {
+    if (isModerator) {
+      const code = await promptFinanceActionCode("edit");
+      if (!code) return;
+      setEditingActionCode(code);
+      setEditingEntry(entry);
+      setIsModalOpen(true);
+    } else {
+      setEditingActionCode(undefined);
+      setEditingEntry(entry);
+      setIsModalOpen(true);
     }
   };
 
@@ -138,6 +164,7 @@ const FinanceTransactions = () => {
         {canManageFinance && (
           <button
             onClick={() => {
+              setEditingActionCode(undefined);
               setEditingEntry(null);
               setIsModalOpen(true);
             }}
@@ -393,14 +420,13 @@ const FinanceTransactions = () => {
                         <TransactionExpandedRow
                           entry={entry}
                           canManageFinance={!!canManageFinance}
+                          isAdmin={isAdmin}
+                          isModerator={isModerator}
                           onOpenDueModal={(e) => {
                             setSelectedDueEntry(e);
                             setIsDueModalOpen(true);
                           }}
-                          onEdit={(e) => {
-                            setEditingEntry(e);
-                            setIsModalOpen(true);
-                          }}
+                          onEdit={handleEdit}
                           onDelete={handleDelete}
                         />
                       )}
@@ -522,9 +548,11 @@ const FinanceTransactions = () => {
         isOpen={isModalOpen}
         branchId={branchId as string}
         entryToEdit={editingEntry}
+        actionCode={editingActionCode}
         onClose={() => {
           setIsModalOpen(false);
           setEditingEntry(null);
+          setEditingActionCode(undefined);
         }}
       />
 

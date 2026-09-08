@@ -51,6 +51,7 @@ interface FinanceAddEntryFormProps {
   isOpen: boolean;
   branchId: string;
   entryToEdit?: FinanceEntry | null;
+  actionCode?: string;
   onClose: () => void;
   onSuccess?: () => void;
 }
@@ -59,6 +60,7 @@ const FinanceAddEntryForm = ({
   isOpen,
   branchId,
   entryToEdit,
+  actionCode,
   onClose,
   onSuccess,
 }: FinanceAddEntryFormProps) => {
@@ -200,6 +202,7 @@ const FinanceAddEntryForm = ({
       personPhone: data.personPhone || undefined,
       details:
         data.details && data.details.length > 0 ? data.details : undefined,
+      actionCode: actionCode || undefined,
     };
 
     if (isEditing && entryToEdit) {

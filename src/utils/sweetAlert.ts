@@ -458,5 +458,48 @@ export const showNoTokensError = () => {
   });
 };
 
+// ============================================
+// FINANCE SECURITY CODE PROMPT (Moderator Action)
+// ============================================
+export const promptFinanceActionCode = async (
+  action: "edit" | "delete"
+): Promise<string | null> => {
+  const isDelete = action === "delete";
+  const actionText = isDelete ? "ডিলিট" : "এডিট";
+
+  const result = await Swal.fire<string>({
+    title: "মডারেটর সিকিউরিটি কোড",
+    html: `<p class="text-sm text-gray-600 mb-2">এই এন্ট্রিটি <b>${actionText}</b> করতে ব্রাঞ্চ এডমিনের দেওয়া অনুমোদিত সিকিউরিটি কোড প্রদান করুন:</p>`,
+    input: "password",
+    inputPlaceholder: "কোড লিখুন (যেমন: 1234)",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: `যাচাই ও ${actionText}`,
+    cancelButtonText: "বাতিল",
+    confirmButtonColor: isDelete ? "#dc2626" : "#2563eb",
+    cancelButtonColor: "#6b7280",
+    customClass: {
+      popup: "rounded-2xl",
+      input: "tracking-widest font-mono text-center text-lg",
+    },
+    inputAttributes: {
+      autocapitalize: "off",
+      autocorrect: "off",
+    },
+    preConfirm: (value) => {
+      if (!value || !value.trim()) {
+        Swal.showValidationMessage("সিকিউরিটি কোড প্রদান করা আবশ্যক!");
+        return null;
+      }
+      return value.trim();
+    },
+  });
+
+  if (result.isConfirmed && result.value) {
+    return result.value.trim();
+  }
+  return null;
+};
+
 // Default export for backwards compatibility
 export default confirm;

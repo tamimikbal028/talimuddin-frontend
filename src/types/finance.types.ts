@@ -125,6 +125,7 @@ export interface CreateFinanceEntryRequest {
   personName?: string;
   personPhone?: string;
   details?: FinanceDetailItem[];
+  actionCode?: string;
 }
 
 export interface RecordFinancePaymentRequest {
@@ -232,5 +233,14 @@ export interface DeleteFinanceEntryResponse {
   message: string;
   data: {
     entryId: string;
+  };
+}
+
+export interface BranchActionCodeResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    actionCode: string;
   };
 }
