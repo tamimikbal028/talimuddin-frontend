@@ -8,6 +8,7 @@ import {
   FaEdit,
   FaTrashAlt,
   FaLock,
+  FaUserTie,
 } from "react-icons/fa";
 import authHooks from "@/hooks/useAuth";
 import {
@@ -114,22 +115,33 @@ const NoticePage = () => {
       }`}
     >
       <div>
-        {/* Optional Pinned / Draft Badges (rendered only if present) */}
-        {(notice.is_pinned || (!notice.is_active && is_app_admin)) && (
-          <div className="mb-2 flex flex-wrap items-center gap-1.5">
+        {/* Top Creator Info & Admin Controls */}
+        <div className="mb-2.5 flex items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2">
+            {notice.author?.avatar ? (
+              <img
+                src={notice.author.avatar}
+                alt={notice.author.full_name || "Author"}
+                className="h-6 w-6 shrink-0 rounded-full object-cover ring-1 ring-gray-200"
+              />
+            ) : (
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 ring-1 ring-blue-500/15">
+                <FaUserTie className="h-3 w-3" />
+              </div>
+            )}
+            <span
+              className="truncate text-xs font-semibold text-gray-700"
+              title={notice.author?.full_name || notice.author?.user_name || "অ্যাডমিন"}
+            >
+              {notice.author?.full_name || notice.author?.user_name || "অ্যাডমিন"}
+            </span>
+
             {!notice.is_active && is_app_admin && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+              <span className="shrink-0 rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
                 অপ্রকাশিত (Draft)
               </span>
             )}
           </div>
-        )}
-
-        {/* Title & Admin Controls Row */}
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="text-base leading-snug font-bold text-gray-900 transition-colors group-hover:text-blue-600">
-            {notice.title}
-          </h3>
 
           {/* Admin Controls (Always visible, clean buttons) */}
           {is_app_admin && (
@@ -160,8 +172,13 @@ const NoticePage = () => {
           )}
         </div>
 
+        {/* Title */}
+        <h3 className="text-base leading-snug font-bold text-gray-900 transition-colors group-hover:text-blue-600">
+          {notice.title}
+        </h3>
+
         {/* Snippet */}
-        <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-gray-600">
+        <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-gray-600">
           {notice.content}
         </p>
       </div>
