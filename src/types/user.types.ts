@@ -50,7 +50,9 @@ export interface AuthUser {
 export interface UserMeta {
   is_app_admin: boolean;
   is_app_moderator: boolean;
+  is_branch_admin?: boolean;
 }
+
 
 // Login Types
 export interface LoginType {

@@ -34,12 +34,18 @@ const useUser = () => {
     ...currentUserQueryOptions,
   });
 
+  const is_app_admin = authData?.user?.user_type === USER_TYPES.ADMIN;
+  const is_branch_admin = Boolean(authData?.meta?.is_branch_admin);
+  const can_access_notices = is_app_admin || is_branch_admin;
+
   return {
     user: authData?.user ?? null,
     meta: authData?.meta ?? null,
     isAuthenticated: Boolean(authData?.user),
     isCheckingAuth: isLoading,
-    is_app_admin: authData?.user?.user_type === USER_TYPES.ADMIN,
+    is_app_admin,
+    is_branch_admin,
+    can_access_notices,
   };
 };
 

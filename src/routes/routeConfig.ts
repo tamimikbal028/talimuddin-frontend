@@ -87,6 +87,18 @@ export const routes: RouteConfig[] = [
     meta: { description: "Account and app settings" },
   },
 
+  // Notice board route (Authenticated only)
+  {
+    path: "/notices",
+    display: FEATURE_FLAGS.NOTICE,
+    Component: lazy(() => import("../app/notice/page")),
+    requireAuth: true,
+    title: "Notices",
+    category: "management",
+    meta: { description: "Official announcements and notices" },
+  },
+
+
   // 404 route
   {
     path: "*",

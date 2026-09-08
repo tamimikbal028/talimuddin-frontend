@@ -1,11 +1,11 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { FaCodeBranch, FaCog, FaSignOutAlt } from "react-icons/fa";
+import { FaCodeBranch, FaCog, FaSignOutAlt, FaBullhorn } from "react-icons/fa";
 import authHooks from "@/hooks/useAuth";
 import { FEATURE_FLAGS as flags } from "@/constants";
 
 const Sidebar = () => {
   const location = useLocation();
-  const { user } = authHooks.useUser();
+  const { user, can_access_notices } = authHooks.useUser();
   const { mutate: logout, isPending: isLoggingOut } = authHooks.useLogout();
 
   const navigationItems = [
@@ -17,6 +17,13 @@ const Sidebar = () => {
       active: location.pathname.startsWith("/branch"),
     },
     {
+      icon: FaBullhorn,
+      display: flags.NOTICE && can_access_notices,
+      label: "Notice",
+      path: "/notices",
+      active: location.pathname.startsWith("/notices"),
+    },
+    {
       icon: FaCog,
       display: flags.SETTINGS && !!user,
       label: "Settings",
@@ -24,6 +31,7 @@ const Sidebar = () => {
       active: location.pathname.startsWith("/settings"),
     },
   ];
+
 
   const displayNavItems = navigationItems.filter((item) => item.display);
 

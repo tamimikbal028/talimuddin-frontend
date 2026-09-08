@@ -3,12 +3,13 @@ import {
   FaCodeBranch,
   FaCog,
   FaSignOutAlt,
+  FaBullhorn,
 } from "react-icons/fa";
 import authHooks from "@/hooks/useAuth";
 import { FEATURE_FLAGS as flags } from "@/constants";
 
 const MobileTopNavbar = () => {
-  const { isAuthenticated } = authHooks.useUser();
+  const { isAuthenticated, can_access_notices } = authHooks.useUser();
   const { mutate: logout, isPending: isLoggingOut } = authHooks.useLogout();
   const location = useLocation();
 
@@ -20,12 +21,19 @@ const MobileTopNavbar = () => {
       display: flags.BRANCH,
     },
     {
+      to: "/notices",
+      icon: FaBullhorn,
+      label: "Notice",
+      display: flags.NOTICE && can_access_notices,
+    },
+    {
       to: "/settings",
       icon: FaCog,
       label: "Settings",
       display: flags.SETTINGS && isAuthenticated,
     },
   ];
+
 
   const displayNavItems = navItems.filter((item) => item.display);
 
