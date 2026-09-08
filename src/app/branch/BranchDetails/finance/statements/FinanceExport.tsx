@@ -36,6 +36,52 @@ const FinanceExport = () => {
   const entries = report?.entries ?? [];
   const summary = report?.summary;
 
+  const totalIncome =
+    summary?.income ??
+    entries
+      .filter((e) => e.type === "INCOME")
+      .reduce((s, e) => s + (e.total_amount ?? e.amount ?? 0), 0);
+
+  const totalExpense =
+    summary?.expense ??
+    entries
+      .filter((e) => e.type === "EXPENSE")
+      .reduce((s, e) => s + (e.total_amount ?? e.amount ?? 0), 0);
+
+  const receivable =
+    summary?.receivable !== undefined
+      ? summary.receivable
+      : entries
+          .filter((e) => e.type === "INCOME")
+          .reduce((s, e) => s + (e.due_amount ?? 0), 0);
+
+  const payable =
+    summary?.payable !== undefined
+      ? summary.payable
+      : entries
+          .filter((e) => e.type === "EXPENSE")
+          .reduce((s, e) => s + (e.due_amount ?? 0), 0);
+
+  const cashIn =
+    summary?.cash_in !== undefined
+      ? summary.cash_in
+      : entries
+          .filter((e) => e.type === "INCOME")
+          .reduce((s, e) => s + (e.paid_amount ?? e.amount ?? 0), 0);
+
+  const cashOut =
+    summary?.cash_out !== undefined
+      ? summary.cash_out
+      : entries
+          .filter((e) => e.type === "EXPENSE")
+          .reduce((s, e) => s + (e.paid_amount ?? e.amount ?? 0), 0);
+
+  const cashBalance =
+    summary?.balance !== undefined ? summary.balance : cashIn - cashOut;
+
+  const netDue = receivable - payable;
+  const overallNet = totalIncome - totalExpense;
+
   const handlePrint = () => {
     window.print();
   };
@@ -59,6 +105,8 @@ const FinanceExport = () => {
           }
           #print-area, #print-area * {
             visibility: visible;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
           #print-area {
             position: absolute;
@@ -70,6 +118,10 @@ const FinanceExport = () => {
           }
           .no-print {
             display: none !important;
+          }
+          .print-grid-3 {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
           }
         }
       `}</style>
@@ -170,38 +222,101 @@ const FinanceExport = () => {
           </div>
 
           {/* Quick Metrics (visible in print too) */}
-          <div className="grid grid-cols-3 gap-4 rounded-xl border border-gray-100 bg-gray-50/50 p-4">
-            <div className="space-y-1">
-              <p className="flex items-center gap-1 text-[10px] font-bold text-gray-400 uppercase">
-                <FaArrowUp className="h-2.5 w-2.5 text-green-500" /> Total
-                Income
-              </p>
-              <p className="text-sm font-extrabold text-green-600">
-                {formatCurrency(summary?.income ?? 0)}
-              </p>
+          <div className="print-grid-3 grid grid-cols-1 gap-3.5 rounded-xl border border-gray-200 bg-gray-50/70 p-4 sm:grid-cols-3 sm:gap-4">
+            {/* Total Income */}
+            <div className="flex flex-col justify-between rounded-lg border border-emerald-100 bg-white p-3.5 shadow-2xs">
+              <div>
+                <p className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-gray-500 uppercase sm:text-[11px]">
+                  <FaArrowUp className="h-3 w-3 text-emerald-600" /> Total
+                  Income
+                </p>
+                <p className="mt-1 text-base font-black text-emerald-600 sm:text-xl">
+                  {formatCurrency(totalIncome)}
+                </p>
+              </div>
+              <div className="mt-2.5 space-y-1 border-t border-gray-100 pt-2 text-[11px]">
+                <div className="flex items-center justify-between text-gray-500">
+                  <span>নগদ আদায়:</span>
+                  <span className="font-semibold text-gray-700">
+                    {formatCurrency(cashIn)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-amber-700">
+                  <span className="font-medium">বাকি (নিতে হবে):</span>
+                  <span className="font-bold">
+                    {formatCurrency(receivable)}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="space-y-1">
-              <p className="flex items-center gap-1 text-[10px] font-bold text-gray-400 uppercase">
-                <FaArrowDown className="h-2.5 w-2.5 text-red-500" /> Total
-                Expense
-              </p>
-              <p className="text-sm font-extrabold text-red-600">
-                {formatCurrency(summary?.expense ?? 0)}
-              </p>
+
+            {/* Total Expense */}
+            <div className="flex flex-col justify-between rounded-lg border border-rose-100 bg-white p-3.5 shadow-2xs">
+              <div>
+                <p className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-gray-500 uppercase sm:text-[11px]">
+                  <FaArrowDown className="h-3 w-3 text-rose-600" /> Total
+                  Expense
+                </p>
+                <p className="mt-1 text-base font-black text-rose-600 sm:text-xl">
+                  {formatCurrency(totalExpense)}
+                </p>
+              </div>
+              <div className="mt-2.5 space-y-1 border-t border-gray-100 pt-2 text-[11px]">
+                <div className="flex items-center justify-between text-gray-500">
+                  <span>নগদ পরিশোধ:</span>
+                  <span className="font-semibold text-gray-700">
+                    {formatCurrency(cashOut)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-rose-700">
+                  <span className="font-medium">বাকি (দিতে হবে):</span>
+                  <span className="font-bold">{formatCurrency(payable)}</span>
+                </div>
+              </div>
             </div>
-            <div className="space-y-1">
-              <p className="flex items-center gap-1 text-[10px] font-bold text-gray-400 uppercase">
-                <FaWallet className="h-2.5 w-2.5 text-blue-500" /> Net Balance
-              </p>
-              <p
-                className={`text-sm font-extrabold ${
-                  (summary?.balance ?? 0) >= 0
-                    ? "text-green-600"
-                    : "text-red-600"
-                }`}
-              >
-                {formatCurrency(summary?.balance ?? 0)}
-              </p>
+
+            {/* Net Balance */}
+            <div className="flex flex-col justify-between rounded-lg border border-blue-100 bg-white p-3.5 shadow-2xs">
+              <div>
+                <p className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-gray-500 uppercase sm:text-[11px]">
+                  <FaWallet className="h-3 w-3 text-blue-600" /> Net Balance
+                </p>
+                <p
+                  className={`mt-1 text-base font-black sm:text-xl ${
+                    overallNet >= 0 ? "text-emerald-600" : "text-rose-600"
+                  }`}
+                >
+                  {formatCurrency(overallNet)}
+                </p>
+              </div>
+              <div className="mt-2.5 space-y-1 border-t border-gray-100 pt-2 text-[11px]">
+                <div className="flex items-center justify-between text-gray-500">
+                  <span>হাতে নগদ (Cash):</span>
+                  <span
+                    className={`font-semibold ${
+                      cashBalance >= 0 ? "text-emerald-600" : "text-rose-600"
+                    }`}
+                  >
+                    {formatCurrency(cashBalance)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">নেট বাকি:</span>
+                  {netDue > 0 ? (
+                    <span className="font-bold text-amber-700">
+                      পাবো +{formatCurrency(netDue)}
+                    </span>
+                  ) : netDue < 0 ? (
+                    <span className="font-bold text-rose-700">
+                      দিতে হবে -{formatCurrency(Math.abs(netDue))}
+                    </span>
+                  ) : (
+                    <span className="font-semibold text-gray-600">
+                      বাকি নেই (০)
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -219,35 +334,58 @@ const FinanceExport = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200/80 font-medium text-gray-700">
-                {entries.map((entry) => (
-                  <tr
-                    key={entry.id}
-                    className="border-b border-gray-200/80 last:border-b-0"
-                  >
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      {formatDateShort(entry.date)}
-                    </td>
-                    <td className="px-4 py-3 font-bold whitespace-nowrap text-gray-900">
-                      {entry.category?.name}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-gray-500">
-                      {entry.person_name || "-"}
-                    </td>
-                    <td className="max-w-50 truncate px-4 py-3 text-gray-600">
-                      {entry.note || "-"}
-                    </td>
-                    <td className="px-4 py-3 text-right font-bold whitespace-nowrap text-green-600">
-                      {entry.type === "INCOME"
-                        ? `+${formatCurrency(entry.amount)}`
-                        : "-"}
-                    </td>
-                    <td className="px-4 py-3 text-right font-bold whitespace-nowrap text-red-600">
-                      {entry.type === "EXPENSE"
-                        ? `-${formatCurrency(entry.amount)}`
-                        : "-"}
-                    </td>
-                  </tr>
-                ))}
+                {entries.map((entry) => {
+                  const hasDue = (entry.due_amount ?? 0) > 0;
+                  const totalAmt = entry.total_amount ?? entry.amount;
+
+                  return (
+                    <tr
+                      key={entry.id}
+                      className="border-b border-gray-200/80 last:border-b-0"
+                    >
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        {formatDateShort(entry.date)}
+                      </td>
+                      <td className="px-4 py-3 font-bold whitespace-nowrap text-gray-900">
+                        {entry.category?.name}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-gray-500">
+                        {entry.person_name || "-"}
+                      </td>
+                      <td className="max-w-50 truncate px-4 py-3 text-gray-600">
+                        {entry.note || "-"}
+                      </td>
+                      <td className="px-4 py-3 text-right font-bold whitespace-nowrap text-emerald-600">
+                        {entry.type === "INCOME" ? (
+                          <div>
+                            <span>+{formatCurrency(totalAmt)}</span>
+                            {hasDue && (
+                              <p className="text-[10px] font-semibold text-amber-700">
+                                বাকি: {formatCurrency(entry.due_amount ?? 0)}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right font-bold whitespace-nowrap text-rose-600">
+                        {entry.type === "EXPENSE" ? (
+                          <div>
+                            <span>-{formatCurrency(totalAmt)}</span>
+                            {hasDue && (
+                              <p className="text-[10px] font-semibold text-rose-700">
+                                বাকি: {formatCurrency(entry.due_amount ?? 0)}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

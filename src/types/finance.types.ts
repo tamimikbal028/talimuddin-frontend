@@ -217,6 +217,10 @@ export interface FinanceMonthExportResponse {
       income: number;
       expense: number;
       balance: number;
+      cash_in?: number;
+      cash_out?: number;
+      receivable?: number;
+      payable?: number;
       totalEntries: number;
     };
   };
