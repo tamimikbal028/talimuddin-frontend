@@ -267,7 +267,6 @@ const useSearchUsers = (query: string, enabled = true) => {
   });
 };
 
-
 const useAddBranchAdmin = () => {
   const { branchId } = useParams();
   const queryClient = useQueryClient();
@@ -279,6 +278,9 @@ const useAddBranchAdmin = () => {
       toast.success(response.message || "Branch admin added successfully");
       queryClient.invalidateQueries({
         queryKey: [BRANCH_KEYS.DETAILS, branchId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["BRANCH_ADMINS", branchId],
       });
       queryClient.invalidateQueries({
         queryKey: [BRANCH_KEYS.MEMBERS, branchId],
@@ -301,10 +303,77 @@ const useAddBranchModerator = () => {
         queryKey: [BRANCH_KEYS.DETAILS, branchId],
       });
       queryClient.invalidateQueries({
+        queryKey: ["BRANCH_MODERATORS", branchId],
+      });
+      queryClient.invalidateQueries({
         queryKey: [BRANCH_KEYS.MEMBERS, branchId],
       });
     },
     onError: handleMutationError("Failed to add branch moderator"),
+  });
+};
+
+const useBranchAdmins = (branchId?: string) => {
+  const { branchId: paramBranchId } = useParams();
+  const targetId = branchId || paramBranchId;
+
+  return useQuery({
+    queryKey: ["BRANCH_ADMINS", targetId],
+    queryFn: () => branchServices.getBranchAdmins(targetId as string),
+    enabled: !!targetId,
+  });
+};
+
+const useRemoveBranchAdmin = () => {
+  const { branchId } = useParams();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (memberId: string) =>
+      branchServices.removeBranchAdmin(branchId as string, memberId),
+    onSuccess: (response) => {
+      toast.success(response.message || "Branch admin removed successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["BRANCH_ADMINS", branchId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [BRANCH_KEYS.DETAILS, branchId],
+      });
+    },
+    onError: handleMutationError("Failed to remove branch admin"),
+  });
+};
+
+const useBranchModerators = (branchId?: string) => {
+  const { branchId: paramBranchId } = useParams();
+  const targetId = branchId || paramBranchId;
+
+  return useQuery({
+    queryKey: ["BRANCH_MODERATORS", targetId],
+    queryFn: () => branchServices.getBranchModerators(targetId as string),
+    enabled: !!targetId,
+  });
+};
+
+const useRemoveBranchModerator = () => {
+  const { branchId } = useParams();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (memberId: string) =>
+      branchServices.removeBranchModerator(branchId as string, memberId),
+    onSuccess: (response) => {
+      toast.success(
+        response.message || "Branch moderator removed successfully"
+      );
+      queryClient.invalidateQueries({
+        queryKey: ["BRANCH_MODERATORS", branchId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [BRANCH_KEYS.DETAILS, branchId],
+      });
+    },
+    onError: handleMutationError("Failed to remove branch moderator"),
   });
 };
 
@@ -330,7 +399,10 @@ const branchHooks = {
   useSearchUsers,
   useAddBranchAdmin,
   useAddBranchModerator,
+  useBranchAdmins,
+  useRemoveBranchAdmin,
+  useBranchModerators,
+  useRemoveBranchModerator,
 } as const;
 
 export default branchHooks;
-

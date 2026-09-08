@@ -63,7 +63,6 @@ export interface BranchMember {
   };
 }
 
-
 export interface AddBranchMemberData {
   serial_no?: number | null;
   name: string;
@@ -233,7 +232,6 @@ export interface SearchUserItem {
   } | null;
 }
 
-
 export interface SearchUsersResponse {
   statusCode: number;
   success: boolean;
@@ -269,3 +267,48 @@ export interface AddBranchModeratorResponse {
   };
 }
 
+export interface BranchAdminItem {
+  id: string;
+  user_id: string;
+  is_admin: boolean;
+  created_at: string;
+  user: {
+    id: string;
+    full_name: string;
+    user_name: string;
+    email: string;
+    avatar: string | null;
+  };
+}
+
+export interface BranchAdminsResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    admins: BranchAdminItem[];
+  };
+}
+
+export interface BranchModeratorItem {
+  id: string;
+  user_id: string;
+  is_moderator: boolean;
+  created_at: string;
+  user: {
+    id: string;
+    full_name: string;
+    user_name: string;
+    email: string;
+    avatar: string | null;
+  };
+}
+
+export interface BranchModeratorsResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    moderators: BranchModeratorItem[];
+  };
+}

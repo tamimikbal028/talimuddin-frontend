@@ -21,8 +21,9 @@ import type {
   AddBranchAdminResponse,
   AddBranchModeratorData,
   AddBranchModeratorResponse,
+  BranchAdminsResponse,
+  BranchModeratorsResponse,
 } from "../types";
-
 
 const createBranch = async (
   branchData: CreateBranchData
@@ -170,7 +171,6 @@ const searchUsers = async (
   return response.data;
 };
 
-
 const addBranchAdmin = async (
   branchId: string,
   data: AddBranchAdminData
@@ -193,6 +193,42 @@ const addBranchModerator = async (
   return response.data;
 };
 
+const getBranchAdmins = async (
+  branchId: string
+): Promise<BranchAdminsResponse> => {
+  const response = await api.get<BranchAdminsResponse>(
+    `/branches/${branchId}/admins`
+  );
+  return response.data;
+};
+
+const removeBranchAdmin = async (
+  branchId: string,
+  memberId: string
+): Promise<{ success: boolean; message: string }> => {
+  const response = await api.delete(`/branches/${branchId}/admins/${memberId}`);
+  return response.data;
+};
+
+const getBranchModerators = async (
+  branchId: string
+): Promise<BranchModeratorsResponse> => {
+  const response = await api.get<BranchModeratorsResponse>(
+    `/branches/${branchId}/moderators`
+  );
+  return response.data;
+};
+
+const removeBranchModerator = async (
+  branchId: string,
+  memberId: string
+): Promise<{ success: boolean; message: string }> => {
+  const response = await api.delete(
+    `/branches/${branchId}/moderators/${memberId}`
+  );
+  return response.data;
+};
+
 export const branchServices = {
   createBranch,
   getMainBranches,
@@ -210,7 +246,10 @@ export const branchServices = {
   searchUsers,
   addBranchAdmin,
   addBranchModerator,
+  getBranchAdmins,
+  removeBranchAdmin,
+  getBranchModerators,
+  removeBranchModerator,
 } as const;
 
 export default branchServices;
-
