@@ -45,8 +45,10 @@ const NoticePage = () => {
     queryParams,
     can_access_notices
   );
-  const { mutateAsync: createNotice, isPending: isCreating } = useCreateNotice();
-  const { mutateAsync: updateNotice, isPending: isUpdating } = useUpdateNotice();
+  const { mutateAsync: createNotice, isPending: isCreating } =
+    useCreateNotice();
+  const { mutateAsync: updateNotice, isPending: isUpdating } =
+    useUpdateNotice();
   const { mutateAsync: deleteNotice } = useDeleteNotice();
 
   const notices = noticesData?.data?.notices || [];
@@ -67,7 +69,8 @@ const NoticePage = () => {
         </h2>
         <p className="mt-1.5 max-w-md text-xs text-gray-500">
           এই নোটিশ বোর্ডটি শুধুমাত্র অ্যাপ অ্যাডমিনিস্ট্রেটর এবং ব্রাঞ্চ
-          অ্যাডমিনদের জন্য সংরক্ষিত। সাধারণ সদস্য বা মডারেটরদের জন্য এটি উন্মুক্ত নয়।
+          অ্যাডমিনদের জন্য সংরক্ষিত। সাধারণ সদস্য বা মডারেটরদের জন্য এটি
+          উন্মুক্ত নয়।
         </p>
       </div>
     );
@@ -104,34 +107,34 @@ const NoticePage = () => {
     <div
       key={notice.id}
       onClick={() => setReadingNotice(notice)}
-      className={`group relative flex flex-col justify-between rounded-2xl border p-4 sm:p-5 transition-all duration-200 hover:shadow-md cursor-pointer ${
+      className={`group relative flex cursor-pointer flex-col justify-between rounded-2xl border p-4 transition-all duration-200 hover:shadow-md sm:p-5 ${
         isPinnedView
           ? "border-amber-200/90 bg-linear-to-br from-amber-50/40 via-white to-amber-50/20 shadow-2xs"
           : "border-gray-200/80 bg-white hover:border-gray-300"
       }`}
     >
       <div>
-        {/* Top Badges & Actions */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-1.5">
-            {notice.is_pinned && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50/90 px-2.5 py-0.5 text-[10px] font-semibold text-amber-700">
-                <FaThumbtack className="h-2.5 w-2.5" />
-                পিন করা
-              </span>
-            )}
-
+        {/* Optional Pinned / Draft Badges (rendered only if present) */}
+        {(notice.is_pinned || (!notice.is_active && is_app_admin)) && (
+          <div className="mb-2 flex flex-wrap items-center gap-1.5">
             {!notice.is_active && is_app_admin && (
               <span className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
                 অপ্রকাশিত (Draft)
               </span>
             )}
           </div>
+        )}
 
-          {/* Admin Controls */}
+        {/* Title & Admin Controls Row */}
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="text-base leading-snug font-bold text-gray-900 transition-colors group-hover:text-blue-600">
+            {notice.title}
+          </h3>
+
+          {/* Admin Controls (Always visible, clean buttons) */}
           {is_app_admin && (
             <div
-              className="flex items-center gap-1 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+              className="flex shrink-0 items-center gap-1.5"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -141,29 +144,24 @@ const NoticePage = () => {
                   setIsModalOpen(true);
                 }}
                 title="সম্পাদনা করুন"
-                className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-blue-600 transition-colors"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200/80 bg-gray-50 text-gray-600 shadow-2xs transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
               >
-                <FaEdit className="h-3.5 w-3.5" />
+                <FaEdit className="h-3 w-3" />
               </button>
               <button
                 type="button"
                 onClick={(e) => handleDelete(notice, e)}
                 title="মুছে ফেলুন"
-                className="rounded-lg p-1.5 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200/80 bg-gray-50 text-gray-600 shadow-2xs transition-all hover:border-red-300 hover:bg-red-50 hover:text-red-600"
               >
-                <FaTrashAlt className="h-3.5 w-3.5" />
+                <FaTrashAlt className="h-3 w-3" />
               </button>
             </div>
           )}
         </div>
 
-        {/* Title */}
-        <h3 className="mt-2.5 text-base font-bold text-gray-900 leading-snug group-hover:text-blue-600 transition-colors">
-          {notice.title}
-        </h3>
-
         {/* Snippet */}
-        <p className="mt-1.5 line-clamp-2 text-xs text-gray-600 leading-relaxed">
+        <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-gray-600">
           {notice.content}
         </p>
       </div>
@@ -175,7 +173,7 @@ const NoticePage = () => {
           {dayjs(notice.created_at).fromNow()}
         </span>
 
-        <span className="font-semibold text-blue-600 group-hover:translate-x-0.5 transition-transform">
+        <span className="font-semibold text-blue-600 transition-transform group-hover:translate-x-0.5">
           বিস্তারিত দেখুন &rarr;
         </span>
       </div>
@@ -185,7 +183,7 @@ const NoticePage = () => {
   return (
     <div className="space-y-5">
       {/* Page Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-gray-200/80 bg-white p-4 sm:p-6 shadow-2xs">
+      <div className="flex flex-col gap-3 rounded-2xl border border-gray-200/80 bg-white p-4 shadow-2xs sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <div className="flex items-center gap-3.5">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-blue-600 to-indigo-700 text-white shadow-md shadow-blue-500/20">
             <FaBullhorn className="h-5 w-5" />
@@ -207,7 +205,7 @@ const NoticePage = () => {
               setEditingNotice(null);
               setIsModalOpen(true);
             }}
-            className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 active:scale-[0.99] transition-all"
+            className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-[0.99]"
           >
             <FaPlus className="h-3 w-3" />
             <span>নতুন নোটিশ লিখুন</span>
@@ -217,13 +215,13 @@ const NoticePage = () => {
 
       {/* Search Bar */}
       <div className="relative w-full max-w-md">
-        <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 h-3.5 w-3.5" />
+        <FaSearch className="absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="নোটিশ খুঁজুন..."
-          className="w-full rounded-xl border border-gray-200/80 bg-white pl-9 pr-3.5 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 shadow-2xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-hidden transition-all"
+          className="w-full rounded-xl border border-gray-200/80 bg-white py-2.5 pr-3.5 pl-9 text-xs text-gray-900 shadow-2xs transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-hidden"
         />
       </div>
 
@@ -233,7 +231,7 @@ const NoticePage = () => {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="animate-pulse rounded-2xl border border-gray-200/80 bg-white p-5 space-y-3"
+              className="animate-pulse space-y-3 rounded-2xl border border-gray-200/80 bg-white p-5"
             >
               <div className="h-4 w-20 rounded-md bg-gray-200" />
               <div className="h-5 w-3/4 rounded-md bg-gray-200" />
@@ -246,7 +244,7 @@ const NoticePage = () => {
         </div>
       ) : notices.length === 0 ? (
         /* Empty State */
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white py-12 px-4 text-center">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white px-4 py-12 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
             <FaBullhorn className="h-6 w-6" />
           </div>
