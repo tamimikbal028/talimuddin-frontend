@@ -302,7 +302,16 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
                 <strong className="font-bold">App Admin</strong>
               </span>
             </span>
-          ) : null}
+          ) : (
+            <span
+              title="You are viewing this branch as a guest"
+              className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50/90 px-3 py-1 text-xs font-medium text-amber-800 shadow-2xs"
+            >
+              <span>
+                <strong className="font-bold">Guest View</strong>
+              </span>
+            </span>
+          )}
 
           {/* Sub Branch Parent Link */}
           {branch.branch_type === "SUB" && branch.parent_branch?.name && (
