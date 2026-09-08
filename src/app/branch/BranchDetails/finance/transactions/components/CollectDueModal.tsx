@@ -5,6 +5,8 @@ import {
   useRecordFinancePayment,
   useFinancePayments,
 } from "@/hooks/useBranchFinance";
+import authHooks from "@/hooks/useAuth";
+import { toast } from "sonner";
 import { formatCurrency, getMonthName } from "../../financeUtils";
 import type { FinanceEntry } from "@/types";
 
@@ -23,6 +25,9 @@ const CollectDueModal = ({
   onClose,
   onSuccess,
 }: CollectDueModalProps) => {
+  const { user } = authHooks.useUser();
+  const isOwner = !!user?.id && user.id === entry?.recorded_by?.id;
+
   const [amount, setAmount] = useState<number | "">("");
   const [paymentDate, setPaymentDate] = useState<string>(
     new Date().toISOString().split("T")[0]
@@ -64,6 +69,14 @@ const CollectDueModal = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isOwner) {
+      const msg = `শুধুমাত্র যিনি এন্ট্রি করেছেন (${entry.recorded_by?.full_name || "এন্ট্রিকারী"}) তিনিই আদায়/পরিশোধ করতে পারবেন`;
+      setValidationError(msg);
+      toast.error(msg);
+      return;
+    }
+
     const numAmount = Number(amount);
 
     if (isNaN(numAmount) || numAmount <= 0) {
@@ -172,6 +185,18 @@ const CollectDueModal = ({
                 </div>
               </div>
             </div>
+
+            {/* Restriction banner if not owner */}
+            {!isOwner && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900 shadow-2xs">
+                <p className="font-bold">⚠️ অনুমতি সীমাবদ্ধতা:</p>
+                <p className="mt-0.5 text-amber-800">
+                  বকেয়া থাকা এন্ট্রিতে শুধুমাত্র যিনি এন্ট্রিটি তৈরি করেছেন{" "}
+                  <b>({entry.recorded_by?.full_name || "এন্ট্রিকারী"})</b> তিনিই
+                  আদায় বা পরিশোধ করতে পারবেন।
+                </p>
+              </div>
+            )}
 
             {/* Payment Input Section */}
             <div className="space-y-3">
@@ -292,7 +317,7 @@ const CollectDueModal = ({
             </button>
             <button
               type="submit"
-              disabled={isPending || dueAmount <= 0}
+              disabled={isPending || dueAmount <= 0 || !isOwner}
               className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700 disabled:opacity-50"
             >
               <FaCheckCircle className="h-3.5 w-3.5" />

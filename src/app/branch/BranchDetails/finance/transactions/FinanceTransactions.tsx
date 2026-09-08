@@ -6,6 +6,8 @@ import {
   useCategoriesList,
 } from "@/hooks/useBranchFinance";
 import branchHooks from "@/hooks/useBranch";
+import authHooks from "@/hooks/useAuth";
+import { toast } from "sonner";
 import FinanceAddEntryForm from "./components/FinanceAddEntryForm";
 import CollectDueModal from "./components/CollectDueModal";
 import TransactionFilters from "./components/TransactionFilters";
@@ -26,6 +28,9 @@ import {
 
 const FinanceTransactions = () => {
   const { branchId } = useParams<{ branchId: string }>();
+
+  // Current logged in user
+  const { user } = authHooks.useUser();
 
   // Only Branch Admin or Branch Moderator can add entries / manage finance
   const { data: branchDetailsData } = branchHooks.useBranchDetails();
@@ -87,6 +92,20 @@ const FinanceTransactions = () => {
   };
 
   const handleDelete = async (entry: FinanceEntry) => {
+    const isOwner = !!user?.id && user.id === entry.recorded_by?.id;
+    const hasDue =
+      (entry.due_amount !== undefined && entry.due_amount > 0) ||
+      entry.payment_status === "PARTIAL" ||
+      entry.payment_status === "DUE";
+
+    // If entry has due, only and only creator can delete it
+    if (hasDue && !isOwner) {
+      toast.error(
+        `বকেয়া থাকায় শুধুমাত্র যিনি এন্ট্রি করেছেন (${entry.recorded_by?.full_name || "এন্ট্রিকারী"}) তিনিই এটি ডিলিট করতে পারবেন`
+      );
+      return;
+    }
+
     let actionCode: string | undefined = undefined;
 
     if (isModerator) {
@@ -105,6 +124,20 @@ const FinanceTransactions = () => {
   };
 
   const handleEdit = async (entry: FinanceEntry) => {
+    const isOwner = !!user?.id && user.id === entry.recorded_by?.id;
+    const hasDue =
+      (entry.due_amount !== undefined && entry.due_amount > 0) ||
+      entry.payment_status === "PARTIAL" ||
+      entry.payment_status === "DUE";
+
+    // If entry has due, only and only creator can edit it
+    if (hasDue && !isOwner) {
+      toast.error(
+        `বকেয়া থাকায় শুধুমাত্র যিনি এন্ট্রি করেছেন (${entry.recorded_by?.full_name || "এন্ট্রিকারী"}) তিনিই এটি এডিট করতে পারবেন`
+      );
+      return;
+    }
+
     if (isModerator) {
       const code = await promptFinanceActionCode("edit");
       if (!code) return;
@@ -247,6 +280,7 @@ const FinanceTransactions = () => {
                   const isExpanded = expandedRows[entry.id];
                   const hasDetails = entry.details && entry.details.length > 0;
                   const hasNotes = !!entry.note;
+                  const isOwner = !!user?.id && user.id === entry.recorded_by?.id;
                   const hasDue =
                     (entry.due_amount !== undefined && entry.due_amount > 0) ||
                     entry.payment_status === "PARTIAL" ||
@@ -362,27 +396,38 @@ const FinanceTransactions = () => {
                             {/* Slot 1: Due Action button or fixed width spacer */}
                             {canManageFinance &&
                               (hasDue ? (
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedDueEntry(entry);
-                                    setIsDueModalOpen(true);
-                                  }}
-                                  className="flex h-7 w-18 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[11px] font-bold text-amber-800 transition-colors hover:bg-amber-100"
-                                  title={
-                                    entry.type === "INCOME"
-                                      ? "বকেয়া আদায় করুন"
-                                      : "দেনা পরিশোধ করুন"
-                                  }
-                                >
-                                  <FaMoneyBillWave className="h-3 w-3 shrink-0 text-amber-600" />
-                                  <span>
+                                isOwner ? (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedDueEntry(entry);
+                                      setIsDueModalOpen(true);
+                                    }}
+                                    className="flex h-7 w-18 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[11px] font-bold text-amber-800 transition-colors hover:bg-amber-100"
+                                    title={
+                                      entry.type === "INCOME"
+                                        ? "বকেয়া আদায় করুন"
+                                        : "দেনা পরিশোধ করুন"
+                                    }
+                                  >
+                                    <FaMoneyBillWave className="h-3 w-3 shrink-0 text-amber-600" />
+                                    <span>
+                                      {entry.type === "INCOME"
+                                        ? "আদায়"
+                                        : "পরিশোধ"}
+                                    </span>
+                                  </button>
+                                ) : (
+                                  <span
+                                    title={`শুধুমাত্র যিনি এন্ট্রি করেছেন (${entry.recorded_by?.full_name || "এন্ট্রিকারী"}) তিনিই আদায়/পরিশোধ করতে পারবেন`}
+                                    className="flex h-7 w-18 shrink-0 select-none items-center justify-center rounded-lg border border-gray-200 bg-gray-100 px-1.5 py-1 text-[10px] font-medium text-gray-400 cursor-not-allowed"
+                                  >
                                     {entry.type === "INCOME"
                                       ? "আদায়"
                                       : "পরিশোধ"}
                                   </span>
-                                </button>
+                                )
                               ) : (
                                 <div className="h-7 w-18 shrink-0" />
                               ))}
