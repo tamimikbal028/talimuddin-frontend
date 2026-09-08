@@ -12,7 +12,6 @@ import {
   FaShareAlt,
   FaWhatsapp,
   FaLink,
-  FaEye,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -303,26 +302,7 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
                 <strong className="font-bold">App Admin</strong>
               </span>
             </span>
-          ) : meta.is_member ? (
-            <span
-              title="You are a Member of this branch"
-              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50/90 px-3 py-1 text-xs font-medium text-emerald-800 shadow-2xs"
-            >
-              <span>
-                <strong className="font-bold">Branch Member</strong>
-              </span>
-            </span>
-          ) : (
-            <span
-              title="You are viewing this branch as a guest"
-              className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50/90 px-3 py-1 text-xs font-medium text-amber-800 shadow-2xs"
-            >
-              <FaEye className="h-3 w-3 text-amber-600" />
-              <span>
-                Role: <strong className="font-bold">Guest View</strong>
-              </span>
-            </span>
-          )}
+          ) : null}
 
           {/* Sub Branch Parent Link */}
           {branch.branch_type === "SUB" && branch.parent_branch?.name && (
