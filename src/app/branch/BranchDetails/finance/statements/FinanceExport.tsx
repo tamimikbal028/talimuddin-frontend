@@ -7,9 +7,12 @@ import {
   FetchingIndicator,
 } from "@/app/shared/LoadingSkeleton/FinanceSkeletons";
 import { FaPrint, FaArrowUp, FaArrowDown, FaWallet } from "react-icons/fa";
+import branchHooks from "@/hooks/useBranch";
 
 const FinanceExport = () => {
   const { branchId } = useParams<{ branchId: string }>();
+  const { data: branchData } = branchHooks.useBranchDetails();
+  const branch = branchData?.data?.branch;
 
   // Date selection state
   const currentYear = new Date().getFullYear();
@@ -219,10 +222,20 @@ const FinanceExport = () => {
           {/* Header (visible in print too) */}
           <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gray-100 pb-5">
             <div>
-              <h2 className="text-xl font-extrabold text-gray-900">
+              {branch?.name && (
+                <h1 className="text-2xl font-black tracking-tight text-gray-950">
+                  {branch.name}
+                  {branch.location_name && (
+                    <span className="ml-2 text-xs font-medium text-gray-500">
+                      ({branch.location_name})
+                    </span>
+                  )}
+                </h1>
+              )}
+              <h2 className="text-base font-bold text-blue-600">
                 Monthly Finance Statement
               </h2>
-              <p className="mt-1 text-xs font-semibold text-gray-500">
+              <p className="mt-0.5 text-xs font-medium text-gray-500">
                 Statement Period: {getMonthName(month)} {year}
               </p>
             </div>
