@@ -57,6 +57,18 @@ export interface FinanceOverallSummary {
   total_payable?: number;
 }
 
+export interface FinanceCategoryMonthStat {
+  year: number;
+  month: number;
+  monthKey: string;
+  income: number;
+  expense: number;
+  paid: number;
+  due: number;
+  balance: number;
+  count: number;
+}
+
 export interface FinanceCategoryBreakdown {
   id: string;
   category: string;
@@ -67,6 +79,7 @@ export interface FinanceCategoryBreakdown {
   paid?: number;
   due?: number;
   count: number;
+  months?: FinanceCategoryMonthStat[];
 }
 
 export interface FinanceMonthlyStat {
