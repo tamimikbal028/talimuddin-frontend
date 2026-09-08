@@ -29,7 +29,7 @@ const BranchMembersTab = () => {
   } = branchHooks.useBranchMembers(searchTerm);
 
   const members = (data?.pages.flatMap((page) => page.data.members) || [])
-    .filter((member) => !member.meta?.is_admin)
+    .filter((member) => !member.meta?.is_admin && !member.meta?.is_moderator)
     .sort((a, b) => {
       const aSerial = a.serial_no;
       const bSerial = b.serial_no;

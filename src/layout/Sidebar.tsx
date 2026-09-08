@@ -84,20 +84,20 @@ const Sidebar = () => {
       </div>
 
       {/* Sign Out / Footer Section */}
-      <div className="border-t border-gray-200/80 p-3">
+      <div className="border-t border-gray-200/80 p-3.5">
         {user ? (
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {/* User Info (Name, Username, Email) */}
-            <div className="rounded-xl border border-gray-200/80 bg-gray-50/70 px-3 py-2.5">
+            <div className="rounded-2xl border border-gray-200/90 bg-gray-50/80 p-3.5 shadow-2xs">
               <p
-                className="truncate text-xs font-bold text-gray-900"
+                className="truncate text-sm leading-snug font-bold text-gray-900 sm:text-base"
                 title={user.full_name}
               >
                 {user.full_name || user.user_name}
               </p>
               {user.user_name && (
                 <p
-                  className="truncate text-[11px] font-medium text-blue-600"
+                  className="mt-0.5 truncate text-xs font-semibold text-blue-600"
                   title={`@${user.user_name}`}
                 >
                   @{user.user_name}
@@ -105,7 +105,7 @@ const Sidebar = () => {
               )}
               {user.email && (
                 <p
-                  className="truncate text-[10px] text-gray-500"
+                  className="mt-1 truncate text-xs text-gray-600"
                   title={user.email}
                 >
                   {user.email}

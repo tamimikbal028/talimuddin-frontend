@@ -225,6 +225,8 @@ export interface SearchUserItem {
   user_name: string;
   email: string;
   avatar: string | null;
+  user_type?: string;
+  is_app_admin?: boolean;
   branch_role?: {
     is_admin: boolean;
     is_moderator: boolean;

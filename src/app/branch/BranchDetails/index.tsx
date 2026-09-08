@@ -86,8 +86,13 @@ const BranchDetails = () => {
     );
   }
 
-  const isMember = meta?.is_member || meta?.is_admin_user || meta?.is_admin;
-  const isManagement = meta?.is_admin || meta?.is_admin_user;
+  const isMember =
+    meta?.is_member ||
+    meta?.is_admin_user ||
+    meta?.is_admin ||
+    meta?.is_moderator;
+  const isManagement =
+    meta?.is_admin || meta?.is_admin_user || meta?.is_moderator;
 
   // Show full branch details
   return (
@@ -137,16 +142,7 @@ const BranchDetails = () => {
             </div>
           </div>
         </>
-      ) : (
-        /* Guest View: Only header is shown, no tabs or tab routes */
-        <Routes>
-          <Route
-            path="*"
-            element={<Navigate to={`/branch/branches/${branchId}`} replace />}
-          />
-          <Route index element={null} />
-        </Routes>
-      )}
+      ) : null}
     </div>
   );
 };

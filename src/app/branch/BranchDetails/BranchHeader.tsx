@@ -12,6 +12,8 @@ import {
   FaShareAlt,
   FaWhatsapp,
   FaLink,
+  FaEye,
+  FaUser,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -270,6 +272,59 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
           ) : (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/90 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 shadow-2xs">
               Main Branch
+            </span>
+          )}
+
+          {/* User Branch Role Badge */}
+          {meta.is_admin ? (
+            <span
+              title="You are a Branch Admin of this branch"
+              className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50/90 px-3 py-1 text-xs font-medium text-blue-800 shadow-2xs"
+            >
+              <FaUserShield className="h-3 w-3 text-blue-600" />
+              <span>
+                Role: <strong className="font-bold">Admin</strong>
+              </span>
+            </span>
+          ) : meta.is_moderator ? (
+            <span
+              title="You are a Moderator of this branch"
+              className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50/90 px-3 py-1 text-xs font-medium text-purple-800 shadow-2xs"
+            >
+              <FaUserCheck className="h-3 w-3 text-purple-600" />
+              <span>
+                Role: <strong className="font-bold">Moderator</strong>
+              </span>
+            </span>
+          ) : meta.is_admin_user ? (
+            <span
+              title="You are viewing as an App Administrator"
+              className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50/90 px-3 py-1 text-xs font-medium text-indigo-800 shadow-2xs"
+            >
+              <FaUserShield className="h-3 w-3 text-indigo-600" />
+              <span>
+                Role: <strong className="font-bold">App Admin</strong>
+              </span>
+            </span>
+          ) : meta.is_member ? (
+            <span
+              title="You are a Member of this branch"
+              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50/90 px-3 py-1 text-xs font-medium text-emerald-800 shadow-2xs"
+            >
+              <FaUser className="h-3 w-3 text-emerald-600" />
+              <span>
+                Role: <strong className="font-bold">Member</strong>
+              </span>
+            </span>
+          ) : (
+            <span
+              title="You are viewing this branch as a guest"
+              className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50/90 px-3 py-1 text-xs font-medium text-amber-800 shadow-2xs"
+            >
+              <FaEye className="h-3 w-3 text-amber-600" />
+              <span>
+                Role: <strong className="font-bold">Guest View</strong>
+              </span>
             </span>
           )}
 

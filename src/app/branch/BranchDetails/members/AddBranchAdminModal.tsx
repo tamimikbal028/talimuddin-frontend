@@ -166,7 +166,9 @@ const AddBranchAdminModal = ({
                   users.map((u) => {
                     const isAlreadyAdmin = !!u.branch_role?.is_admin;
                     const isAlreadyModerator = !!u.branch_role?.is_moderator;
-                    const isDisabled = isAlreadyAdmin || isAlreadyModerator;
+                    const isAppAdmin = !!u.is_app_admin || u.user_type === "ADMIN";
+                    const isDisabled =
+                      isAlreadyAdmin || isAlreadyModerator || isAppAdmin;
                     const isSelected = selectedUser?.id === u.id;
 
                     return (
@@ -206,7 +208,11 @@ const AddBranchAdminModal = ({
                         </div>
 
                         <div className="shrink-0">
-                          {isAlreadyAdmin ? (
+                          {isAppAdmin ? (
+                            <span className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-0.5 text-[11px] font-bold text-indigo-700">
+                              App Admin
+                            </span>
+                          ) : isAlreadyAdmin ? (
                             <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700">
                               Already Admin
                             </span>
