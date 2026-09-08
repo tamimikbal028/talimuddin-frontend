@@ -86,15 +86,43 @@ const Sidebar = () => {
       {/* Sign Out / Footer Section */}
       <div className="border-t border-gray-200/80 p-3">
         {user ? (
-          <button
-            type="button"
-            onClick={() => logout()}
-            disabled={isLoggingOut}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200/80 bg-red-50/50 py-2.5 text-xs font-semibold text-red-600 transition-colors hover:border-red-300 hover:bg-red-100 active:scale-[0.99] disabled:opacity-50"
-          >
-            <FaSignOutAlt className="h-3.5 w-3.5" />
-            <span>{isLoggingOut ? "Signing out..." : "Sign Out"}</span>
-          </button>
+          <div className="space-y-2.5">
+            {/* User Info (Name, Username, Email) */}
+            <div className="rounded-xl border border-gray-200/80 bg-gray-50/70 px-3 py-2.5">
+              <p
+                className="truncate text-xs font-bold text-gray-900"
+                title={user.full_name}
+              >
+                {user.full_name || user.user_name}
+              </p>
+              {user.user_name && (
+                <p
+                  className="truncate text-[11px] font-medium text-blue-600"
+                  title={`@${user.user_name}`}
+                >
+                  @{user.user_name}
+                </p>
+              )}
+              {user.email && (
+                <p
+                  className="truncate text-[10px] text-gray-500"
+                  title={user.email}
+                >
+                  {user.email}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => logout()}
+              disabled={isLoggingOut}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200/80 bg-red-50/50 py-2.5 text-xs font-semibold text-red-600 transition-colors hover:border-red-300 hover:bg-red-100 active:scale-[0.99] disabled:opacity-50"
+            >
+              <FaSignOutAlt className="h-3.5 w-3.5" />
+              <span>{isLoggingOut ? "Signing out..." : "Sign Out"}</span>
+            </button>
+          </div>
         ) : (
           <NavLink
             to="/login"

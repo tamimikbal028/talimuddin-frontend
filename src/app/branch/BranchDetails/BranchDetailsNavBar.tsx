@@ -14,8 +14,14 @@ const BranchDetailsNavBar = ({
   const { branchId } = useParams<{ branchId: string }>();
   const baseUrl = `/branch/branches/${branchId}`;
 
-  const isMember = meta?.is_member || meta?.is_admin_user || meta?.is_admin;
-  const isManagement = meta?.is_admin || meta?.is_admin_user;
+  const isMember =
+    meta?.is_member ||
+    meta?.is_admin_user ||
+    meta?.is_admin ||
+    meta?.is_moderator;
+  const isManagement =
+    meta?.is_admin || meta?.is_admin_user || meta?.is_moderator;
+
 
   // Tabs list:
   // Admins see "Finance" and "Students"

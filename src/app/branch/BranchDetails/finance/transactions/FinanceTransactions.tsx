@@ -27,10 +27,12 @@ import {
 const FinanceTransactions = () => {
   const { branchId } = useParams<{ branchId: string }>();
 
-  // Check if current user is branch admin
+  // Check if current user is branch admin, app admin, or moderator
   const { data: branchDetailsData } = branchHooks.useBranchDetails();
   const meta = branchDetailsData?.data?.meta;
-  const canManageFinance = meta?.is_admin;
+  const canManageFinance =
+    meta?.is_admin || meta?.is_admin_user || meta?.is_moderator;
+
 
   // State for adding/editing entry modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -98,6 +100,22 @@ const FinanceTransactions = () => {
     const year = d.getFullYear();
     return `${day} ${month}, ${year}`;
   };
+
+  const formatDateTime = (dateStr: string) => {
+    if (!dateStr) return "-";
+    const d = new Date(dateStr);
+    const day = d.getDate().toString().padStart(2, "0");
+    const month = getMonthName(d.getMonth() + 1);
+    const year = d.getFullYear();
+    let hours = d.getHours();
+    const minutes = d.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const strHours = hours.toString().padStart(2, "0");
+    return `${day} ${month}, ${year} • ${strHours}:${minutes} ${ampm}`;
+  };
+
 
   const handleClearFilters = () => {
     setType("");
@@ -187,9 +205,10 @@ const FinanceTransactions = () => {
                     Category
                   </th>
                   <th className="px-3 py-3 whitespace-nowrap sm:px-5">
-                    Person Name
+                    Recorded By
                   </th>
                   <th className="px-3 py-3 text-right whitespace-nowrap sm:px-5">
+
                     Amount
                   </th>
                   <th className="px-3 py-3 text-center whitespace-nowrap sm:px-5">
@@ -264,23 +283,19 @@ const FinanceTransactions = () => {
                           </div>
                         </td>
 
-                        {/* Person Name / Details */}
+                        {/* Recorded By & Created At */}
                         <td className="border-b border-gray-200/80 px-3 py-3.5 font-medium whitespace-nowrap text-gray-600 sm:px-5">
-                          {entry.person_name ? (
-                            <div>
-                              <p className="font-semibold text-gray-900">
-                                {entry.person_name}
-                              </p>
-                              {entry.person_phone && (
-                                <p className="mt-0.5 flex items-center gap-1 text-[10px] text-gray-600">
-                                  {entry.person_phone}
-                                </p>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-gray-300">-</span>
-                          )}
+                          <p className="truncate font-semibold text-gray-900">
+                            {entry.recorded_by?.full_name ||
+                              entry.recorded_by?.user_name ||
+                              "Unknown"}
+                          </p>
+                          <p className="mt-0.5 text-[10px] text-gray-500">
+                            {formatDateTime(entry.created_at)}
+                          </p>
                         </td>
+
+
 
                         {/* Amount */}
                         <td

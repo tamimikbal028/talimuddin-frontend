@@ -19,7 +19,10 @@ import type {
   SearchUsersResponse,
   AddBranchAdminData,
   AddBranchAdminResponse,
+  AddBranchModeratorData,
+  AddBranchModeratorResponse,
 } from "../types";
+
 
 const createBranch = async (
   branchData: CreateBranchData
@@ -154,12 +157,19 @@ const removeMember = async (
   return response.data;
 };
 
-const searchUsers = async (query: string): Promise<SearchUsersResponse> => {
+const searchUsers = async (
+  query: string,
+  branchId?: string
+): Promise<SearchUsersResponse> => {
+  const branchParam = branchId
+    ? `&branchId=${encodeURIComponent(branchId)}`
+    : "";
   const response = await api.get<SearchUsersResponse>(
-    `/branches/users/search?query=${encodeURIComponent(query)}`
+    `/branches/users/search?query=${encodeURIComponent(query)}${branchParam}`
   );
   return response.data;
 };
+
 
 const addBranchAdmin = async (
   branchId: string,
@@ -167,6 +177,17 @@ const addBranchAdmin = async (
 ): Promise<AddBranchAdminResponse> => {
   const response = await api.post<AddBranchAdminResponse>(
     `/branches/${branchId}/admins`,
+    data
+  );
+  return response.data;
+};
+
+const addBranchModerator = async (
+  branchId: string,
+  data: AddBranchModeratorData
+): Promise<AddBranchModeratorResponse> => {
+  const response = await api.post<AddBranchModeratorResponse>(
+    `/branches/${branchId}/moderators`,
     data
   );
   return response.data;
@@ -188,6 +209,8 @@ export const branchServices = {
   removeMember,
   searchUsers,
   addBranchAdmin,
+  addBranchModerator,
 } as const;
 
 export default branchServices;
+

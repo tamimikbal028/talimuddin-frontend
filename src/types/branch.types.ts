@@ -33,6 +33,7 @@ export interface BranchMeta {
   is_member: boolean;
   is_admin_user: boolean;
   is_admin: boolean;
+  is_moderator?: boolean;
 }
 
 // Branch Member (from getBranchMembers)
@@ -50,6 +51,7 @@ export interface BranchMember {
     member_id: string;
     is_self: boolean;
     is_admin: boolean;
+    is_moderator?: boolean;
     is_manual?: boolean;
     joined_at: string;
     user_relation_status: string;
@@ -60,6 +62,7 @@ export interface BranchMember {
     } | null;
   };
 }
+
 
 export interface AddBranchMemberData {
   serial_no?: number | null;
@@ -222,7 +225,12 @@ export interface SearchUserItem {
   user_name: string;
   email: string;
   avatar: string | null;
+  branch_role?: {
+    is_admin: boolean;
+    is_moderator: boolean;
+  } | null;
 }
+
 
 export interface SearchUsersResponse {
   statusCode: number;
@@ -245,3 +253,17 @@ export interface AddBranchAdminResponse {
     user: SearchUserItem;
   };
 }
+
+export interface AddBranchModeratorData {
+  user_id: string;
+}
+
+export interface AddBranchModeratorResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    user: SearchUserItem;
+  };
+}
+

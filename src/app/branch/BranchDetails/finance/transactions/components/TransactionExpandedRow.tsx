@@ -1,6 +1,14 @@
-import { FaMoneyBillWave, FaEdit, FaTrash } from "react-icons/fa";
+import {
+  FaMoneyBillWave,
+  FaEdit,
+  FaTrash,
+  FaUser,
+  FaPhoneAlt,
+  FaInfoCircle,
+} from "react-icons/fa";
 import { formatCurrency } from "../../financeUtils";
 import type { FinanceEntry, FinanceDetailItem } from "@/types";
+import authHooks from "@/hooks/useAuth";
 
 interface TransactionExpandedRowProps {
   entry: FinanceEntry;
@@ -17,12 +25,16 @@ const TransactionExpandedRow = ({
   onEdit,
   onDelete,
 }: TransactionExpandedRowProps) => {
+  const { user } = authHooks.useUser();
+  const isOwner = !!user?.id && user.id === entry.recorded_by?.id;
+
   const hasDue =
     (entry.due_amount !== undefined && entry.due_amount > 0) ||
     entry.payment_status === "PARTIAL" ||
     entry.payment_status === "DUE";
   const hasNotes = !!entry.note;
   const hasDetails = entry.details && entry.details.length > 0;
+  const hasPerson = !!entry.person_name || !!entry.person_phone;
 
   return (
     <tr className="border-b border-gray-200/80 bg-gray-50/40">
@@ -79,6 +91,36 @@ const TransactionExpandedRow = ({
             </div>
           )}
 
+          {/* Person Contact Details (Moved from main table row into expand) */}
+          {hasPerson && (
+            <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-xl border border-gray-200/90 bg-white p-3 shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                  <FaUser className="h-3.5 w-3.5" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                    ব্যক্তি / কন্টাক্ট (Person Details)
+                  </span>
+                  <p className="font-semibold text-gray-900">
+                    {entry.person_name || "N/A"}
+                  </p>
+                </div>
+              </div>
+              {entry.person_phone && (
+                <a
+                  href={`tel:${entry.person_phone}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 active:scale-95"
+                  title={`Call ${entry.person_name || entry.person_phone}`}
+                >
+                  <FaPhoneAlt className="h-3 w-3 text-emerald-600" />
+                  <span>{entry.person_phone}</span>
+                </a>
+              )}
+            </div>
+          )}
+
           {/* Notes */}
           {hasNotes && (
             <div className="flex items-start gap-2 rounded-lg border border-gray-200/80 bg-white p-2.5 shadow-xs">
@@ -112,33 +154,69 @@ const TransactionExpandedRow = ({
             </div>
           )}
 
-          {/* Management Actions: Edit & Delete */}
+          {/* Management Actions: Edit & Delete (Creator only) */}
           {canManageFinance && (
-            <div className="flex items-center justify-end gap-2 border-t border-gray-200/80 pt-2.5">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(entry);
-                }}
-                className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
-                title="Edit Transaction"
-              >
-                <FaEdit className="h-3.5 w-3.5 text-blue-500" />
-                <span>Edit</span>
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(entry);
-                }}
-                className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 shadow-2xs transition-colors hover:border-red-300 hover:bg-red-50"
-                title="Delete Transaction"
-              >
-                <FaTrash className="h-3.5 w-3.5 text-red-500" />
-                <span>Delete</span>
-              </button>
+            <div className="flex flex-wrap items-center justify-between gap-2.5 border-t border-gray-200/80 pt-2.5">
+              {!isOwner ? (
+                <div className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-800">
+                  <FaInfoCircle className="h-3.5 w-3.5 shrink-0 text-amber-600" />
+                  <span>Only entry je korse se edit delet korte parbe</span>
+                </div>
+              ) : (
+                <div />
+              )}
+
+              <div className="flex items-center gap-2">
+                {isOwner ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(entry);
+                      }}
+                      className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                      title="Edit Transaction"
+                    >
+                      <FaEdit className="h-3.5 w-3.5 text-blue-500" />
+                      <span>Edit</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(entry);
+                      }}
+                      className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 shadow-2xs transition-colors hover:border-red-300 hover:bg-red-50 active:scale-95"
+                      title="Delete Transaction"
+                    >
+                      <FaTrash className="h-3.5 w-3.5 text-red-500" />
+                      <span>Delete</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      disabled
+                      className="flex cursor-not-allowed items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-400 opacity-60"
+                      title="Only entry je korse se edit delet korte parbe"
+                    >
+                      <FaEdit className="h-3.5 w-3.5 text-gray-400" />
+                      <span>Edit</span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled
+                      className="flex cursor-not-allowed items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-400 opacity-60"
+                      title="Only entry je korse se edit delet korte parbe"
+                    >
+                      <FaTrash className="h-3.5 w-3.5 text-gray-400" />
+                      <span>Delete</span>
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           )}
         </div>

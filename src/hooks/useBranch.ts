@@ -256,15 +256,17 @@ const useBranchDirectorySearch = (query: string) => {
 
 const useSearchUsers = (query: string, enabled = true) => {
   const normalizedQuery = query.trim();
+  const { branchId } = useParams();
 
   return useQuery({
-    queryKey: ["users", "search", normalizedQuery],
-    queryFn: () => branchServices.searchUsers(normalizedQuery),
+    queryKey: ["users", "search", normalizedQuery, branchId || ""],
+    queryFn: () => branchServices.searchUsers(normalizedQuery, branchId),
     staleTime: 1000 * 30,
     retry: 1,
     enabled,
   });
 };
+
 
 const useAddBranchAdmin = () => {
   const { branchId } = useParams();
@@ -283,6 +285,26 @@ const useAddBranchAdmin = () => {
       });
     },
     onError: handleMutationError("Failed to add branch admin"),
+  });
+};
+
+const useAddBranchModerator = () => {
+  const { branchId } = useParams();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { user_id: string }) =>
+      branchServices.addBranchModerator(branchId as string, data),
+    onSuccess: (response) => {
+      toast.success(response.message || "Branch moderator added successfully");
+      queryClient.invalidateQueries({
+        queryKey: [BRANCH_KEYS.DETAILS, branchId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [BRANCH_KEYS.MEMBERS, branchId],
+      });
+    },
+    onError: handleMutationError("Failed to add branch moderator"),
   });
 };
 
@@ -307,6 +329,8 @@ const branchHooks = {
   // Admins & Users
   useSearchUsers,
   useAddBranchAdmin,
+  useAddBranchModerator,
 } as const;
 
 export default branchHooks;
+

@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
-import { FaUserShield, FaSearch, FaUser, FaCheck } from "react-icons/fa";
+import { FaUserCheck, FaSearch, FaUser, FaCheck } from "react-icons/fa";
 import branchHooks from "@/hooks/useBranch";
 import type { SearchUserItem } from "@/types";
 
-interface AddBranchAdminModalProps {
+interface AddBranchModeratorModalProps {
   isOpen: boolean;
   onClose: () => void;
   branchName: string;
 }
 
-const AddBranchAdminModal = ({
+const AddBranchModeratorModal = ({
   isOpen,
   onClose,
   branchName,
-}: AddBranchAdminModalProps) => {
+}: AddBranchModeratorModalProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<SearchUserItem | null>(null);
@@ -44,8 +44,9 @@ const AddBranchAdminModal = ({
   );
   const users = data?.data.users || [];
 
-  // Mutation to add branch admin
-  const { mutate: addAdmin, isPending } = branchHooks.useAddBranchAdmin();
+  // Mutation to add branch moderator
+  const { mutate: addModerator, isPending } =
+    branchHooks.useAddBranchModerator();
 
   if (!isOpen) return null;
 
@@ -53,7 +54,7 @@ const AddBranchAdminModal = ({
     e.preventDefault();
     if (!selectedUser || isPending) return;
 
-    addAdmin(
+    addModerator(
       { user_id: selectedUser.id },
       {
         onSuccess: () => {
@@ -76,15 +77,15 @@ const AddBranchAdminModal = ({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-              <FaUserShield className="h-5 w-5" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
+              <FaUserCheck className="h-5 w-5" />
             </div>
             <div>
               <h3 className="text-base font-bold text-gray-900 sm:text-lg">
-                Add Branch Admin
+                Add Branch Moderator
               </h3>
               <p className="line-clamp-1 text-xs text-gray-500">
-                Appoint an administrator for {branchName}
+                Appoint a moderator for {branchName}
               </p>
             </div>
           </div>
@@ -115,7 +116,7 @@ const AddBranchAdminModal = ({
                   placeholder="Search by full name, username, or email..."
                   autoFocus
                   disabled={isPending}
-                  className="w-full rounded-xl border border-gray-300 py-2.5 pr-4 pl-9 text-xs text-gray-900 shadow-2xs transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                  className="w-full rounded-xl border border-gray-300 py-2.5 pr-4 pl-9 text-xs text-gray-900 shadow-2xs transition-colors placeholder:text-gray-400 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none sm:text-sm"
                 />
                 {searchTerm && (
                   <button
@@ -138,7 +139,7 @@ const AddBranchAdminModal = ({
               <label className="block text-xs font-semibold text-gray-700">
                 Select User{" "}
                 {selectedUser && (
-                  <span className="font-medium text-blue-600">
+                  <span className="font-medium text-purple-600">
                     (1 selected)
                   </span>
                 )}
@@ -147,7 +148,7 @@ const AddBranchAdminModal = ({
               <div className="max-h-56 min-h-35 space-y-1.5 overflow-y-auto rounded-xl border border-gray-200 bg-gray-50/50 p-2">
                 {isLoading ? (
                   <div className="flex flex-col items-center justify-center py-8 text-gray-400">
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-purple-600 border-t-transparent" />
                     <p className="mt-2 text-xs">Searching users...</p>
                   </div>
                 ) : users.length === 0 ? (
@@ -179,7 +180,7 @@ const AddBranchAdminModal = ({
                           isDisabled
                             ? "cursor-not-allowed border-gray-200 bg-gray-100/70 opacity-75"
                             : isSelected
-                              ? "cursor-pointer border-blue-500 bg-blue-50/90 shadow-2xs ring-1 ring-blue-500"
+                              ? "cursor-pointer border-purple-500 bg-purple-50/90 shadow-2xs ring-1 ring-purple-500"
                               : "cursor-pointer border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
                         }`}
                       >
@@ -191,7 +192,7 @@ const AddBranchAdminModal = ({
                               className="h-9 w-9 shrink-0 rounded-full object-cover shadow-2xs"
                             />
                           ) : (
-                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 shadow-2xs">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-100 text-xs font-bold text-purple-700 shadow-2xs">
                               {u.full_name?.charAt(0).toUpperCase() || "U"}
                             </div>
                           )}
@@ -215,7 +216,7 @@ const AddBranchAdminModal = ({
                               Already Moderator
                             </span>
                           ) : isSelected ? (
-                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-white shadow-2xs">
+                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-600 text-white shadow-2xs">
                               <FaCheck className="h-2.5 w-2.5" />
                             </div>
                           ) : (
@@ -244,17 +245,17 @@ const AddBranchAdminModal = ({
             <button
               type="submit"
               disabled={!selectedUser || isPending}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-purple-600 px-5 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-purple-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
             >
               {isPending ? (
                 <>
                   <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Adding Admin...
+                  Adding Moderator...
                 </>
               ) : (
                 <>
-                  <FaUserShield className="h-3.5 w-3.5" />
-                  Add as Admin
+                  <FaUserCheck className="h-3.5 w-3.5" />
+                  Add as Moderator
                 </>
               )}
             </button>
@@ -265,4 +266,4 @@ const AddBranchAdminModal = ({
   );
 };
 
-export default AddBranchAdminModal;
+export default AddBranchModeratorModal;

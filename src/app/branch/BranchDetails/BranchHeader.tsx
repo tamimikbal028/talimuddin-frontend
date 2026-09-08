@@ -7,6 +7,7 @@ import {
   FaMapMarkerAlt,
   FaExternalLinkAlt,
   FaUserShield,
+  FaUserCheck,
   FaPhoneAlt,
   FaShareAlt,
   FaWhatsapp,
@@ -19,6 +20,7 @@ import branchHooks from "@/hooks/useBranch";
 import confirm from "@/utils/sweetAlert";
 import dropdownHooks from "@/hooks/useDropdown";
 import AddBranchAdminModal from "./members/AddBranchAdminModal";
+import AddBranchModeratorModal from "./members/AddBranchModeratorModal";
 
 interface BranchHeaderProps {
   branch: Branch;
@@ -28,6 +30,7 @@ interface BranchHeaderProps {
 const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
   const navigate = useNavigate();
   const [isAddAdminModalOpen, setIsAddAdminModalOpen] = useState(false);
+  const [isAddModeratorModalOpen, setIsAddModeratorModalOpen] = useState(false);
 
   const { mutate: deleteBranch, isPending: isDeleting } =
     branchHooks.useDeleteBranch();
@@ -212,6 +215,20 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
                         </button>
                       )}
 
+                      {meta.is_admin && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            closeMenu();
+                            setIsAddModeratorModalOpen(true);
+                          }}
+                          className="flex w-full items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-purple-50 hover:text-purple-700"
+                        >
+                          <FaUserCheck className="h-4 w-4 shrink-0 text-purple-600" />
+                          <span>Add Branch Moderator</span>
+                        </button>
+                      )}
+
                       {(meta.is_admin || meta.is_admin_user) && (
                         <Link
                           to={`/branch/branches/${branch.id}/edit`}
@@ -346,6 +363,13 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
       <AddBranchAdminModal
         isOpen={isAddAdminModalOpen}
         onClose={() => setIsAddAdminModalOpen(false)}
+        branchName={branch.name}
+      />
+
+      {/* Branch Admin: Add Branch Moderator Modal */}
+      <AddBranchModeratorModal
+        isOpen={isAddModeratorModalOpen}
+        onClose={() => setIsAddModeratorModalOpen(false)}
         branchName={branch.name}
       />
     </div>

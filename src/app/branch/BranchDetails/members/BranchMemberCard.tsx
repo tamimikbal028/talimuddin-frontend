@@ -63,8 +63,16 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
         </span>
       );
     }
+    if (meta.is_moderator) {
+      return (
+        <span className="shrink-0 rounded-full border border-purple-200/90 bg-purple-50 px-2.5 py-0.5 text-[10px] font-bold text-purple-700 shadow-2xs">
+          Moderator
+        </span>
+      );
+    }
     return null;
   };
+
 
   return (
     <div
