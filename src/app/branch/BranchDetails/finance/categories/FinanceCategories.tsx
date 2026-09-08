@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useFinanceCategories } from "@/hooks/useBranchFinance";
 import { formatCurrency, getMonthName } from "../financeUtils";
@@ -30,10 +30,13 @@ const FinanceCategories = () => {
     filterType === "INCOME" || filterType === "EXPENSE" ? filterType : undefined
   );
 
-  const categories = data?.data?.categories ?? [];
+  const categories = useMemo(
+    () => data?.data?.categories ?? [],
+    [data?.data?.categories]
+  );
 
   // Initialize expanded set once categories are loaded
-  useMemo(() => {
+  useEffect(() => {
     if (!isInitialized && categories.length > 0) {
       // Expand all categories by default for immediate month-wise visibility
       setExpandedIds(new Set(categories.map((c) => c.id)));
