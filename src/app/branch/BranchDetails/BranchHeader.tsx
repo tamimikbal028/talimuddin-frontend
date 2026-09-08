@@ -13,7 +13,6 @@ import {
   FaWhatsapp,
   FaLink,
   FaEye,
-  FaUser,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -282,9 +281,8 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
               title="You are a Branch Admin of this branch"
               className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50/90 px-3 py-1 text-xs font-medium text-blue-800 shadow-2xs"
             >
-              <FaUserShield className="h-3 w-3 text-blue-600" />
               <span>
-                Role: <strong className="font-bold">Admin</strong>
+                <strong className="font-bold">Branch Admin</strong>
               </span>
             </span>
           ) : meta.is_moderator ? (
@@ -292,9 +290,8 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
               title="You are a Moderator of this branch"
               className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50/90 px-3 py-1 text-xs font-medium text-purple-800 shadow-2xs"
             >
-              <FaUserCheck className="h-3 w-3 text-purple-600" />
               <span>
-                Role: <strong className="font-bold">Moderator</strong>
+                <strong className="font-bold">Branch Moderator</strong>
               </span>
             </span>
           ) : meta.is_admin_user ? (
@@ -302,9 +299,8 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
               title="You are viewing as an App Administrator"
               className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50/90 px-3 py-1 text-xs font-medium text-indigo-800 shadow-2xs"
             >
-              <FaUserShield className="h-3 w-3 text-indigo-600" />
               <span>
-                Role: <strong className="font-bold">App Admin</strong>
+                <strong className="font-bold">App Admin</strong>
               </span>
             </span>
           ) : meta.is_member ? (
@@ -312,9 +308,8 @@ const BranchHeader = ({ branch, meta }: BranchHeaderProps) => {
               title="You are a Member of this branch"
               className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50/90 px-3 py-1 text-xs font-medium text-emerald-800 shadow-2xs"
             >
-              <FaUser className="h-3 w-3 text-emerald-600" />
               <span>
-                Role: <strong className="font-bold">Member</strong>
+                <strong className="font-bold">Branch Member</strong>
               </span>
             </span>
           ) : (

@@ -27,11 +27,10 @@ import {
 const FinanceTransactions = () => {
   const { branchId } = useParams<{ branchId: string }>();
 
-  // Check if current user is branch admin, app admin, or moderator
+  // Only Branch Admin or Branch Moderator can add entries / manage finance
   const { data: branchDetailsData } = branchHooks.useBranchDetails();
   const meta = branchDetailsData?.data?.meta;
-  const canManageFinance =
-    meta?.is_admin || meta?.is_admin_user || meta?.is_moderator;
+  const canManageFinance = !!meta?.is_admin || !!meta?.is_moderator;
 
 
   // State for adding/editing entry modal
