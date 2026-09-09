@@ -56,9 +56,18 @@ const ManageBranchAdminsModal = ({
     branchHooks.useRemoveBranchAdmin();
 
   // Query searchable users when in "add" tab
-  const { data: usersData, isLoading: isLoadingUsers } =
-    branchHooks.useSearchUsers(debouncedSearch, isOpen && activeTab === "add");
-  const users = usersData?.data.users || [];
+  const {
+    data: usersData,
+    isLoading: isLoadingUsers,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = branchHooks.useSearchUsers(
+    debouncedSearch,
+    isOpen && activeTab === "add"
+  );
+  const users = usersData?.pages.flatMap((page) => page.data.users) || [];
+  const totalUsers = usersData?.pages[0]?.data.pagination?.totalDocs;
 
   // Mutation to add branch admin
   const { mutate: addAdmin, isPending: isAdding } =
@@ -311,75 +320,102 @@ const ManageBranchAdminsModal = ({
                       </p>
                     </div>
                   ) : (
-                    users.map((u) => {
-                      const isAlreadyAdmin = !!u.branch_role?.is_admin;
-                      const isAlreadyModerator = !!u.branch_role?.is_moderator;
-                      const isAppAdmin =
-                        !!u.is_app_admin || u.user_type === "ADMIN";
-                      const isDisabled =
-                        isAlreadyAdmin || isAlreadyModerator || isAppAdmin;
-                      const isSelected = selectedUser?.id === u.id;
+                    <>
+                      {users.map((u) => {
+                        const isAlreadyAdmin = !!u.branch_role?.is_admin;
+                        const isAlreadyModerator =
+                          !!u.branch_role?.is_moderator;
+                        const isAppAdmin =
+                          !!u.is_app_admin || u.user_type === "ADMIN";
+                        const isDisabled =
+                          isAlreadyAdmin || isAlreadyModerator || isAppAdmin;
+                        const isSelected = selectedUser?.id === u.id;
 
-                      return (
-                        <div
-                          key={u.id}
-                          onClick={() => {
-                            if (!isDisabled) setSelectedUser(u);
-                          }}
-                          className={`flex items-center justify-between gap-3 rounded-lg border p-2.5 transition-all select-none ${
-                            isDisabled
-                              ? "cursor-not-allowed border-gray-200 bg-gray-100/70 opacity-75"
-                              : isSelected
-                                ? "cursor-pointer border-blue-500 bg-blue-50/90 shadow-2xs ring-1 ring-blue-500"
-                                : "cursor-pointer border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
-                          }`}
-                        >
-                          <div className="flex min-w-0 items-center gap-3">
-                            {u.avatar ? (
-                              <img
-                                src={u.avatar}
-                                alt={u.full_name}
-                                className="h-9 w-9 shrink-0 rounded-full object-cover shadow-2xs"
-                              />
-                            ) : (
-                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 shadow-2xs">
-                                {u.full_name?.charAt(0).toUpperCase() || "U"}
+                        return (
+                          <div
+                            key={u.id}
+                            onClick={() => {
+                              if (!isDisabled) setSelectedUser(u);
+                            }}
+                            className={`flex items-center justify-between gap-3 rounded-lg border p-2.5 transition-all select-none ${
+                              isDisabled
+                                ? "cursor-not-allowed border-gray-200 bg-gray-100/70 opacity-75"
+                                : isSelected
+                                  ? "cursor-pointer border-blue-500 bg-blue-50/90 shadow-2xs ring-1 ring-blue-500"
+                                  : "cursor-pointer border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
+                            }`}
+                          >
+                            <div className="flex min-w-0 items-center gap-3">
+                              {u.avatar ? (
+                                <img
+                                  src={u.avatar}
+                                  alt={u.full_name}
+                                  className="h-9 w-9 shrink-0 rounded-full object-cover shadow-2xs"
+                                />
+                              ) : (
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 shadow-2xs">
+                                  {u.full_name?.charAt(0).toUpperCase() || "U"}
+                                </div>
+                              )}
+                              <div className="min-w-0">
+                                <p className="truncate text-xs font-semibold text-gray-900 sm:text-sm">
+                                  {u.full_name}
+                                </p>
+                                <p className="truncate text-[11px] text-gray-500">
+                                  @{u.user_name} {u.email && `• ${u.email}`}
+                                </p>
                               </div>
-                            )}
-                            <div className="min-w-0">
-                              <p className="truncate text-xs font-semibold text-gray-900 sm:text-sm">
-                                {u.full_name}
-                              </p>
-                              <p className="truncate text-[11px] text-gray-500">
-                                @{u.user_name} {u.email && `• ${u.email}`}
-                              </p>
+                            </div>
+
+                            <div className="shrink-0">
+                              {isAppAdmin ? (
+                                <span className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-0.5 text-[11px] font-bold text-indigo-700">
+                                  App Admin
+                                </span>
+                              ) : isAlreadyAdmin ? (
+                                <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700">
+                                  Already Admin
+                                </span>
+                              ) : isAlreadyModerator ? (
+                                <span className="inline-flex items-center rounded-full border border-purple-200 bg-purple-50 px-2.5 py-0.5 text-[11px] font-bold text-purple-700">
+                                  Already Moderator
+                                </span>
+                              ) : isSelected ? (
+                                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-white shadow-2xs">
+                                  <FaCheck className="h-2.5 w-2.5" />
+                                </div>
+                              ) : (
+                                <div className="h-5 w-5 rounded-full border border-gray-300 bg-white" />
+                              )}
                             </div>
                           </div>
-
-                          <div className="shrink-0">
-                            {isAppAdmin ? (
-                              <span className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-0.5 text-[11px] font-bold text-indigo-700">
-                                App Admin
-                              </span>
-                            ) : isAlreadyAdmin ? (
-                              <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700">
-                                Already Admin
-                              </span>
-                            ) : isAlreadyModerator ? (
-                              <span className="inline-flex items-center rounded-full border border-purple-200 bg-purple-50 px-2.5 py-0.5 text-[11px] font-bold text-purple-700">
-                                Already Moderator
-                              </span>
-                            ) : isSelected ? (
-                              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-white shadow-2xs">
-                                <FaCheck className="h-2.5 w-2.5" />
-                              </div>
+                        );
+                      })}
+                      {hasNextPage && (
+                        <div className="pt-1.5 pb-0.5">
+                          <button
+                            type="button"
+                            onClick={() => fetchNextPage()}
+                            disabled={isFetchingNextPage}
+                            className="flex w-full items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50/90 py-2 text-xs font-semibold text-blue-700 shadow-2xs transition-all hover:border-blue-300 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {isFetchingNextPage ? (
+                              <>
+                                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                                <span>আরও ইউজার লোড হচ্ছে...</span>
+                              </>
                             ) : (
-                              <div className="h-5 w-5 rounded-full border border-gray-300 bg-white" />
+                              <span>
+                                আরও লোড করুন (Load More)
+                                {totalUsers
+                                  ? ` • (${users.length} of ${totalUsers})`
+                                  : ""}
+                              </span>
                             )}
-                          </div>
+                          </button>
                         </div>
-                      );
-                    })
+                      )}
+                    </>
                   )}
                 </div>
               </div>

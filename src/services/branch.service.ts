@@ -162,13 +162,16 @@ const removeMember = async (
 
 const searchUsers = async (
   query: string,
-  branchId?: string
+  branchId?: string,
+  page: number = 1,
+  limit: number = 15
 ): Promise<SearchUsersResponse> => {
   const branchParam = branchId
     ? `&branchId=${encodeURIComponent(branchId)}`
     : "";
+  const pageParam = `&page=${page}&limit=${limit}`;
   const response = await api.get<SearchUsersResponse>(
-    `/branches/users/search?query=${encodeURIComponent(query)}${branchParam}`
+    `/branches/users/search?query=${encodeURIComponent(query)}${branchParam}${pageParam}`
   );
   return response.data;
 };

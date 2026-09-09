@@ -238,6 +238,7 @@ export interface SearchUsersResponse {
   message: string;
   data: {
     users: SearchUserItem[];
+    pagination: Pagination;
   };
 }
 

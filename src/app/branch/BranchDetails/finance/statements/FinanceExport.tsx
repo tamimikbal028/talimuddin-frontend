@@ -215,12 +215,9 @@ const FinanceExport = () => {
                   )}
                 </h1>
               )}
-              <h2 className="text-base font-bold text-blue-600">
-                Monthly Finance Statement
+              <h2 className="mt-1 text-lg font-bold text-blue-600 sm:text-xl">
+                {getMonthName(month)} {year}
               </h2>
-              <p className="mt-0.5 text-xs font-medium text-gray-500">
-                Statement Period: {getMonthName(month)} {year}
-              </p>
             </div>
             <div className="text-right">
               <p className="text-xs font-bold tracking-wider text-gray-400 uppercase">

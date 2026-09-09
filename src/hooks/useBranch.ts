@@ -260,9 +260,22 @@ const useSearchUsers = (query: string, enabled = true) => {
   const normalizedQuery = query.trim();
   const { branchId } = useParams();
 
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["users", "search", normalizedQuery, branchId || ""],
-    queryFn: () => branchServices.searchUsers(normalizedQuery, branchId),
+    queryFn: ({ pageParam }) =>
+      branchServices.searchUsers(
+        normalizedQuery,
+        branchId,
+        pageParam as number,
+        15
+      ),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const pagination = lastPage?.data?.pagination;
+      if (!pagination) return undefined;
+      const { page, totalPages } = pagination;
+      return page < totalPages ? page + 1 : undefined;
+    },
     staleTime: 1000 * 30,
     retry: 1,
     enabled,
