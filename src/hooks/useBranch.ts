@@ -13,6 +13,8 @@ import type {
   UpdateBranchData,
   AddBranchMemberData,
   UpdateBranchMemberData,
+  AddBranchModeratorData,
+  UpdateBranchModeratorData,
 } from "@/types";
 import { BRANCH_KEYS } from "@/constants";
 import { handleMutationError } from "@/utils/errorHandler";
@@ -295,7 +297,7 @@ const useAddBranchModerator = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { user_id: string }) =>
+    mutationFn: (data: AddBranchModeratorData) =>
       branchServices.addBranchModerator(branchId as string, data),
     onSuccess: (response) => {
       toast.success(response.message || "Branch moderator added successfully");
@@ -310,6 +312,31 @@ const useAddBranchModerator = () => {
       });
     },
     onError: handleMutationError("Failed to add branch moderator"),
+  });
+};
+
+const useUpdateBranchModerator = () => {
+  const { branchId } = useParams();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      memberId,
+      data,
+    }: {
+      memberId: string;
+      data: UpdateBranchModeratorData;
+    }) =>
+      branchServices.updateBranchModerator(branchId as string, memberId, data),
+    onSuccess: (response) => {
+      toast.success(
+        response.message || "Moderator category permissions updated"
+      );
+      queryClient.invalidateQueries({
+        queryKey: ["BRANCH_MODERATORS", branchId],
+      });
+    },
+    onError: handleMutationError("Failed to update moderator permissions"),
   });
 };
 
@@ -399,6 +426,7 @@ const branchHooks = {
   useSearchUsers,
   useAddBranchAdmin,
   useAddBranchModerator,
+  useUpdateBranchModerator,
   useBranchAdmins,
   useRemoveBranchAdmin,
   useBranchModerators,

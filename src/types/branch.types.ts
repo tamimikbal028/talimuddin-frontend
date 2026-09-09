@@ -256,6 +256,21 @@ export interface AddBranchAdminResponse {
 
 export interface AddBranchModeratorData {
   user_id: string;
+  allowed_category_ids?: string[] | null;
+}
+
+export interface UpdateBranchModeratorData {
+  allowed_category_ids?: string[] | null;
+}
+
+export interface UpdateBranchModeratorResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    member_id: string;
+    allowed_category_ids: string[] | null;
+  };
 }
 
 export interface AddBranchModeratorResponse {
@@ -264,6 +279,7 @@ export interface AddBranchModeratorResponse {
   message: string;
   data: {
     user: SearchUserItem;
+    allowed_category_ids?: string[] | null;
   };
 }
 
@@ -290,10 +306,18 @@ export interface BranchAdminsResponse {
   };
 }
 
+export interface ModeratorAllowedCategory {
+  id: string;
+  name: string;
+  type: "INCOME" | "EXPENSE";
+}
+
 export interface BranchModeratorItem {
   id: string;
   user_id: string;
   is_moderator: boolean;
+  allowed_category_ids?: string[] | null;
+  allowed_categories?: ModeratorAllowedCategory[] | null;
   created_at: string;
   user: {
     id: string;

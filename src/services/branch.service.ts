@@ -21,6 +21,8 @@ import type {
   AddBranchAdminResponse,
   AddBranchModeratorData,
   AddBranchModeratorResponse,
+  UpdateBranchModeratorData,
+  UpdateBranchModeratorResponse,
   BranchAdminsResponse,
   BranchModeratorsResponse,
 } from "../types";
@@ -229,6 +231,18 @@ const removeBranchModerator = async (
   return response.data;
 };
 
+const updateBranchModerator = async (
+  branchId: string,
+  memberId: string,
+  data: UpdateBranchModeratorData
+): Promise<UpdateBranchModeratorResponse> => {
+  const response = await api.patch<UpdateBranchModeratorResponse>(
+    `/branches/${branchId}/moderators/${memberId}`,
+    data
+  );
+  return response.data;
+};
+
 export const branchServices = {
   createBranch,
   getMainBranches,
@@ -246,6 +260,7 @@ export const branchServices = {
   searchUsers,
   addBranchAdmin,
   addBranchModerator,
+  updateBranchModerator,
   getBranchAdmins,
   removeBranchAdmin,
   getBranchModerators,

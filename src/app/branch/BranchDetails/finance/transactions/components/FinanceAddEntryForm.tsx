@@ -18,6 +18,7 @@ import {
   useCreateFinanceEntry,
   useUpdateFinanceEntry,
 } from "@/hooks/useBranchFinance";
+import branchHooks from "@/hooks/useBranch";
 import { toast } from "sonner";
 import type { FinanceEntry } from "@/types";
 
@@ -75,6 +76,11 @@ const FinanceAddEntryForm = ({
 
   const isSavingEntry = isCreatingEntry || isUpdatingEntry;
   const isEditing = !!entryToEdit;
+
+  const { data: branchDetailsData } = branchHooks.useBranchDetails();
+  const meta = branchDetailsData?.data?.meta;
+  const isAdmin = !!meta?.is_admin;
+  const isModerator = !!meta?.is_moderator && !isAdmin;
 
   const [isAddingCustomCat, setIsAddingCustomCat] = useState(false);
   const [newCatName, setNewCatName] = useState("");
@@ -345,7 +351,7 @@ const FinanceAddEntryForm = ({
                   <label className="block text-xs font-semibold text-gray-600">
                     Category *
                   </label>
-                  {!isAddingCustomCat && (
+                  {!isAddingCustomCat && !isModerator && (
                     <button
                       type="button"
                       onClick={() => setIsAddingCustomCat(true)}
@@ -399,6 +405,11 @@ const FinanceAddEntryForm = ({
                       </option>
                     ))}
                   </select>
+                )}
+                {isModerator && !isCatLoading && filteredCategories.length === 0 && (
+                  <p className="mt-1 text-[11px] text-amber-600 font-medium">
+                    ⚠️ আপনার জন্য {selectedType === "INCOME" ? "আয় (Income)" : "ব্যয় (Expense)"} খাতে কোনো অনুমোদিত ক্যাটাগরি নেই।
+                  </p>
                 )}
                 {errors.category_id && !isAddingCustomCat && (
                   <p className="mt-1 text-xs text-red-600">
