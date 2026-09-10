@@ -1,4 +1,10 @@
-import { FaEdit, FaTrash, FaPhoneAlt, FaLock, FaUserGraduate } from "react-icons/fa";
+import {
+  FaEdit,
+  FaTrash,
+  FaPhoneAlt,
+  FaLock,
+  FaUserGraduate,
+} from "react-icons/fa";
 import { formatCurrency } from "../../financeUtils";
 import type { FinanceEntry, FinanceDetailItem } from "@/types";
 import authHooks from "@/hooks/useAuth";
@@ -30,6 +36,19 @@ const TransactionExpandedRow = ({
   const hasNotes = !!entry.note;
   const hasDetails = entry.details && entry.details.length > 0;
   const hasPerson = !!entry.person_name || !!entry.person_phone;
+  const hasMember = !!entry.member;
+  const canEditOrDelete = canManageFinance && isOwner;
+
+  if (
+    !hasDue &&
+    !hasMember &&
+    !hasPerson &&
+    !hasNotes &&
+    !hasDetails &&
+    !canEditOrDelete
+  ) {
+    return null;
+  }
 
   return (
     <tr className="border-b border-gray-200/80 bg-gray-50/40">

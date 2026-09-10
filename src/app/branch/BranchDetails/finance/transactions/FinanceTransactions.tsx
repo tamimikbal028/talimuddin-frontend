@@ -279,14 +279,22 @@ const FinanceTransactions = () => {
                   const isExpanded = expandedRows[entry.id];
                   const hasDetails = entry.details && entry.details.length > 0;
                   const hasNotes = !!entry.note;
+                  const hasPerson = !!entry.person_name || !!entry.person_phone;
+                  const hasMember = !!entry.member;
                   const isOwner =
                     !!user?.id && user.id === entry.recorded_by?.id;
                   const hasDue =
                     (entry.due_amount !== undefined && entry.due_amount > 0) ||
                     entry.payment_status === "PARTIAL" ||
                     entry.payment_status === "DUE";
+                  const canEditOrDelete = canManageFinance && isOwner;
                   const canExpand =
-                    hasDetails || hasNotes || hasDue || canManageFinance;
+                    hasDetails ||
+                    hasNotes ||
+                    hasDue ||
+                    hasPerson ||
+                    hasMember ||
+                    canEditOrDelete;
 
                   return (
                     <Fragment key={entry.id}>
