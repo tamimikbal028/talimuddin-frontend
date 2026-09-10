@@ -13,7 +13,7 @@ import CollectDueModal from "./components/CollectDueModal";
 import TransactionFilters from "./components/TransactionFilters";
 import TransactionExpandedRow from "./components/TransactionExpandedRow";
 import { confirmDelete, promptFinanceActionCode } from "@/utils/sweetAlert";
-import { formatCurrency, getMonthName } from "../financeUtils";
+import { formatCurrency, formatDate, formatDateTime } from "../financeUtils";
 import {
   TransactionsTableSkeleton,
   FetchingIndicator,
@@ -149,30 +149,6 @@ const FinanceTransactions = () => {
       setEditingEntry(entry);
       setIsModalOpen(true);
     }
-  };
-
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return "-";
-    const d = new Date(dateStr);
-    const day = d.getDate().toString().padStart(2, "0");
-    const month = getMonthName(d.getMonth() + 1);
-    const year = d.getFullYear();
-    return `${day} ${month} ${year}`;
-  };
-
-  const formatDateTime = (dateStr: string) => {
-    if (!dateStr) return "-";
-    const d = new Date(dateStr);
-    const day = d.getDate().toString().padStart(2, "0");
-    const month = getMonthName(d.getMonth() + 1);
-    const year = d.getFullYear();
-    let hours = d.getHours();
-    const minutes = d.getMinutes().toString().padStart(2, "0");
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const strHours = hours.toString().padStart(2, "0");
-    return `${day} ${month} ${year} • ${strHours}:${minutes} ${ampm}`;
   };
 
   const handleClearFilters = () => {

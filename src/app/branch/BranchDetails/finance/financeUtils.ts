@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const formatCurrency = (amount: number) => {
   const rounded = Math.round(amount * 100) / 100;
   return new Intl.NumberFormat("en-BD", {
@@ -23,4 +25,14 @@ export const getMonthName = (month: number) => {
     "December",
   ];
   return months[month - 1] || "Unknown";
+};
+
+export const formatDate = (dateStr: string | null | undefined) => {
+  if (!dateStr) return "-";
+  return dayjs(dateStr).format("DD MMM YY");
+};
+
+export const formatDateTime = (dateStr: string | null | undefined) => {
+  if (!dateStr) return "-";
+  return dayjs(dateStr).format("DD MMM YY • hh:mm A");
 };
