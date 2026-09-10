@@ -1,4 +1,4 @@
-import { FaEdit, FaTrash, FaPhoneAlt, FaLock } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPhoneAlt, FaLock, FaUserGraduate } from "react-icons/fa";
 import { formatCurrency } from "../../financeUtils";
 import type { FinanceEntry, FinanceDetailItem } from "@/types";
 import authHooks from "@/hooks/useAuth";
@@ -66,6 +66,40 @@ const TransactionExpandedRow = ({
                   </p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Linked Student / Member Reference */}
+          {entry.member && (
+            <div className="flex w-fit flex-wrap items-center gap-2 rounded-xl border border-blue-200/90 bg-blue-50/60 px-3.5 py-2 text-xs shadow-2xs">
+              <span className="flex items-center gap-1.5 font-bold text-blue-700">
+                <FaUserGraduate className="h-3.5 w-3.5 text-blue-600" />
+              </span>
+
+              {entry.member.serial_no != null && (
+                <span className="rounded bg-blue-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                  #{entry.member.serial_no}
+                </span>
+              )}
+
+              <span className="font-bold text-gray-900 sm:text-sm">
+                {entry.member.name}
+              </span>
+
+              {entry.member.phone && (
+                <>
+                  <span className="text-gray-300">|</span>
+                  <a
+                    href={`tel:${entry.member.phone}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200/80 bg-white px-2 py-0.5 text-[11px] font-semibold text-blue-700 transition-colors hover:bg-blue-100 active:scale-95"
+                    title={`Call ${entry.member.name}`}
+                  >
+                    <FaPhoneAlt className="h-2 w-2 text-blue-600" />
+                    <span>{entry.member.phone}</span>
+                  </a>
+                </>
+              )}
             </div>
           )}
 

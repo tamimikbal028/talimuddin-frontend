@@ -10,6 +10,8 @@ import {
   FaCheck,
   FaTimes,
   FaEdit,
+  FaUserGraduate,
+  FaSearch,
 } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import {
@@ -34,6 +36,7 @@ const entrySchema = z.object({
   category_id: z.string().trim().min(1, "Category is required"),
   note: z.string().trim().optional(),
   date: z.string().min(1, "Date is required"),
+  member_id: z.string().trim().optional().nullable(),
   personName: z.string().trim().optional(),
   personPhone: z.string().trim().optional(),
   details: z
@@ -85,6 +88,23 @@ const FinanceAddEntryForm = ({
   const [isAddingCustomCat, setIsAddingCustomCat] = useState(false);
   const [newCatName, setNewCatName] = useState("");
 
+  // Student / Member reference search state
+  const [studentSearch, setStudentSearch] = useState("");
+  const [isStudentDropdownOpen, setIsStudentDropdownOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<{
+    id: string;
+    name: string;
+    phone?: string | null;
+    serial_no?: number | string | null;
+  } | null>(null);
+
+  const { data: membersData, isLoading: isMembersLoading } =
+    branchHooks.useBranchMembers(studentSearch);
+
+  const studentMembers = (
+    membersData?.pages.flatMap((page) => page.data.members) || []
+  ).filter((m) => !m.meta?.is_admin && !m.meta?.is_moderator);
+
   const categories = categoriesData?.data?.categories ?? [];
 
   const {
@@ -101,6 +121,7 @@ const FinanceAddEntryForm = ({
       type: "INCOME",
       payment_status: "PAID",
       date: new Date().toISOString().split("T")[0],
+      member_id: "",
       details: [],
     },
   });
@@ -113,6 +134,7 @@ const FinanceAddEntryForm = ({
   useEffect(() => {
     if (isOpen) {
       if (entryToEdit) {
+        setSelectedMember(entryToEdit.member || null);
         reset({
           type: entryToEdit.type,
           amount: entryToEdit.total_amount ?? entryToEdit.amount,
@@ -122,12 +144,14 @@ const FinanceAddEntryForm = ({
           date: entryToEdit.date
             ? new Date(entryToEdit.date).toISOString().split("T")[0]
             : new Date().toISOString().split("T")[0],
+          member_id: entryToEdit.member_id || "",
           note: entryToEdit.note || "",
           personName: entryToEdit.person_name || "",
           personPhone: entryToEdit.person_phone || "",
           details: entryToEdit.details || [],
         });
       } else {
+        setSelectedMember(null);
         reset({
           type: "INCOME",
           amount: undefined,
@@ -135,6 +159,7 @@ const FinanceAddEntryForm = ({
           payment_status: "PAID",
           category_id: "",
           date: new Date().toISOString().split("T")[0],
+          member_id: "",
           note: "",
           personName: "",
           personPhone: "",
@@ -143,6 +168,8 @@ const FinanceAddEntryForm = ({
       }
       setIsAddingCustomCat(false);
       setNewCatName("");
+      setStudentSearch("");
+      setIsStudentDropdownOpen(false);
     }
   }, [entryToEdit, reset, isOpen]);
 
@@ -204,6 +231,7 @@ const FinanceAddEntryForm = ({
       category_id: data.category_id,
       note: data.note || undefined,
       date: data.date,
+      member_id: data.member_id || undefined,
       personName: data.personName || undefined,
       personPhone: data.personPhone || undefined,
       details:
@@ -567,6 +595,133 @@ const FinanceAddEntryForm = ({
                   }}
                   className="w-full cursor-pointer rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
                 />
+              </div>
+
+              {/* Member / Student Reference field */}
+              <div className="relative">
+                <div className="mb-1.5 flex items-center justify-between">
+                  <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700">
+                    <FaUserGraduate className="h-3.5 w-3.5 text-blue-600" />
+                    <span>শিক্ষার্থী / মেম্বার রেফারেন্স</span>
+                    <span className="font-normal text-gray-400">(ঐচ্ছিক)</span>
+                  </label>
+                  {selectedMember && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedMember(null);
+                        setValue("member_id", "");
+                      }}
+                      className="text-[11px] font-medium text-red-600 transition-colors hover:text-red-700 hover:underline"
+                    >
+                      ✕ রিমুভ করুন
+                    </button>
+                  )}
+                </div>
+
+                {selectedMember ? (
+                  <div className="flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50/70 px-3 py-2 text-xs text-blue-900 shadow-2xs">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      {selectedMember.serial_no != null && (
+                        <span className="rounded bg-blue-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                          #{selectedMember.serial_no}
+                        </span>
+                      )}
+                      <span className="truncate font-bold text-gray-900">
+                        {selectedMember.name}
+                      </span>
+                      {selectedMember.phone && (
+                        <span className="text-[11px] text-gray-500">
+                          ({selectedMember.phone})
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedMember(null);
+                        setValue("member_id", "");
+                      }}
+                      className="ml-2 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-blue-200 hover:text-gray-700"
+                      title="Clear student reference"
+                    >
+                      <IoClose className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <div className="relative flex items-center">
+                      <FaSearch className="pointer-events-none absolute left-3 h-3.5 w-3.5 text-gray-400" />
+                      <input
+                        type="text"
+                        value={studentSearch}
+                        onChange={(e) => {
+                          setStudentSearch(e.target.value);
+                          setIsStudentDropdownOpen(true);
+                        }}
+                        onFocus={() => setIsStudentDropdownOpen(true)}
+                        placeholder="রোল বা নাম লিখে শিক্ষার্থী খুঁজুন..."
+                        className="w-full rounded-lg border border-gray-300 py-2 pr-3 pl-8.5 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                      />
+                    </div>
+
+                    {/* Dropdown search results */}
+                    {isStudentDropdownOpen && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-20"
+                          onClick={() => setIsStudentDropdownOpen(false)}
+                        />
+                        <div className="absolute top-full right-0 left-0 z-30 mt-1 max-h-48 overflow-y-auto rounded-xl border border-gray-200 bg-white py-1 shadow-lg">
+                          {isMembersLoading ? (
+                            <div className="px-3 py-2 text-center text-xs text-gray-500">
+                              শিক্ষার্থী লোড হচ্ছে...
+                            </div>
+                          ) : studentMembers.length === 0 ? (
+                            <div className="px-3 py-2 text-center text-xs text-gray-400">
+                              কোনো শিক্ষার্থী পাওয়া যায়নি
+                            </div>
+                          ) : (
+                            studentMembers.slice(0, 20).map((member) => (
+                              <button
+                                key={member.id}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedMember({
+                                    id: member.id!,
+                                    name: member.name!,
+                                    phone: member.phone,
+                                    serial_no: member.serial_no,
+                                  });
+                                  setValue("member_id", member.id!);
+                                  setIsStudentDropdownOpen(false);
+                                  setStudentSearch("");
+                                }}
+                                className="flex w-full items-center justify-between px-3 py-2 text-left text-xs transition-colors hover:bg-blue-50/80"
+                              >
+                                <div className="flex items-center gap-2">
+                                  {member.serial_no != null && (
+                                    <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-bold text-gray-700">
+                                      #{member.serial_no}
+                                    </span>
+                                  )}
+                                  <span className="font-semibold text-gray-800">
+                                    {member.name}
+                                  </span>
+                                </div>
+                                {member.phone && (
+                                  <span className="text-[11px] text-gray-500">
+                                    {member.phone}
+                                  </span>
+                                )}
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Person Name field */}

@@ -38,6 +38,13 @@ export interface FinanceEntry {
   recorded_by: User;
   person_name: string;
   person_phone: string;
+  member_id?: string | null;
+  member?: {
+    id: string;
+    name: string;
+    phone?: string | null;
+    serial_no?: number | string | null;
+  } | null;
   details: FinanceDetailItem[];
   created_at: string;
   category: {
@@ -122,6 +129,7 @@ export interface CreateFinanceEntryRequest {
   category_id: string;
   note?: string;
   date: string;
+  member_id?: string | null;
   personName?: string;
   personPhone?: string;
   details?: FinanceDetailItem[];
