@@ -75,7 +75,7 @@ const Login = () => {
       {/* Header - Left Side */}
       <div className="text-center lg:text-left">
         <h1 className="text-2xl font-extrabold text-blue-600 sm:text-4xl lg:mb-2 lg:text-5xl">
-          Take Rest
+          Talimuddin
         </h1>
         <h2 className="hidden text-xl font-semibold text-gray-800 sm:block sm:text-2xl lg:mb-2 lg:text-3xl">
           Welcome Back
