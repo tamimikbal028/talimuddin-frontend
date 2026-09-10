@@ -9,9 +9,9 @@ export const TransactionsTableSkeleton = () => {
             <tr>
               <th className="px-3 py-3 whitespace-nowrap sm:px-5">Date</th>
               <th className="px-3 py-3 whitespace-nowrap sm:px-5">Category</th>
-              <th className="px-3 py-3 whitespace-nowrap sm:px-5">Person Name</th>
+              <th className="hidden px-3 py-3 whitespace-nowrap sm:table-cell sm:px-5">Person Name</th>
               <th className="px-3 py-3 text-right whitespace-nowrap sm:px-5">Amount</th>
-              <th className="px-3 py-3 text-center whitespace-nowrap sm:px-5">Actions</th>
+              <th className="hidden px-3 py-3 text-center whitespace-nowrap sm:table-cell sm:px-5">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -31,7 +31,7 @@ export const TransactionsTableSkeleton = () => {
                 </td>
 
                 {/* Person Name */}
-                <td className="px-3 py-3.5 sm:px-5">
+                <td className="hidden px-3 py-3.5 sm:table-cell sm:px-5">
                   <div className="space-y-1.5">
                     <div className="h-4 w-28 rounded bg-gray-200" />
                     <div className="h-3 w-20 rounded bg-gray-100" />
@@ -44,7 +44,7 @@ export const TransactionsTableSkeleton = () => {
                 </td>
 
                 {/* Actions */}
-                <td className="px-3 py-3.5 sm:px-5">
+                <td className="hidden px-3 py-3.5 sm:table-cell sm:px-5">
                   <div className="mx-auto flex justify-center gap-2">
                     <div className="h-6 w-6 rounded-md bg-gray-100" />
                     <div className="h-6 w-6 rounded-md bg-gray-100" />

@@ -236,16 +236,16 @@ const FinanceTransactions = () => {
               <thead className="border-b border-gray-300 bg-gray-50/80 text-[11px] font-bold tracking-wider text-gray-500 uppercase sm:text-xs">
                 <tr>
                   <th className="px-3 py-3 whitespace-nowrap sm:px-5">Date</th>
-                  <th className="px-3 py-3 whitespace-nowrap sm:px-5">
+                  <th className="max-w-[145px] px-2.5 py-3 whitespace-nowrap sm:max-w-xs sm:px-5 md:max-w-none">
                     Category
                   </th>
-                  <th className="px-3 py-3 whitespace-nowrap sm:px-5">
+                  <th className="hidden px-3 py-3 whitespace-nowrap sm:table-cell sm:px-5">
                     Recorded By
                   </th>
                   <th className="px-3 py-3 text-right whitespace-nowrap sm:px-5">
                     Amount
                   </th>
-                  <th className="px-3 py-3 text-center whitespace-nowrap sm:px-5">
+                  <th className="hidden w-px px-1.5 py-3 text-center whitespace-nowrap sm:table-cell sm:px-5">
                     {canManageFinance ? "Actions" : ""}
                   </th>
                 </tr>
@@ -253,24 +253,21 @@ const FinanceTransactions = () => {
               <tbody className="divide-y divide-gray-500">
                 {entries.map((entry) => {
                   const isExpanded = expandedRows[entry.id];
-                  const hasDetails = entry.details && entry.details.length > 0;
-                  const hasNotes = !!entry.note;
-                  const hasPerson = !!entry.person_name || !!entry.person_phone;
-                  const hasMember = !!entry.member;
                   const isOwner =
                     !!user?.id && user.id === entry.recorded_by?.id;
                   const hasDue =
                     (entry.due_amount !== undefined && entry.due_amount > 0) ||
                     entry.payment_status === "PARTIAL" ||
                     entry.payment_status === "DUE";
-                  const canEditOrDelete = canManageFinance && isOwner;
                   const canExpand =
-                    hasDetails ||
-                    hasNotes ||
                     hasDue ||
-                    hasPerson ||
-                    hasMember ||
-                    canEditOrDelete;
+                    !!entry.member ||
+                    !!entry.person_name ||
+                    !!entry.person_phone ||
+                    !!entry.note ||
+                    (entry.details && entry.details.length > 0) ||
+                    (canManageFinance && isOwner) ||
+                    !!entry.recorded_by;
 
                   return (
                     <Fragment key={entry.id}>
@@ -295,8 +292,8 @@ const FinanceTransactions = () => {
                             <span
                               className={`inline-block shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold sm:text-[10px] ${
                                 entry.type === "INCOME"
-                                  ? "bg-green-50 text-green-700"
-                                  : "bg-red-50 text-red-700"
+                                    ? "bg-green-50 text-green-700"
+                                    : "bg-red-50 text-red-700"
                               }`}
                             >
                               {entry.type === "INCOME" ? "Income" : "Expense"}
@@ -305,8 +302,11 @@ const FinanceTransactions = () => {
                         </td>
 
                         {/* Category & Status */}
-                        <td className="border-b border-gray-200/80 px-3 py-3.5 whitespace-nowrap sm:px-5">
-                          <span className="block font-semibold text-gray-900">
+                        <td className="max-w-[145px] border-b border-gray-200/80 px-2.5 py-3.5 sm:max-w-xs sm:px-5 md:max-w-sm lg:max-w-none">
+                          <span
+                            className="block max-w-[138px] truncate font-semibold text-gray-900 sm:max-w-xs md:max-w-sm lg:max-w-none"
+                            title={entry.category?.name}
+                          >
                             {entry.category?.name}
                           </span>
                           <div className="mt-1 flex items-center gap-1.5 whitespace-nowrap">
@@ -327,8 +327,8 @@ const FinanceTransactions = () => {
                           </div>
                         </td>
 
-                        {/* Recorded By & Created At */}
-                        <td className="border-b border-gray-200/80 px-3 py-3.5 font-medium whitespace-nowrap text-gray-600 sm:px-5">
+                        {/* Recorded By & Created At (hidden on mobile, visible from sm up) */}
+                        <td className="hidden border-b border-gray-200/80 px-3 py-3.5 font-medium whitespace-nowrap text-gray-600 sm:table-cell sm:px-5">
                           <p className="truncate font-semibold text-gray-900">
                             {entry.recorded_by?.full_name ||
                               entry.recorded_by?.user_name ||
@@ -372,10 +372,10 @@ const FinanceTransactions = () => {
                           </div>
                         </td>
 
-                        {/* Actions */}
-                        <td className="border-b border-gray-200/80 px-3 py-3.5 text-center whitespace-nowrap sm:px-5">
-                          <div className="flex items-center justify-center gap-1.5 sm:gap-2">
-                            {/* Slot 1: Due Action button or fixed width spacer */}
+                        {/* Actions / Arrow (hidden on mobile, visible on sm and up) */}
+                        <td className="hidden w-px border-b border-gray-200/80 px-1 py-3.5 text-center whitespace-nowrap sm:table-cell sm:px-5">
+                          <div className="flex items-center justify-center gap-1 sm:gap-2">
+                            {/* Slot 1: Due Action button */}
                             {canManageFinance &&
                               (hasDue && isOwner ? (
                                 <button
@@ -385,7 +385,7 @@ const FinanceTransactions = () => {
                                     setSelectedDueEntry(entry);
                                     setIsDueModalOpen(true);
                                   }}
-                                  className="flex h-7 w-18 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[11px] font-bold text-amber-800 transition-colors hover:bg-amber-100"
+                                  className="flex h-7 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[11px] font-bold text-amber-800 transition-colors hover:bg-amber-100"
                                   title={
                                     entry.type === "INCOME"
                                       ? "বকেয়া আদায় করুন"
@@ -403,7 +403,7 @@ const FinanceTransactions = () => {
                                 <div className="h-7 w-18 shrink-0" />
                               ))}
 
-                            {/* Slot 2: Expand Chevron button or fixed width spacer */}
+                            {/* Slot 2: Expand Chevron button */}
                             {canExpand ? (
                               <button
                                 type="button"
@@ -440,6 +440,10 @@ const FinanceTransactions = () => {
                           isModerator={isModerator}
                           onEdit={handleEdit}
                           onDelete={handleDelete}
+                          onSettleDue={(entry) => {
+                            setSelectedDueEntry(entry);
+                            setIsDueModalOpen(true);
+                          }}
                         />
                       )}
                     </Fragment>

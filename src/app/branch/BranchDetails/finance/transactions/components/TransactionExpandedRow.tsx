@@ -4,8 +4,9 @@ import {
   FaPhoneAlt,
   FaLock,
   FaUserGraduate,
+  FaMoneyBillWave,
 } from "react-icons/fa";
-import { formatCurrency } from "../../financeUtils";
+import { formatCurrency, formatDateTime } from "../../financeUtils";
 import type { FinanceEntry, FinanceDetailItem } from "@/types";
 import authHooks from "@/hooks/useAuth";
 
@@ -16,6 +17,7 @@ interface TransactionExpandedRowProps {
   isModerator?: boolean;
   onEdit: (entry: FinanceEntry) => void;
   onDelete: (entry: FinanceEntry) => void;
+  onSettleDue?: (entry: FinanceEntry) => void;
 }
 
 const TransactionExpandedRow = ({
@@ -25,6 +27,7 @@ const TransactionExpandedRow = ({
   isModerator,
   onEdit,
   onDelete,
+  onSettleDue,
 }: TransactionExpandedRowProps) => {
   const { user } = authHooks.useUser();
   const isOwner = !!user?.id && user.id === entry.recorded_by?.id;
@@ -45,7 +48,8 @@ const TransactionExpandedRow = ({
     !hasPerson &&
     !hasNotes &&
     !hasDetails &&
-    !canEditOrDelete
+    !canEditOrDelete &&
+    !entry.recorded_by
   ) {
     return null;
   }
@@ -54,9 +58,32 @@ const TransactionExpandedRow = ({
     <tr className="border-b border-gray-200/80 bg-gray-50/40">
       <td colSpan={5} className="border-b border-gray-200/80 px-4 py-3 sm:px-8">
         <div className="space-y-3 text-xs">
+          {/* Mobile view Recorded By (styled identically to Breakdown List) */}
+          {entry.recorded_by && (
+            <div className="space-y-1.5 sm:hidden">
+              <p className="text-[9px] font-bold tracking-wider text-gray-500 uppercase">
+                Recorded By:
+              </p>
+              <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
+                <div className="flex items-center justify-between px-3 py-2">
+                  <span className="font-semibold text-gray-800">
+                    {entry.recorded_by.full_name ||
+                      entry.recorded_by.user_name ||
+                      "Unknown"}
+                  </span>
+                  {entry.created_at && (
+                    <span className="text-[11px] font-medium text-gray-500">
+                      {formatDateTime(entry.created_at)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Due status details card if has due */}
           {hasDue && (
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50/50 p-3 shadow-2xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50/50 p-3 shadow-2xs">
               <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                 <div>
                   <span className="text-[10px] font-bold text-gray-500 uppercase">
@@ -85,6 +112,25 @@ const TransactionExpandedRow = ({
                   </p>
                 </div>
               </div>
+
+              {/* Mobile view Due Action button */}
+              {canManageFinance && isOwner && onSettleDue && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSettleDue(entry);
+                  }}
+                  className="flex sm:hidden w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-amber-300 bg-amber-500 px-3 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-amber-600 active:scale-98"
+                >
+                  <FaMoneyBillWave className="h-3.5 w-3.5 text-white" />
+                  <span>
+                    {entry.type === "INCOME"
+                      ? "বকেয়া আদায় করুন"
+                      : "দেনা পরিশোধ করুন"}
+                  </span>
+                </button>
+              )}
             </div>
           )}
 
