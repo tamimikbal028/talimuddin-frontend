@@ -393,39 +393,28 @@ const FinanceTransactions = () => {
                           <div className="flex items-center justify-center gap-1.5 sm:gap-2">
                             {/* Slot 1: Due Action button or fixed width spacer */}
                             {canManageFinance &&
-                              (hasDue ? (
-                                isOwner ? (
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedDueEntry(entry);
-                                      setIsDueModalOpen(true);
-                                    }}
-                                    className="flex h-7 w-18 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[11px] font-bold text-amber-800 transition-colors hover:bg-amber-100"
-                                    title={
-                                      entry.type === "INCOME"
-                                        ? "বকেয়া আদায় করুন"
-                                        : "দেনা পরিশোধ করুন"
-                                    }
-                                  >
-                                    <FaMoneyBillWave className="h-3 w-3 shrink-0 text-amber-600" />
-                                    <span>
-                                      {entry.type === "INCOME"
-                                        ? "আদায়"
-                                        : "পরিশোধ"}
-                                    </span>
-                                  </button>
-                                ) : (
-                                  <span
-                                    title={`শুধুমাত্র যিনি এন্ট্রি করেছেন (${entry.recorded_by?.full_name || "এন্ট্রিকারী"}) তিনিই আদায়/পরিশোধ করতে পারবেন`}
-                                    className="flex h-7 w-18 shrink-0 cursor-not-allowed items-center justify-center rounded-lg border border-gray-200 bg-gray-100 px-1.5 py-1 text-[10px] font-medium text-gray-400 select-none"
-                                  >
+                              (hasDue && isOwner ? (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedDueEntry(entry);
+                                    setIsDueModalOpen(true);
+                                  }}
+                                  className="flex h-7 w-18 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[11px] font-bold text-amber-800 transition-colors hover:bg-amber-100"
+                                  title={
+                                    entry.type === "INCOME"
+                                      ? "বকেয়া আদায় করুন"
+                                      : "দেনা পরিশোধ করুন"
+                                  }
+                                >
+                                  <FaMoneyBillWave className="h-3 w-3 shrink-0 text-amber-600" />
+                                  <span>
                                     {entry.type === "INCOME"
                                       ? "আদায়"
                                       : "পরিশোধ"}
                                   </span>
-                                )
+                                </button>
                               ) : (
                                 <div className="h-7 w-18 shrink-0" />
                               ))}

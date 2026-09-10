@@ -130,7 +130,7 @@ const TransactionExpandedRow = ({
           )}
 
           {/* Management Actions: Edit & Delete */}
-          {canManageFinance && (!hasDue || isOwner) && (
+          {canManageFinance && isOwner && (
             <div className="flex flex-wrap items-center justify-end gap-2.5 border-t border-gray-200/80 pt-2.5">
               <div className="flex items-center gap-2">
                 <button
