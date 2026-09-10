@@ -1,10 +1,4 @@
-import {
-  FaMoneyBillWave,
-  FaEdit,
-  FaTrash,
-  FaPhoneAlt,
-  FaLock,
-} from "react-icons/fa";
+import { FaEdit, FaTrash, FaPhoneAlt, FaLock } from "react-icons/fa";
 import { formatCurrency } from "../../financeUtils";
 import type { FinanceEntry, FinanceDetailItem } from "@/types";
 import authHooks from "@/hooks/useAuth";
@@ -14,7 +8,6 @@ interface TransactionExpandedRowProps {
   canManageFinance: boolean;
   isAdmin?: boolean;
   isModerator?: boolean;
-  onOpenDueModal: (entry: FinanceEntry) => void;
   onEdit: (entry: FinanceEntry) => void;
   onDelete: (entry: FinanceEntry) => void;
 }
@@ -24,7 +17,6 @@ const TransactionExpandedRow = ({
   canManageFinance,
   isAdmin,
   isModerator,
-  onOpenDueModal,
   onEdit,
   onDelete,
 }: TransactionExpandedRowProps) => {
@@ -74,23 +66,6 @@ const TransactionExpandedRow = ({
                   </p>
                 </div>
               </div>
-              {canManageFinance && isOwner && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenDueModal(entry);
-                  }}
-                  className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-amber-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-amber-700"
-                >
-                  <FaMoneyBillWave className="h-3.5 w-3.5" />
-                  <span>
-                    {entry.type === "INCOME"
-                      ? "বকেয়া আদায় (আমি পাবো)"
-                      : "দেনা পরিশোধ (আমাকে দিতে হবে)"}
-                  </span>
-                </button>
-              )}
             </div>
           )}
 

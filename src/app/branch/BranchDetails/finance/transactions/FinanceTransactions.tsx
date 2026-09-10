@@ -42,9 +42,9 @@ const FinanceTransactions = () => {
   // State for adding/editing entry modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<FinanceEntry | null>(null);
-  const [editingActionCode, setEditingActionCode] = useState<string | undefined>(
-    undefined
-  );
+  const [editingActionCode, setEditingActionCode] = useState<
+    string | undefined
+  >(undefined);
 
   // State for collecting/paying due modal
   const [isDueModalOpen, setIsDueModalOpen] = useState(false);
@@ -175,7 +175,6 @@ const FinanceTransactions = () => {
     return `${day} ${month} ${year} • ${strHours}:${minutes} ${ampm}`;
   };
 
-
   const handleClearFilters = () => {
     setType("");
     setCategoryId("");
@@ -268,7 +267,6 @@ const FinanceTransactions = () => {
                     Recorded By
                   </th>
                   <th className="px-3 py-3 text-right whitespace-nowrap sm:px-5">
-
                     Amount
                   </th>
                   <th className="px-3 py-3 text-center whitespace-nowrap sm:px-5">
@@ -281,7 +279,8 @@ const FinanceTransactions = () => {
                   const isExpanded = expandedRows[entry.id];
                   const hasDetails = entry.details && entry.details.length > 0;
                   const hasNotes = !!entry.note;
-                  const isOwner = !!user?.id && user.id === entry.recorded_by?.id;
+                  const isOwner =
+                    !!user?.id && user.id === entry.recorded_by?.id;
                   const hasDue =
                     (entry.due_amount !== undefined && entry.due_amount > 0) ||
                     entry.payment_status === "PARTIAL" ||
@@ -356,8 +355,6 @@ const FinanceTransactions = () => {
                           </p>
                         </td>
 
-
-
                         {/* Amount */}
                         <td
                           className={`border-b border-gray-200/80 px-3 py-3.5 text-right font-bold whitespace-nowrap sm:px-5 ${
@@ -422,7 +419,7 @@ const FinanceTransactions = () => {
                                 ) : (
                                   <span
                                     title={`শুধুমাত্র যিনি এন্ট্রি করেছেন (${entry.recorded_by?.full_name || "এন্ট্রিকারী"}) তিনিই আদায়/পরিশোধ করতে পারবেন`}
-                                    className="flex h-7 w-18 shrink-0 select-none items-center justify-center rounded-lg border border-gray-200 bg-gray-100 px-1.5 py-1 text-[10px] font-medium text-gray-400 cursor-not-allowed"
+                                    className="flex h-7 w-18 shrink-0 cursor-not-allowed items-center justify-center rounded-lg border border-gray-200 bg-gray-100 px-1.5 py-1 text-[10px] font-medium text-gray-400 select-none"
                                   >
                                     {entry.type === "INCOME"
                                       ? "আদায়"
@@ -468,10 +465,6 @@ const FinanceTransactions = () => {
                           canManageFinance={!!canManageFinance}
                           isAdmin={isAdmin}
                           isModerator={isModerator}
-                          onOpenDueModal={(e) => {
-                            setSelectedDueEntry(e);
-                            setIsDueModalOpen(true);
-                          }}
                           onEdit={handleEdit}
                           onDelete={handleDelete}
                         />
