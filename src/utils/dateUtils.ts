@@ -50,3 +50,21 @@ export const formatRelativeTime = (dateString: string): string => {
   // For older posts, use the formatted date
   return formatPostDate(dateString);
 };
+
+/**
+ * Formats date to short format with 3-letter month: "23 Sep 2026"
+ */
+export const formatDateShort = (dateString?: string | Date | null): string => {
+  if (!dateString) return "-";
+  const d = dayjs(dateString);
+  return d.isValid() ? d.format("DD MMM YYYY") : "-";
+};
+
+/**
+ * Formats date to full format with full month name: "23 September 2026"
+ */
+export const formatDateFull = (dateString?: string | Date | null): string => {
+  if (!dateString) return "-";
+  const d = dayjs(dateString);
+  return d.isValid() ? d.format("DD MMMM YYYY") : "-";
+};

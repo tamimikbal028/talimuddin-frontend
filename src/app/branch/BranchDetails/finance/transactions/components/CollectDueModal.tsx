@@ -109,11 +109,12 @@ const CollectDueModal = ({
   };
 
   const formatDate = (dateStr: string) => {
+    if (!dateStr) return "-";
     const d = new Date(dateStr);
     const day = d.getDate().toString().padStart(2, "0");
-    const month = getMonthName(d.getMonth() + 1);
+    const month = getMonthName(d.getMonth() + 1).slice(0, 3);
     const year = d.getFullYear();
-    return `${day} ${month}, ${year}`;
+    return `${day} ${month} ${year}`;
   };
 
   return (

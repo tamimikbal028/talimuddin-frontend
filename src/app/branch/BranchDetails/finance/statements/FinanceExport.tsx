@@ -8,6 +8,7 @@ import {
 } from "@/app/shared/LoadingSkeleton/FinanceSkeletons";
 import { FaPrint, FaArrowUp, FaArrowDown, FaWallet } from "react-icons/fa";
 import branchHooks from "@/hooks/useBranch";
+import dayjs from "dayjs";
 
 const FinanceExport = () => {
   const { branchId } = useParams<{ branchId: string }>();
@@ -73,12 +74,9 @@ const FinanceExport = () => {
   };
 
   const formatDateShort = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("en-BD", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+    if (!dateStr) return "-";
+    const d = dayjs(dateStr);
+    return d.isValid() ? d.format("DD MMM YYYY") : "-";
   };
 
   return (
@@ -224,7 +222,7 @@ const FinanceExport = () => {
                 Report Generated
               </p>
               <p className="mt-0.5 text-xs font-bold text-gray-700">
-                {new Date().toLocaleDateString("en-BD")}
+                {dayjs().format("DD MMM YYYY")}
               </p>
             </div>
           </div>

@@ -152,11 +152,12 @@ const FinanceTransactions = () => {
   };
 
   const formatDate = (dateStr: string) => {
+    if (!dateStr) return "-";
     const d = new Date(dateStr);
     const day = d.getDate().toString().padStart(2, "0");
     const month = getMonthName(d.getMonth() + 1);
     const year = d.getFullYear();
-    return `${day} ${month}, ${year}`;
+    return `${day} ${month} ${year}`;
   };
 
   const formatDateTime = (dateStr: string) => {
@@ -171,7 +172,7 @@ const FinanceTransactions = () => {
     hours = hours % 12;
     hours = hours ? hours : 12;
     const strHours = hours.toString().padStart(2, "0");
-    return `${day} ${month}, ${year} • ${strHours}:${minutes} ${ampm}`;
+    return `${day} ${month} ${year} • ${strHours}:${minutes} ${ampm}`;
   };
 
 
