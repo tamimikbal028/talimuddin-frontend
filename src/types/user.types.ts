@@ -31,9 +31,10 @@ export interface SupabaseSession {
 }
 
 export type AuthResponse = ApiResponse<{
-  user: AuthUser;
-  meta: UserMeta;
+  user?: AuthUser;
+  meta?: UserMeta;
   supabaseSession?: SupabaseSession | null;
+  emailConfirmationRequired?: boolean;
 }>;
 
 export interface AuthUser {

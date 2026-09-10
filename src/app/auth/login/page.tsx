@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash, FaBuilding } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 import authHooks from "@/hooks/useAuth";
 
 // Zod Schema for Login
@@ -40,6 +41,19 @@ const Login = () => {
   const emailRegister = register("email");
   const passwordRegister = register("password");
   const rememberMeRegister = register("rememberMe");
+
+  // Check if user came back from clicking confirmation email link
+  useEffect(() => {
+    if (
+      window.location.hash.includes("type=signup") ||
+      window.location.hash.includes("access_token")
+    ) {
+      toast.success(
+        "আপনার ইমেইল ভেরিফিকেশন সফল হয়েছে! অনুগ্রহ করে লগইন করুন।"
+      );
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
 
   // Loading remembered email from localStorage on component mount
   useEffect(() => {

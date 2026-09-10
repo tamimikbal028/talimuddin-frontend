@@ -58,6 +58,16 @@ const useRegister = () => {
     mutationFn: (registerData: RegisterType) =>
       authServices.register(registerData),
     onSuccess: async (response) => {
+      if (response.data?.emailConfirmationRequired) {
+        toast.success(
+          response.message ||
+            "নিবন্ধন সফল হয়েছে! অনুগ্রহ করে আপনার ইমেইল চেক করে একাউন্ট ভেরিফাই করুন।",
+          { duration: 8000 }
+        );
+        navigate("/login");
+        return;
+      }
+
       if (response.data?.supabaseSession) {
         try {
           await supabase.auth.setSession(response.data.supabaseSession);
