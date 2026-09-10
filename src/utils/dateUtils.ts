@@ -50,4 +50,3 @@ export const formatRelativeTime = (dateString: string): string => {
   // For older posts, use the formatted date
   return formatPostDate(dateString);
 };
-
