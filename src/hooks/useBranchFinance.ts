@@ -54,6 +54,8 @@ const useFinanceEntries = (
   filters: {
     type?: string;
     category_id?: string;
+    payment_status?: string;
+    member_id?: string;
     page?: number;
     limit?: number;
     startDate?: string;
@@ -64,6 +66,23 @@ const useFinanceEntries = (
     queryKey: [FINANCE_KEYS.ENTRIES, branchId, filters],
     queryFn: () => branchFinanceServices.getFinanceEntries(branchId, filters),
     enabled: !!branchId,
+  });
+};
+
+const useMemberFinanceEntries = (
+  branchId: string,
+  memberId?: string,
+  enabled = false
+) => {
+  return useQuery({
+    queryKey: [FINANCE_KEYS.ENTRIES, branchId, "member", memberId],
+    queryFn: () =>
+      branchFinanceServices.getFinanceEntries(branchId, {
+        member_id: memberId,
+        limit: 100,
+      }),
+    enabled: enabled && !!branchId && !!memberId,
+    staleTime: 1000 * 60 * 2,
   });
 };
 
@@ -199,6 +218,7 @@ const financeHooks = {
   useCreateFinanceEntry,
   useUpdateFinanceEntry,
   useFinanceEntries,
+  useMemberFinanceEntries,
   useFinanceSummary,
   useFinanceCategories,
   useFinanceMonthExport,
@@ -216,6 +236,7 @@ export {
   useCreateFinanceEntry,
   useUpdateFinanceEntry,
   useFinanceEntries,
+  useMemberFinanceEntries,
   useFinanceSummary,
   useFinanceCategories,
   useFinanceMonthExport,

@@ -50,6 +50,7 @@ const getFinanceEntries = async (
     type?: string;
     category_id?: string;
     payment_status?: string;
+    member_id?: string;
     page?: number;
     limit?: number;
     startDate?: string;
@@ -60,6 +61,7 @@ const getFinanceEntries = async (
   if (filters.type) params.append("type", filters.type);
   if (filters.category_id) params.append("category_id", filters.category_id);
   if (filters.payment_status) params.append("payment_status", filters.payment_status);
+  if (filters.member_id) params.append("member_id", filters.member_id);
   if (filters.page) params.append("page", String(filters.page));
   if (filters.limit) params.append("limit", String(filters.limit));
   if (filters.startDate) params.append("startDate", filters.startDate);
