@@ -42,9 +42,28 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
     data: financeData,
     isLoading: isFinanceLoading,
     isError: isFinanceError,
-  } = useMemberFinanceEntries(branchId || "", memberId, isExpanded);
+  } = useMemberFinanceEntries(branchId || "", memberId, true);
 
   const transactions: FinanceEntry[] = financeData?.data?.entries || [];
+  const paidSalaryMonths = Array.from(
+    new Set(
+      transactions
+        .filter(
+          (entry) =>
+            entry.type === "INCOME" &&
+            entry.salary_month &&
+            (entry.paid_amount ?? entry.amount) > 0
+        )
+        .map((entry) => entry.salary_month as string)
+    )
+  ).sort((a, b) => b.localeCompare(a));
+  const salaryMonthLabels = paidSalaryMonths.map((month) => {
+    const [year, monthNumber] = month.split("-").map(Number);
+    return new Intl.DateTimeFormat("bn-BD", {
+      month: "long",
+      year: "numeric",
+    }).format(new Date(year, monthNumber - 1, 1));
+  });
 
   const totalPaid = transactions.reduce(
     (sum, t) => sum + (t.paid_amount ?? (t.type === "INCOME" ? t.amount : 0)),
@@ -137,6 +156,14 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
               {meta.is_self && (
                 <span className="shrink-0 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
                   You
+                </span>
+              )}
+              {salaryMonthLabels.length > 0 && (
+                <span
+                  className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700"
+                  title="যে মাসগুলোর বেতন দেওয়া হয়েছে"
+                >
+                  বেতন: {salaryMonthLabels.join(", ")}
                 </span>
               )}
             </div>

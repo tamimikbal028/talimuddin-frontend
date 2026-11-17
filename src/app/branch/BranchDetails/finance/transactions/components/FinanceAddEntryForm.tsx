@@ -24,7 +24,8 @@ import branchHooks from "@/hooks/useBranch";
 import { toast } from "sonner";
 import type { FinanceEntry } from "@/types";
 
-const entrySchema = z.object({
+const entrySchema = z
+  .object({
   type: z.enum(["INCOME", "EXPENSE"]),
   amount: z.coerce.number().positive("Amount must be greater than 0"),
   total_amount: z.coerce.number().optional(),
@@ -36,18 +37,29 @@ const entrySchema = z.object({
   category_id: z.string().trim().min(1, "Category is required"),
   note: z.string().trim().optional(),
   date: z.string().min(1, "Date is required"),
+  is_salary_entry: z.boolean().optional(),
+  salary_month: z.string().optional(),
   member_id: z.string().trim().optional().nullable(),
   personName: z.string().trim().optional(),
   personPhone: z.string().trim().optional(),
-  details: z
-    .array(
-      z.object({
-        itemName: z.string().trim().min(1, "Item name is required"),
-        amount: z.coerce.number().positive("Amount must be > 0"),
-      })
-    )
-    .optional(),
-});
+    details: z
+      .array(
+        z.object({
+          itemName: z.string().trim().min(1, "Item name is required"),
+          amount: z.coerce.number().positive("Amount must be > 0"),
+        })
+      )
+      .optional(),
+  })
+  .superRefine((data, context) => {
+    if (data.is_salary_entry && !data.member_id) {
+      context.addIssue({
+        code: "custom",
+        path: ["member_id"],
+        message: "মাসিক বেতনের জন্য শিক্ষার্থী নির্বাচন করুন",
+      });
+    }
+  });
 
 type EntryFormData = z.infer<typeof entrySchema>;
 
@@ -122,6 +134,7 @@ const FinanceAddEntryForm = ({
       payment_status: "PAID",
       date: new Date().toISOString().split("T")[0],
       member_id: "",
+      is_salary_entry: false,
       details: [],
     },
   });
@@ -145,6 +158,8 @@ const FinanceAddEntryForm = ({
             ? new Date(entryToEdit.date).toISOString().split("T")[0]
             : new Date().toISOString().split("T")[0],
           member_id: entryToEdit.member_id || "",
+          is_salary_entry: Boolean(entryToEdit.salary_month),
+          salary_month: entryToEdit.salary_month || "",
           note: entryToEdit.note || "",
           personName: entryToEdit.person_name || "",
           personPhone: entryToEdit.person_phone || "",
@@ -160,6 +175,8 @@ const FinanceAddEntryForm = ({
           category_id: "",
           date: new Date().toISOString().split("T")[0],
           member_id: "",
+          is_salary_entry: false,
+          salary_month: "",
           note: "",
           personName: "",
           personPhone: "",
@@ -177,6 +194,7 @@ const FinanceAddEntryForm = ({
 
   const selectedType = watch("type");
   const selectedPaymentStatus = watch("payment_status") || "PAID";
+  const isSalaryEntry = watch("is_salary_entry") || false;
   const enteredAmount = watch("amount");
   const enteredPaidAmount = watch("paid_amount");
 
@@ -209,6 +227,11 @@ const FinanceAddEntryForm = ({
   };
 
   const onSubmit = (data: EntryFormData) => {
+    if (data.is_salary_entry && !data.salary_month) {
+      toast.error("বেতনের মাস নির্বাচন করুন");
+      return;
+    }
+
     const totalAmount = data.amount;
     let paidAmount = totalAmount;
     let dueAmount = 0;
@@ -231,6 +254,7 @@ const FinanceAddEntryForm = ({
       category_id: data.category_id,
       note: data.note || undefined,
       date: data.date,
+      salary_month: data.is_salary_entry ? data.salary_month : null,
       member_id: data.member_id || undefined,
       personName: data.personName || undefined,
       personPhone: data.personPhone || undefined,
@@ -256,6 +280,8 @@ const FinanceAddEntryForm = ({
             type: "INCOME",
             payment_status: "PAID",
             date: new Date().toISOString().split("T")[0],
+            is_salary_entry: false,
+            salary_month: "",
             details: [],
           });
           onClose();
@@ -274,7 +300,7 @@ const FinanceAddEntryForm = ({
       />
 
       {/* Modal Dialog Card */}
-      <div className="animate-in fade-in zoom-in-95 relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-200">
+      <div className="animate-in fade-in zoom-in-95 relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-200">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50/80 px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex items-center gap-2.5">
@@ -341,6 +367,10 @@ const FinanceAddEntryForm = ({
                       register("type").onChange(e);
                       // Reset selected category because type changed
                       setValue("category_id", "");
+                      if (t === "EXPENSE") {
+                        setValue("is_salary_entry", false);
+                        setValue("salary_month", "");
+                      }
                     }}
                   />
                   {t === "INCOME" ? (
@@ -434,11 +464,17 @@ const FinanceAddEntryForm = ({
                     ))}
                   </select>
                 )}
-                {isModerator && !isCatLoading && filteredCategories.length === 0 && (
-                  <p className="mt-1 text-[11px] text-amber-600 font-medium">
-                    ⚠️ আপনার জন্য {selectedType === "INCOME" ? "আয় (Income)" : "ব্যয় (Expense)"} খাতে কোনো অনুমোদিত ক্যাটাগরি নেই।
-                  </p>
-                )}
+                {isModerator &&
+                  !isCatLoading &&
+                  filteredCategories.length === 0 && (
+                    <p className="mt-1 text-[11px] font-medium text-amber-600">
+                      ⚠️ আপনার জন্য{" "}
+                      {selectedType === "INCOME"
+                        ? "আয় (Income)"
+                        : "ব্যয় (Expense)"}{" "}
+                      খাতে কোনো অনুমোদিত ক্যাটাগরি নেই।
+                    </p>
+                  )}
                 {errors.category_id && !isAddingCustomCat && (
                   <p className="mt-1 text-xs text-red-600">
                     {errors.category_id.message}
@@ -597,12 +633,41 @@ const FinanceAddEntryForm = ({
                 />
               </div>
 
+              {selectedType === "INCOME" && (
+                <div className="flex flex-col justify-center">
+                  <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-gray-700">
+                    <input
+                      type="checkbox"
+                      {...register("is_salary_entry")}
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      onChange={(event) => {
+                        register("is_salary_entry").onChange(event);
+                        if (!event.target.checked) setValue("salary_month", "");
+                      }}
+                    />
+                    <span>মাসিক বেতনের</span>
+                  </label>
+                  {isSalaryEntry && (
+                    <div className="mt-2">
+                      <label className="mb-1 block text-xs font-semibold text-gray-600">
+                        যে মাসের বেতন *
+                      </label>
+                      <input
+                        type="month"
+                        {...register("salary_month")}
+                        className="w-full cursor-pointer rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none sm:text-sm"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Member / Student Reference field */}
               <div className="relative">
                 <div className="mb-1.5 flex items-center justify-between">
                   <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700">
                     <FaUserGraduate className="h-3.5 w-3.5 text-blue-600" />
-                    <span>শিক্ষার্থী / মেম্বার রেফারেন্স</span>
+                    <span>শিক্ষার্থী রেফারেন্স</span>
                     <span className="font-normal text-gray-400">(ঐচ্ছিক)</span>
                   </label>
                   {selectedMember && (

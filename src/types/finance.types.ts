@@ -35,6 +35,7 @@ export interface FinanceEntry {
   category_id: string;
   note: string;
   date: string;
+  salary_month?: string | null;
   recorded_by: User;
   person_name: string;
   person_phone: string;
@@ -129,6 +130,7 @@ export interface CreateFinanceEntryRequest {
   category_id: string;
   note?: string;
   date: string;
+  salary_month?: string | null;
   member_id?: string | null;
   personName?: string;
   personPhone?: string;
