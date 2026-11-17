@@ -45,26 +45,6 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
   } = useMemberFinanceEntries(branchId || "", memberId, true);
 
   const transactions: FinanceEntry[] = financeData?.data?.entries || [];
-  const paidSalaryMonths = Array.from(
-    new Set(
-      transactions
-        .filter(
-          (entry) =>
-            entry.type === "INCOME" &&
-            entry.salary_month &&
-            (entry.paid_amount ?? entry.amount) > 0
-        )
-        .map((entry) => entry.salary_month as string)
-    )
-  ).sort((a, b) => b.localeCompare(a));
-  const salaryMonthLabels = paidSalaryMonths.map((month) => {
-    const [year, monthNumber] = month.split("-").map(Number);
-    return new Intl.DateTimeFormat("bn-BD", {
-      month: "long",
-      year: "numeric",
-    }).format(new Date(year, monthNumber - 1, 1));
-  });
-
   const totalPaid = transactions.reduce(
     (sum, t) => sum + (t.paid_amount ?? (t.type === "INCOME" ? t.amount : 0)),
     0
@@ -126,16 +106,16 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
   return (
     <div
       onClick={() => setIsExpanded((prev) => !prev)}
-      className={`group flex flex-col rounded-2xl border p-3 shadow-xs transition-all duration-200 cursor-pointer ${
+      className={`group flex cursor-pointer flex-col rounded-2xl border p-3 shadow-xs transition-all duration-200 ${
         isExpanded
-          ? "border-blue-300 bg-white ring-2 ring-blue-500/15 shadow-sm"
+          ? "border-blue-300 bg-white shadow-sm ring-2 ring-blue-500/15"
           : meta.is_self
-          ? "border-blue-300 bg-white ring-2 ring-blue-500/10 hover:border-blue-400 hover:shadow-md"
-          : "border-gray-300 bg-white hover:border-blue-300 hover:shadow-md"
+            ? "border-blue-300 bg-white ring-2 ring-blue-500/10 hover:border-blue-400 hover:shadow-md"
+            : "border-gray-300 bg-white hover:border-blue-300 hover:shadow-md"
       }`}
     >
       {/* Main Top Row */}
-      <div className="flex items-center justify-between w-full">
+      <div className="flex w-full items-center justify-between">
         <div className="flex min-w-0 items-center space-x-3.5 sm:space-x-4">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
@@ -156,14 +136,6 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
               {meta.is_self && (
                 <span className="shrink-0 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
                   You
-                </span>
-              )}
-              {salaryMonthLabels.length > 0 && (
-                <span
-                  className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700"
-                  title="যে মাসগুলোর বেতন দেওয়া হয়েছে"
-                >
-                  বেতন: {salaryMonthLabels.join(", ")}
                 </span>
               )}
             </div>
@@ -211,7 +183,7 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
                     e.stopPropagation();
                     setIsNoteExpanded((prev) => !prev);
                   }}
-                  className={`inline-flex items-center gap-1.5 rounded-lg border border-amber-200/80 bg-amber-50/70 px-2.5 py-1 text-left text-xs font-medium text-amber-800 transition-all hover:bg-amber-100/80 cursor-pointer ${
+                  className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-amber-200/80 bg-amber-50/70 px-2.5 py-1 text-left text-xs font-medium text-amber-800 transition-all hover:bg-amber-100/80 ${
                     isNoteExpanded
                       ? "w-full max-w-full whitespace-pre-line"
                       : "max-w-80 truncate"
@@ -225,7 +197,9 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
                   <HiDocumentText className="mt-0.5 h-3.5 w-3.5 shrink-0 self-start text-amber-600" />
                   <span
                     className={
-                      isNoteExpanded ? "leading-relaxed break-words" : "truncate"
+                      isNoteExpanded
+                        ? "leading-relaxed break-words"
+                        : "truncate"
                     }
                   >
                     {member.note}
@@ -309,7 +283,7 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
       {isExpanded && (
         <div
           onClick={(e) => e.stopPropagation()}
-          className="mt-3 border-t border-gray-100 pt-3 animate-in fade-in duration-200"
+          className="animate-in fade-in mt-3 border-t border-gray-100 pt-3 duration-200"
         >
           {/* Header & Stats Bar */}
           <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
@@ -367,7 +341,7 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
                         {t.category?.name || "ক্যাটাগরি"}
                       </span>
                       <span
-                        className={`rounded-full px-1.5 py-0.2 text-[9px] font-bold ${
+                        className={`py-0.2 rounded-full px-1.5 text-[9px] font-bold ${
                           t.type === "INCOME"
                             ? "bg-green-100 text-green-700"
                             : "bg-red-100 text-red-700"
@@ -376,23 +350,37 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
                         {t.type === "INCOME" ? "জমা" : "খরচ"}
                       </span>
                       {t.payment_status === "PAID" && (
-                        <span className="rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0.2 text-[9px] font-bold text-emerald-700">
+                        <span className="py-0.2 rounded-full border border-emerald-200 bg-emerald-50 px-1.5 text-[9px] font-bold text-emerald-700">
                           পরিশোধিত
                         </span>
                       )}
                       {t.payment_status === "PARTIAL" && (
-                        <span className="rounded-full border border-amber-200 bg-amber-50 px-1.5 py-0.2 text-[9px] font-bold text-amber-800">
+                        <span className="py-0.2 rounded-full border border-amber-200 bg-amber-50 px-1.5 text-[9px] font-bold text-amber-800">
                           আংশিক বাকি
                         </span>
                       )}
                       {t.payment_status === "DUE" && (
-                        <span className="rounded-full border border-rose-200 bg-rose-50 px-1.5 py-0.2 text-[9px] font-bold text-rose-800">
+                        <span className="py-0.2 rounded-full border border-rose-200 bg-rose-50 px-1.5 text-[9px] font-bold text-rose-800">
                           সম্পূর্ণ বাকি
                         </span>
                       )}
                     </div>
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
                       <span>{formatDateShort(t.date)}</span>
+                      {t.salary_month && (
+                        <span className="inline-flex items-center rounded-md border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700">
+                          {new Intl.DateTimeFormat("bn-BD", {
+                            month: "long",
+                            year: "numeric",
+                          }).format(
+                            new Date(
+                              Number(t.salary_month.split("-")[0]),
+                              Number(t.salary_month.split("-")[1]) - 1,
+                              1
+                            )
+                          )}
+                        </span>
+                      )}
                       {t.note && (
                         <span className="max-w-72 truncate text-gray-600">
                           • {t.note}
@@ -401,7 +389,7 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
                     </div>
                   </div>
 
-                  <div className="text-right shrink-0">
+                  <div className="shrink-0 text-right">
                     <span
                       className={`font-black ${
                         t.type === "INCOME" ? "text-green-600" : "text-red-600"
