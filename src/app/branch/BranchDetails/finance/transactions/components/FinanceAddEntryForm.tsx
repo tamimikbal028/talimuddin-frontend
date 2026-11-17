@@ -668,7 +668,11 @@ const FinanceAddEntryForm = ({
                   <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700">
                     <FaUserGraduate className="h-3.5 w-3.5 text-blue-600" />
                     <span>শিক্ষার্থী রেফারেন্স</span>
-                    <span className="font-normal text-gray-400">(ঐচ্ছিক)</span>
+                    <span
+                      className={`font-normal text-gray-400 ${isSalaryEntry ? "hidden" : ""}`}
+                    >
+                      (ঐচ্ছিক)
+                    </span>
                   </label>
                   {selectedMember && (
                     <button
@@ -786,6 +790,16 @@ const FinanceAddEntryForm = ({
                       </>
                     )}
                   </div>
+                )}
+                {isSalaryEntry && (
+                  <p className="mt-1 text-[11px] font-medium text-blue-700">
+                    Student reference is required for monthly salary entries.
+                  </p>
+                )}
+                {errors.member_id && (
+                  <p className="mt-1 text-xs text-red-600">
+                    {errors.member_id.message}
+                  </p>
                 )}
               </div>
 
