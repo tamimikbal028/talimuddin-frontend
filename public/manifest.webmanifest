@@ -7,7 +7,7 @@
   "scope": "./",
   "display": "standalone",
   "background_color": "#f9fafb",
-  "theme_color": "#2563eb",
+  "theme_color": "#15803d",
   "icons": [
     {
       "src": "./icons/talimuddin-192.png",
