@@ -2,6 +2,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { FaCodeBranch, FaCog, FaSignOutAlt, FaBullhorn } from "react-icons/fa";
 import authHooks from "@/hooks/useAuth";
 import { FEATURE_FLAGS as flags } from "@/constants";
+import InstallAppAction from "@/layout/InstallAppAction";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -88,6 +89,9 @@ const Sidebar = () => {
               );
             })}
           </nav>
+          <div className="mt-4">
+            <InstallAppAction />
+          </div>
         </div>
       </div>
 
