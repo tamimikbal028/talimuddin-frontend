@@ -1,11 +1,11 @@
 const CACHE_PREFIX = "talimuddin-pwa-";
-const CACHE_NAME = `${CACHE_PREFIX}v2`;
+const CACHE_NAME = `${CACHE_PREFIX}v4`;
 const appPath = (path) => new URL(path, self.registration.scope).pathname;
 const APP_SHELL = [
   appPath(""),
   appPath("manifest.webmanifest"),
-  appPath("icons/talimuddin-192.png"),
-  appPath("icons/talimuddin-512.png"),
+  appPath("icons/talimuddin-mosque-192.png"),
+  appPath("icons/talimuddin-mosque-512.png"),
 ];
 
 self.addEventListener("install", (event) => {
