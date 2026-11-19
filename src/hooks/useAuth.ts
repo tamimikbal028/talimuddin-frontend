@@ -68,14 +68,6 @@ const useRegister = () => {
         return;
       }
 
-      if (response.data?.supabaseSession) {
-        try {
-          await supabase.auth.setSession(response.data.supabaseSession);
-        } catch (e) {
-          console.error("Failed to set Supabase session on register:", e);
-          toast.error("Failed to sync Supabase session.");
-        }
-      }
       queryClient.setQueryData([AUTH_KEYS.CURRENT_USER], response.data);
       toast.success(response.message);
       navigate("/");
@@ -95,14 +87,6 @@ const useLogin = () => {
   return useMutation({
     mutationFn: (loginData: LoginType) => authServices.login(loginData),
     onSuccess: async (response) => {
-      if (response.data?.supabaseSession) {
-        try {
-          await supabase.auth.setSession(response.data.supabaseSession);
-        } catch (e) {
-          console.error("Failed to set Supabase session on login:", e);
-          toast.error("Failed to sync Supabase session.");
-        }
-      }
       queryClient.setQueryData([AUTH_KEYS.CURRENT_USER], response.data);
       queryClient.invalidateQueries({ queryKey: [BRANCH_KEYS.MY_BRANCHES] });
       toast.success(response.message);

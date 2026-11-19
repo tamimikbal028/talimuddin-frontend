@@ -1,5 +1,4 @@
 import { toast } from "sonner";
-import type { AxiosError } from "axios";
 import type { ApiError } from "@/types";
 
 // Overload 1: Higher-Order Function usage
@@ -43,9 +42,9 @@ const _processError = (error: unknown, fallbackMessage: string) => {
     return;
   }
 
-  // Check if it's an AxiosError
+  // Check if it's an Axios-style response error
   if (error && typeof error === "object" && "response" in error) {
-    const axiosErr = error as AxiosError<ApiError>;
+    const axiosErr = error as { response?: { data?: ApiError } };
     const errorData = axiosErr.response?.data;
 
     // Case 1: Multiple validation errors (422 status)
