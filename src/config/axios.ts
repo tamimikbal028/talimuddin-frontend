@@ -80,14 +80,13 @@ api.interceptors.response.use(
 
     // If error is 401 and we haven't retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // No need to refresh for these routes
-      // Login/Register failure is user error, not token issue
-      // current-user fail means user is not logged in, no use trying refresh
+      // These routes must not trigger another refresh attempt.
+      // current-user is intentionally included in refresh handling so a
+      // returning user can restore an expired access token from the refresh cookie.
       const skipRefreshUrls = [
         "/auth/login",
         "/auth/register",
         "/auth/refresh-token",
-        "/auth/current-user", // 401 expected if logged out
       ];
       if (skipRefreshUrls.some((url) => originalRequest.url?.includes(url))) {
         return Promise.reject(error);
