@@ -103,12 +103,11 @@ const BranchDetails = () => {
       {isMember ? (
         <>
           {/* Navigation Tabs (Separated from Branch Header) */}
-          <div className="border-y border-gray-200 bg-white shadow-2xs">
-            <BranchDetailsNavBar
-              meta={meta}
-              membersCount={branch.members_count}
-            />
-          </div>
+
+          <BranchDetailsNavBar
+            meta={meta}
+            membersCount={branch.members_count}
+          />
 
           <div className="mx-auto max-w-5xl">
             <div className="space-y-3">
