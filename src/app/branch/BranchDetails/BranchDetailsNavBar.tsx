@@ -62,7 +62,7 @@ const BranchDetailsNavBar = ({
   return (
     <div className="mx-auto max-w-5xl px-0 sm:px-5">
       <nav
-        className="-mb-px flex w-full items-center justify-between sm:justify-center sm:gap-12"
+        className="mx-auto flex w-fit items-center gap-1"
         aria-label="Branch Navigation"
       >
         {visibleTabs.map((tab) => {
@@ -73,10 +73,10 @@ const BranchDetailsNavBar = ({
                 to={tab.path}
                 end={tab.end}
                 className={({ isActive }) =>
-                  `group flex flex-1 items-center justify-center gap-1.5 border-b-2 py-3 text-xs font-semibold whitespace-nowrap transition-all duration-200 sm:flex-initial sm:gap-2 sm:px-8 sm:py-3.5 sm:text-sm ${
+                  `group flex items-center justify-center gap-1.5 rounded-full border px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all duration-200 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm ${
                     isActive
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-900"
+                      ? "border-blue-200 bg-blue-50 text-blue-700 shadow-xs"
+                      : "border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-900"
                   }`
                 }
               >
@@ -89,7 +89,7 @@ const BranchDetailsNavBar = ({
                         className={`inline-flex items-center justify-center rounded-full px-1.5 py-0.5 text-[11px] font-bold transition-colors sm:px-2 sm:text-xs ${
                           isActive
                             ? "bg-blue-100 text-blue-700"
-                            : "bg-gray-100 text-gray-600 group-hover:bg-gray-200 group-hover:text-gray-900"
+                            : "text-gray-600 group-hover:text-gray-900"
                         }`}
                       >
                         {tab.count.toLocaleString()}

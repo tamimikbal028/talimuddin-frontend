@@ -8,7 +8,6 @@ import {
   FaCopy,
   FaCheck,
   FaLock,
-  FaInfoCircle,
 } from "react-icons/fa";
 import {
   useBranchActionCode,
@@ -123,10 +122,8 @@ const ModeratorCodeModal = ({
         <div className="space-y-4 overflow-y-auto p-5 text-sm text-gray-700">
           {/* Info Notice Banner */}
           <div className="flex items-start gap-2.5 rounded-xl border border-blue-100 bg-blue-50/60 p-3 text-xs leading-relaxed text-blue-900">
-            <FaInfoCircle className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
             <div>
-              <p className="font-semibold">ব্রাঞ্চ এডমিন নির্দেশনা:</p>
-              <p className="text-blue-800">
+              <p className="text-justify text-blue-800">
                 ব্রাঞ্চ এডমিন হিসেবে আপনার হিসাব এডিট বা ডিলিট করতে কোডের
                 প্রয়োজন নেই। কিন্তু মডারেটররা কোনো হিসাব এডিট অথবা ডিলিট করতে
                 চাইলে তাদেরকে অবশ্যই এই কোডটি ব্যবহার করতে হবে।
@@ -163,7 +160,9 @@ const ModeratorCodeModal = ({
                 {isLoading ? (
                   <div className="h-5 w-20 animate-pulse rounded bg-gray-200" />
                 ) : isError ? (
-                  <span className="text-xs text-red-500">লোড করা সম্ভব হয়নি</span>
+                  <span className="text-xs text-red-500">
+                    লোড করা সম্ভব হয়নি
+                  </span>
                 ) : (
                   <span className="font-mono text-base font-bold tracking-widest text-gray-900">
                     {showCurrentCode ? currentCode : "••••••••"}

@@ -142,7 +142,7 @@ const BranchMembersTab = () => {
       </div>
 
       {/* Blood Group Filter Pills */}
-      <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+      <div className="flex flex-wrap items-center gap-1.5 pb-1 text-xs">
         <button
           type="button"
           onClick={() => setSelectedBloodGroup("")}
