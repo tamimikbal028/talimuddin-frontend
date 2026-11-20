@@ -4,7 +4,7 @@ import {
   HiUsers,
   HiMagnifyingGlass,
 } from "react-icons/hi2";
-import { FaUserPlus, FaTint } from "react-icons/fa";
+import { FaUserPlus } from "react-icons/fa";
 import BranchMemberCard from "./BranchMemberCard";
 import AddEditMemberModal from "./AddEditMemberModal";
 import FriendCardSkeleton from "@/app/shared/LoadingSkeleton/FriendCardSkeleton";
@@ -143,9 +143,6 @@ const BranchMembersTab = () => {
 
       {/* Blood Group Filter Pills */}
       <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-        <span className="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-gray-500">
-          <FaTint className="h-3 w-3 text-rose-500" /> Blood:
-        </span>
         <button
           type="button"
           onClick={() => setSelectedBloodGroup("")}
