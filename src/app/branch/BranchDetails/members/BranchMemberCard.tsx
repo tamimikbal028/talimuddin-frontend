@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BsThreeDots } from "react-icons/bs";
 import {
@@ -44,7 +44,35 @@ const BranchMemberCard = ({ member, onEdit }: BranchMemberCardProps) => {
     isError: isFinanceError,
   } = useMemberFinanceEntries(branchId || "", memberId, true);
 
-  const transactions: FinanceEntry[] = financeData?.data?.entries || [];
+  const transactions: FinanceEntry[] = useMemo(() => {
+    const entries = financeData?.data?.entries || [];
+
+    const getSortTime = (entry: FinanceEntry) => {
+      if (
+        entry.salary_month &&
+        /^\d{4}-(0[1-9]|1[0-2])$/.test(entry.salary_month)
+      ) {
+        const [year, month] = entry.salary_month.split("-").map(Number);
+        return new Date(year, month - 1, 1).getTime();
+      }
+      const dateMs = new Date(entry.date).getTime();
+      return Number.isNaN(dateMs) ? 0 : dateMs;
+    };
+
+    return [...entries].sort((a, b) => {
+      const diff = getSortTime(b) - getSortTime(a);
+      if (diff !== 0) return diff;
+
+      const dateDiff =
+        (new Date(b.date).getTime() || 0) - (new Date(a.date).getTime() || 0);
+      if (dateDiff !== 0) return dateDiff;
+
+      return (
+        (new Date(b.created_at).getTime() || 0) -
+        (new Date(a.created_at).getTime() || 0)
+      );
+    });
+  }, [financeData?.data?.entries]);
   const totalPaid = transactions.reduce(
     (sum, t) => sum + (t.paid_amount ?? (t.type === "INCOME" ? t.amount : 0)),
     0
