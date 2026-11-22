@@ -28,6 +28,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "src/data/profile-data/userData.ts"],
-  "exclude": ["src/config/axios.ts"]
+  "include": ["src", "src/data/profile-data/userData.ts"]
 }

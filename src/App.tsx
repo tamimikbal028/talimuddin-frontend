@@ -6,7 +6,6 @@ import MobileTopNavbar from "@/layout/MobileTopNavbar";
 import MainContent from "@/layout/MainContent";
 import authHooks from "@/hooks/useAuth";
 import { AUTH_KEYS } from "@/constants";
-import { supabase } from "@/config/supabase";
 import AuthLoading from "@/app/shared/LoadingSkeleton/AuthLoading";
 
 const App = () => {
@@ -23,24 +22,8 @@ const App = () => {
     };
 
     window.addEventListener("auth:logout", handleLogout);
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") {
-        queryClient.setQueryData([AUTH_KEYS.CURRENT_USER], null);
-      } else if (
-        event === "SIGNED_IN" ||
-        event === "TOKEN_REFRESHED" ||
-        event === "USER_UPDATED"
-      ) {
-        queryClient.invalidateQueries({ queryKey: [AUTH_KEYS.CURRENT_USER] });
-      }
-    });
-
     return () => {
       window.removeEventListener("auth:logout", handleLogout);
-      subscription.unsubscribe();
     };
   }, [queryClient]);
 

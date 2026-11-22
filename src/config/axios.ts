@@ -1,6 +1,5 @@
 import axios from "axios";
 import type { AxiosError, InternalAxiosRequestConfig } from "axios";
-import { supabase } from "./supabase";
 
 /**
  * ====================================
@@ -121,13 +120,6 @@ api.interceptors.response.use(
         // Dispatch custom event - App.tsx is listening
         // This will logout the user and take them to login page
         window.dispatchEvent(new CustomEvent("auth:logout"));
-
-        // Sign out from Supabase to prevent desync (Fix 3)
-        try {
-          await supabase.auth.signOut();
-        } catch (e) {
-          console.error("Failed to sign out from Supabase on session expiry:", e);
-        }
 
         return Promise.reject(refreshError);
       } finally {

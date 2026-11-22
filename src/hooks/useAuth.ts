@@ -6,7 +6,6 @@ import authServices from "@/services/auth.service";
 import { handleMutationError } from "@/utils/errorHandler";
 import type { LoginType, RegisterType } from "@/types";
 import { AUTH_KEYS, BRANCH_KEYS, USER_TYPES } from "@/constants";
-import { supabase } from "@/config/supabase";
 
 // Default query options for current user
 const currentUserQueryOptions = {
@@ -109,26 +108,14 @@ const useLogout = () => {
 
   return useMutation({
     mutationFn: () => authServices.logout(),
-    onSuccess: async (response) => {
-      try {
-        await supabase.auth.signOut();
-      } catch (e) {
-        console.error("Supabase signOut error:", e);
-        toast.error("Failed to sign out from Supabase.");
-      }
+    onSuccess: (response) => {
       queryClient.setQueryData([AUTH_KEYS.CURRENT_USER], null);
       queryClient.removeQueries({ queryKey: [AUTH_KEYS.CURRENT_USER] });
       queryClient.invalidateQueries({ queryKey: [BRANCH_KEYS.MY_BRANCHES] });
       toast.success(response?.message);
       navigate("/login");
     },
-    onError: async (error: unknown) => {
-      try {
-        await supabase.auth.signOut();
-      } catch (e) {
-        console.error("Supabase signOut error:", e);
-        toast.error("Failed to sign out from Supabase.");
-      }
+    onError: (error: unknown) => {
       queryClient.setQueryData([AUTH_KEYS.CURRENT_USER], null);
       handleMutationError(error, "Logout failed, signed out locally.");
       navigate("/login");
