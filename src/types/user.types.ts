@@ -25,15 +25,9 @@ export interface User {
 // AUTH STATE
 // ====================================
 
-export interface SupabaseSession {
-  access_token: string;
-  refresh_token: string;
-}
-
 export type AuthResponse = ApiResponse<{
   user?: AuthUser;
   meta?: UserMeta;
-  supabaseSession?: SupabaseSession | null;
   emailConfirmationRequired?: boolean;
 }>;
 
